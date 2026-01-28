@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-4-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-5-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -70,11 +70,19 @@ Unified git workflow: branch-first, worktree-first, security-first commits, and 
 
 ---
 
-### [GitHub](./github/) - Releases via gh
+### [GitHub](./github/) - GitHub CLI (gh)
 
-Create and verify GitHub Releases using GitHub CLI (`gh`).
+GitHub operations via GitHub CLI (`gh`): repos, issues, PRs, Actions, releases, secrets/vars, and more.
 
 [View skill documentation →](./github/SKILL.md)
+
+---
+
+### [Convex](./convex/) - Convex Backend + MCP
+
+Build and operate Convex backends with best practices, validation, and Convex MCP workflows.
+
+[View skill documentation →](./convex/SKILL.md)
 
 ---
 
@@ -90,6 +98,8 @@ npx skills add bntvllnt/agent-skills --skill skill-builder
 npx skills add bntvllnt/agent-skills --skill git
 
 npx skills add bntvllnt/agent-skills --skill github
+
+npx skills add bntvllnt/agent-skills --skill convex
 ```
 
 Global install:
@@ -101,6 +111,8 @@ npx skills add bntvllnt/agent-skills --skill skill-builder -g
 npx skills add bntvllnt/agent-skills --skill git -g
 
 npx skills add bntvllnt/agent-skills --skill github -g
+
+npx skills add bntvllnt/agent-skills --skill convex -g
 ```
 
 Specific agent:
@@ -112,6 +124,8 @@ npx skills add bntvllnt/agent-skills --skill skill-builder --agent claude-code
 npx skills add bntvllnt/agent-skills --skill git --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill github --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
 ```
 
 ---
