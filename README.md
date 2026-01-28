@@ -1,8 +1,5 @@
 <div align="center">
-
 # 🎯 Agent Skills
-
-**Public collection of AI agent skills by [@bntvllnt](https://github.com/bntvllnt)**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Skills](https://img.shields.io/badge/skills-1-blue.svg)](./analyze/)
