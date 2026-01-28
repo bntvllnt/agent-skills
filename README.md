@@ -10,6 +10,8 @@
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
 
+[GitHub](https://github.com/bntvllnt) • [Twitter](https://twitter.com/bntvllnt) • [Web](https://bntvllnt.com)
+
 </div>
 
 ---
