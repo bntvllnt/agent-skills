@@ -123,9 +123,3 @@ Feel free to:
 ## License
 
 MIT License - Free to use, modify, and distribute.
-
----
-
-## Author
-
-**bntvllnt** ([github](https://github.com/bntvllnt) | [web](https://bntvllnt.com))
