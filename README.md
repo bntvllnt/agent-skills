@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-1-blue.svg)](./analyze/)
+[![Skills](https://img.shields.io/badge/skills-3-blue.svg)](./#available-skills)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/bntvllnt/agent-skills/releases)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -54,22 +54,50 @@ Extract key points, find gaps/risks, identify improvements, and generate actiona
 
 ---
 
+### [Skill Builder](./skill-builder/) - Build Correct Skills
+
+Create/update/delete skills with validated templates, safe defaults, and cross-skill consistency checks.
+
+[View skill documentation →](./skill-builder/SKILL.md)
+
+---
+
+### [Git](./git/) - Git Workflow + Worktrees + PRs
+
+Unified git workflow: branch-first, worktree-first, security-first commits, and PR creation/review flows.
+
+[View skill documentation →](./git/SKILL.md)
+
+---
+
 ## Installation Options
 
 Install specific skill:
 
 ```bash
 npx skills add bntvllnt/agent-skills --skill analyze
+
+npx skills add bntvllnt/agent-skills --skill skill-builder
+
+npx skills add bntvllnt/agent-skills --skill git
 ```
 
 Global install:
 ```bash
 npx skills add bntvllnt/agent-skills --skill analyze -g
+
+npx skills add bntvllnt/agent-skills --skill skill-builder -g
+
+npx skills add bntvllnt/agent-skills --skill git -g
 ```
 
 Specific agent:
 ```bash
 npx skills add bntvllnt/agent-skills --skill analyze --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill skill-builder --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill git --agent claude-code
 ```
 
 ---
