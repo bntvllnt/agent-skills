@@ -15,6 +15,7 @@ Common workflows:
 - Worktree maintenance (cleanup + consolidation): `git/references/worktree-maintenance.md`
 - PR create: `git/references/pr-workflow.md`
 - PR review/fix: `git/references/pr-review-workflow.md`
+- Tags: `git/references/tag-workflow.md`
 - Advanced/recovery: `git/references/advanced-workflows.md`
 
 ## Worktree Path Config

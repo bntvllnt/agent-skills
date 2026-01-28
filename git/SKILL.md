@@ -5,7 +5,7 @@ description: |
   worktrees, and PR creation/review via gh.
   Auto-activates on: "commit", "push", "branch", "worktree", "pr", "pull request", "merge", "rebase", "git".
 license: MIT
-compatibility: Requires git. PR workflows assume GitHub + gh CLI (recommended). Worktree workflows create local directories under WORKTREES_DIR.
+compatibility: Requires git. PR workflows may use GitHub + gh CLI (optional). Worktree workflows create local directories under WORKTREES_DIR.
 metadata:
   version: "1.0"
 ---
@@ -21,10 +21,12 @@ Use the smallest workflow that matches the user intent.
 | User says | Load reference | Do |
 |---|---|---|
 | status / what changed | `references/read-only.md` | read-only inspection |
+| help / usage / man | `references/cli-help.md` | show CLI help safely |
 | commit / stage | `references/commit-workflow.md` | stage + commit safely |
 | branch / switch | `references/branch-workflow.md` | branch operations |
 | worktree create/remove/list | `references/worktree-workflow.md` | worktree operations |
 | worktree cleanup / normalize / consolidate | `references/worktree-maintenance.md` | auto-clean + consolidate worktrees |
+| tag / version | `references/tag-workflow.md` | create/list/inspect tags |
 | pr / pull request | `references/pr-workflow.md` | create/update PR via gh |
 | pr review / fix pr comments / threads | `references/pr-review-workflow.md` | review + respond + fix |
 | merge / rebase / reset / revert | `references/advanced-workflows.md` | advanced/recovery (confirm first) |
@@ -63,6 +65,7 @@ Everything that changes state/history/remote requires explicit user confirmation
 - `git add`, `git commit`, `git push`
 - `git merge`, `git rebase`, `git reset`, `git revert`
 - `git worktree add`, `git worktree remove`
+- `git tag` (create/delete)
 - `git branch -d/-D`
 
 ## Quick Start

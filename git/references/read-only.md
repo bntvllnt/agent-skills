@@ -8,6 +8,8 @@ git diff
 git diff --cached
 git log --oneline -n 20
 git show
+git tag -l
+git describe --tags --always
 git branch --show-current
 git remote -v
 git fetch --all --prune
