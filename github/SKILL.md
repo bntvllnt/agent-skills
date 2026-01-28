@@ -41,6 +41,9 @@ GitHub operations via `gh`.
 - Never upload secrets as assets.
 - Treat `gh api` as powerful: confirm before any write operation.
 - Never delete or move published releases/tags unless explicitly requested.
+- When creating PRs, always set an assignee: default to `@me` unless the user explicitly names someone else.
+- When creating PRs, apply relevant existing labels when possible; auto-pick from PR context (title/body/branch + changed paths) and avoid creating new labels unless truly necessary.
+- If labels must be created, retrieve existing labels first (`gh label list`), propose the minimal set consistent with repo naming, and confirm before `gh label create`.
 
 ## Confirmation Policy
 
