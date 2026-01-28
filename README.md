@@ -1,8 +1,26 @@
-# Agent Skills
+<div align="center">
 
-Public collection of AI agent skills by [@bntvllnt](https://github.com/bntvllnt)
+# 🎯 Agent Skills
+
+**Public collection of AI agent skills by [@bntvllnt](https://github.com/bntvllnt)**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Skills](https://img.shields.io/badge/skills-1-blue.svg)](./analyze/)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/bntvllnt/agent-skills/releases)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
+
+</div>
+
+---
+
+## Installation
+
+```bash
+npx skills add bntvllnt/agent-skills
+```
+
+---
 
 ## Available Skills
 
@@ -36,51 +54,54 @@ Extract key points, find gaps/risks, identify improvements, and generate actiona
 
 ---
 
-## Installation
+## Installation Options
 
-Install specific skills from this collection:
+Install specific skill:
 
 ```bash
-# Install the analyze skill
 npx skills add bntvllnt/agent-skills --skill analyze
-
-# Or install all skills
-npx skills add bntvllnt/agent-skills --all
 ```
 
-The CLI will prompt you to choose installation location and target agent.
-
-**Quick options:**
+Global install:
 ```bash
-# Global install
 npx skills add bntvllnt/agent-skills --skill analyze -g
+```
 
-# Specific agent
+Specific agent:
+```bash
 npx skills add bntvllnt/agent-skills --skill analyze --agent claude-code
-
-# Install all without prompts
-npx skills add bntvllnt/agent-skills --all -g --agent claude-code
 ```
 
 ---
 
 ## Usage Examples
 
+Quick analysis:
 ```bash
-# Quick analysis
 analyze quick "our pricing strategy"
+```
 
-# Standard analysis (default)
+Standard analysis (default):
+```bash
 analyze "SaaS product for developers"
+```
 
-# Deep analysis
+Deep analysis:
+```bash
 analyze deep "migration to microservices"
+```
 
-# Analyze files
+Analyze files:
+```bash
 analyze src/auth.ts
-analyze package.json
+```
 
-# Personal decisions
+```bash
+analyze package.json
+```
+
+Personal decisions:
+```bash
 analyze "should I accept this job offer"
 ```
 
