@@ -1,3 +1,8 @@
+---
+name: analyze
+description: Universal multi-perspective analyzer for any topic, file, idea, or decision. Extract key points, find gaps/risks, identify improvements with actionable plans.
+---
+
 # Universal Analyzer
 
 **A standalone skill for multi-perspective analysis of any topic, file, idea, or decision.**
