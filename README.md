@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-5-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-6-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -86,6 +86,14 @@ Build and operate Convex backends with best practices, validation, and Convex MC
 
 ---
 
+### [Workflow](./workflow/) - High-Velocity Solo Development
+
+Idea to production same-day. Spec-first, quality-gated, pattern-driven development workflow with 7 commands: plan, spike, ship, review, done, drop, workflow.
+
+[View skill documentation →](./workflow/SKILL.md)
+
+---
+
 ## Installation Options
 
 Install specific skill:
@@ -100,6 +108,8 @@ npx skills add bntvllnt/agent-skills --skill git
 npx skills add bntvllnt/agent-skills --skill github
 
 npx skills add bntvllnt/agent-skills --skill convex
+
+npx skills add bntvllnt/agent-skills --skill workflow
 ```
 
 Global install:
@@ -113,6 +123,8 @@ npx skills add bntvllnt/agent-skills --skill git -g
 npx skills add bntvllnt/agent-skills --skill github -g
 
 npx skills add bntvllnt/agent-skills --skill convex -g
+
+npx skills add bntvllnt/agent-skills --skill workflow -g
 ```
 
 Specific agent:
@@ -126,6 +138,8 @@ npx skills add bntvllnt/agent-skills --skill git --agent claude-code
 npx skills add bntvllnt/agent-skills --skill github --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill workflow --agent claude-code
 ```
 
 ---
