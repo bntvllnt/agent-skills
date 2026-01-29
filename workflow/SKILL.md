@@ -7,7 +7,7 @@ description: |
   "refactor", "fix", "review", "check code", "done", "finish", "complete", "drop", "abandon",
   "workflow", "what's next", "next step".
 license: MIT
-compatibility: Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md.
+compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
 metadata:
   version: "1.0"
 ---
