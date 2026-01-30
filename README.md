@@ -64,7 +64,7 @@ Create/update/delete skills with validated templates, safe defaults, and cross-s
 
 ### [Git](./git/) - Git Workflow + Worktrees + PRs
 
-Unified git workflow: branch-first, worktree-first, security-first commits, and PR creation/review flows.
+Unified git workflow: branch-first, worktree-first, security-first commits, PR creation/review flows, and proactive worktree summary with change analysis.
 
 [View skill documentation →](./git/SKILL.md)
 
