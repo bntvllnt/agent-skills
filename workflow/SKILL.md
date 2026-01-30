@@ -2,9 +2,10 @@
 name: workflow
 description: |
   High-velocity solo development workflow. Idea to production same-day.
-  7 commands: plan, spike, ship, review, done, drop, workflow.
+  8 commands: plan, spike, ship, review, spec-review, done, drop, workflow.
   Auto-activates on: "plan", "spec", "ship", "implement", "build", "make", "write", "change",
-  "refactor", "fix", "review", "check code", "done", "finish", "complete", "drop", "abandon",
+  "refactor", "fix", "review", "check code", "review spec", "analyze spec", "challenge spec",
+  "done", "finish", "complete", "drop", "abandon",
   "workflow", "what's next", "next step".
 license: MIT
 compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
@@ -37,6 +38,7 @@ High-velocity solo development. Idea to production same-day.
 | `spike {question}` | Time-boxed exploration | [spike.md](references/actions/spike.md) |
 | `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
 | `review` | Multi-perspective code review | [review.md](references/actions/review.md) |
+| `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
 | `done` | Validate + retro + archive | [done.md](references/actions/done.md) |
 | `drop` | Abandon, preserve learnings | [drop.md](references/actions/drop.md) |
 | `workflow` | Show state + suggest next | [Status](#status-action) (below) |
@@ -62,6 +64,7 @@ Quick mode (<2h): `ship {idea} → done`
 - **Quality gates**: lint → typecheck → build → test (auto-detected per project)
 - **Human controls deployment**: Agent codes, you push/deploy
 - **Done same-day**: Scope to what ships today
+- **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
 
 ## Spec Tiers
 
@@ -81,6 +84,8 @@ User input
   ├─ "spike", "explore", "investigate"   → Load references/actions/spike.md
   ├─ "ship", "implement", "fix", "build" → Load references/actions/ship.md
   ├─ "review", "check code"              → Load references/actions/review.md
+  ├─ "review spec", "analyze spec",
+  │  "challenge spec"                    → Load references/actions/spec-review.md
   ├─ "done", "finish", "complete"        → Load references/actions/done.md
   ├─ "drop", "abandon"                   → Load references/actions/drop.md
   └─ "workflow", "what's next", "status" → Status Action (below)
@@ -132,10 +137,10 @@ All behavior is configurable by editing the skill files directly.
 ## References
 
 Actions:
-- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Review](references/actions/review.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
+- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Review](references/actions/review.md) | [Spec Review](references/actions/spec-review.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
 
 Output templates:
-- [Plan](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Review](references/templates/review-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
+- [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Review](references/templates/review-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
 
 Specs & gates:
 - [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md)

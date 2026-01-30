@@ -2,6 +2,10 @@
 
 > **Agent:** Load this file when `plan` triggers. Also load `references/spec-template.md` — it defines spec structure and validation rules.
 
+**BLOCKING: Never delegate planning to the host agent's built-in plan mode.**
+This skill manages its own planning by writing spec files to `specs/active/`.
+Always stay in the agent's normal execution mode — read, write, and execute directly.
+
 Parse idea, create spec, estimate effort. Output: spec file ready for `ship`.
 
 **The spec template (`references/spec-template.md`) is the SINGLE SOURCE OF TRUTH for spec structure, generation rules, and validation.** This file defines the orchestration — template defines the content.
@@ -16,6 +20,7 @@ Before starting planning, create tasks in your agent's built-in task/todo system
 [ ] Parse idea and identify scope
 [ ] Codebase impact analysis (read affected code, map dependencies)
 [ ] Generate spec (following spec-template.md generation order)
+[ ] Spec analysis (adversarial review of generated spec)
 [ ] Run dev-readiness check (spec-template.md validation rules)
 [ ] All dev-readiness gates PASS
 ```
@@ -83,6 +88,47 @@ For each risk:
 ```
 
 For stateful features, include state machine analysis (see spec-template.md).
+
+## Step 3.5: Spec Analysis (MANDATORY for mini/standard)
+
+After generating the spec, run adversarial analysis to populate the Analysis section.
+
+### Mode by Tier
+
+| Tier | Mode | Agents | Min Requirements |
+|------|------|--------|------------------|
+| mini | Inline | None (single-agent) | 3 assumptions, 1-2 blind spots, 1 failure hypothesis |
+| standard | Parallel sub-agents | 2-3 | 3-5 assumptions, 2-4 blind spots, 3 failure hypotheses |
+
+### Mini Mode (inline)
+
+Apply 4 techniques sequentially (single agent, no sub-agents):
+
+1. **Challenge assumptions**: List 3+ assumptions from the spec. For each: evidence for, against, verdict (VALID/RISKY/WRONG)
+2. **Find blind spots**: What hasn't been considered? 1-2 items with category + impact
+3. **Failure hypothesis**: IF {trigger} THEN {failure} BECAUSE {cause}. At least 1.
+4. **Reframe**: Is this solving the right problem? Confirm or reframe.
+
+Write results directly into spec's `## Analysis` section.
+
+### Standard Mode (parallel sub-agents)
+
+1. Read the spec's context, scope, codebase impact, and risks
+2. Self-select 2-3 analysis perspectives most relevant to THIS spec's domain:
+   - Always include 1 **Skeptic** (domain-agnostic adversarial thinker)
+   - Add 1-2 domain-relevant perspectives (e.g., Security Engineer for auth, UX Designer for UI, Data Engineer for migrations)
+3. Launch all perspectives as **parallel sub-agents** (single message, multiple Task tool calls)
+4. Each agent receives: full spec + relevant codebase files from Codebase Impact
+5. Each agent produces: assumptions table, blind spots, failure hypotheses, reframe
+6. Synthesize: merge findings, deduplicate, rank by severity
+7. Write synthesized results into spec's `## Analysis` section
+
+### Rules
+
+- Cross-reference against actual codebase (not just spec text)
+- Every finding must be action-driven: `→ update spec` / `→ explore` / `→ question` / `→ no action`
+- No passive observations — each finding forces a decision
+- If analysis reveals spec gaps → update spec before proceeding to Step 4
 
 ## Step 4: Spec Review
 

@@ -21,7 +21,7 @@ Sections MUST be generated in this order. Each section feeds the next.
 6. Quality Checklist ← derived from scope + codebase patterns
 7. Risks             ← from codebase impact + pre-mortem
 8. State Machine     ← if stateful (from journey analysis)
-9. Analysis          ← improvements, gaps, questions (MANDATORY output)
+9. Analysis          ← assumptions, blind spots, failures, reframe (MANDATORY output)
 ```
 
 **Rule: Never skip ahead. Journey drives ACs. ACs drive scope. Codebase drives everything.**
@@ -309,17 +309,36 @@ Result: every scope ↔ at least 1 AC, bidirectional
 
     ## Analysis
 
-    ### Improvements
-    - {Suggestion to strengthen the spec, architecture, or approach}
-    - {Alternative approach worth considering}
+    ### Assumptions Challenged
 
-    ### Gaps
-    - {Unknown that could affect implementation}
-    - {Assumption that needs validation}
+    | Assumption | Evidence For | Evidence Against | Verdict |
+    |------------|-------------|-----------------|---------|
+    | {assumption from spec} | {supporting evidence} | {counter-evidence} | VALID / RISKY / WRONG |
 
-    ### Questions
-    - {Question for the user — answer before ship or accept defaults}
-    - {Clarification needed on ambiguous aspect}
+    ### Blind Spots
+
+    1. **[{category}]** {What hasn't been considered}
+       Why it matters: {impact if ignored}
+
+    2. **[{category}]** {What hasn't been considered}
+       Why it matters: {impact if ignored}
+
+    ### Failure Hypotheses
+
+    | IF | THEN | BECAUSE | Severity | Mitigation |
+    |----|------|---------|----------|------------|
+    | {trigger condition} | {failure mode} | {root cause} | HIGH/MED/LOW | {mitigation or "NONE — add to spec"} |
+
+    ### The Real Question
+
+    {Reframe the problem or confirm: "Confirmed — spec solves the right problem because {reason}."}
+
+    ### Open Items
+
+    - [{tag}] {finding} → {action}
+
+    Tags: `[risk]` `[gap]` `[question]` `[improvement]`
+    Actions: `→ update spec` | `→ explore` | `→ question` | `→ no action`
 
     ## Notes
 
@@ -337,16 +356,23 @@ Result: every scope ↔ at least 1 AC, bidirectional
     | plan | {ISO_TIMESTAMP} | - | Created |
 
 **Generation rules (MANDATORY output):**
-- **Improvements**: proactive suggestions the user hasn't considered
-  - Better patterns, simpler approaches, existing code to leverage
-  - Architectural alternatives worth weighing
-- **Gaps**: unknowns that won't block dev but should be tracked
-  - Assumptions made that could be wrong
-  - Areas where requirements are ambiguous
-- **Questions**: things the agent can't resolve alone
-  - Preference decisions, business logic clarifications
-  - If no questions: "None — requirements are clear"
-- **Be proactive**: flag edge cases, perf concerns, security implications, UX issues the user hasn't mentioned
+- **Assumptions Challenged**: min 3 assumptions from the spec. Cross-reference against codebase.
+  - Check: architectural assumptions, scope assumptions, user behavior assumptions
+  - Verdict: VALID (evidence supports), RISKY (mixed evidence), WRONG (evidence contradicts)
+- **Blind Spots**: 2-4 items. Categories: technical, UX, ops, security, data, integration
+  - What the spec doesn't address that could matter
+  - Each must explain impact if ignored
+- **Failure Hypotheses**: min 1 (mini), min 3 (standard). IF/THEN/BECAUSE format.
+  - Pre-mortem style: assume it failed, explain why
+  - Every HIGH severity must have mitigation (or flag "NONE — add to spec")
+- **The Real Question**: reframe the problem or confirm spec solves the right one
+  - Challenge: is this solving the root cause or a symptom?
+- **Open Items**: aggregate all findings with action tags. Every item forces a decision:
+  - `→ update spec` — finding changes the spec (add AC, cut scope, add risk)
+  - `→ explore` — unknown needs investigation before deciding
+  - `→ question` — needs user input
+  - `→ no action` — acknowledged, no change needed
+- **No passive observations.** Every finding must end with an action.
 
 ---
 
@@ -399,9 +425,11 @@ For <100 LOC features. Same rules, shorter format. Codebase Impact + Journey + A
 
     ## Analysis
 
-    **Improvements:** {or "None"}
-    **Gaps:** {or "None"}
-    **Questions:** {or "None — requirements clear"}
+    **Assumptions:** {assumption} → {VALID/RISKY/WRONG} | {assumption} → {verdict} | ...
+    **Blind Spots:** {1-2 items with category + impact}
+    **Failure Hypothesis:** IF {trigger} THEN {failure} BECAUSE {cause} → {mitigation}
+    **The Real Question:** {reframe or confirm}
+    **Open Items:** [{tag}] {finding} → {action} | ...
 
     ## Notes
 
@@ -431,7 +459,7 @@ A spec missing ANY of these cannot proceed to `ship`.
 | 10 | ACs map to scope | Every Must Have AC is covered by scope | YES |
 | 11 | No orphan scope | Scope item with no AC mapping → cut | YES |
 | 12 | No uncovered AC | Must Have AC with no scope item → add scope | YES |
-| 13 | Analysis present | Improvements + Gaps + Questions sections exist | YES |
+| 13 | Analysis present | Assumptions + Blind Spots + Failure Hypotheses + Open Items sections exist | YES |
 
 ---
 
