@@ -20,12 +20,13 @@ Use the smallest workflow that matches the user intent.
 
 | User says | Load reference | Do |
 |---|---|---|
-| status / what changed | `references/read-only.md` | read-only inspection |
+| status / what changed (no "worktree" prefix) | `references/read-only.md` | read-only inspection |
 | help / usage / man | `references/cli-help.md` | show CLI help safely |
 | commit / stage | `references/commit-workflow.md` | stage + commit safely |
 | branch / switch | `references/branch-workflow.md` | branch operations |
 | worktree create/remove/list | `references/worktree-workflow.md` | worktree operations |
 | worktree cleanup / normalize / consolidate | `references/worktree-maintenance.md` | auto-clean + consolidate worktrees |
+| worktree summary / worktree status / show worktrees | `references/worktree-summary.md` | proactive analysis: PR status, change classification, safe-to-delete verdicts |
 | tag / version | `references/tag-workflow.md` | create/list/inspect tags |
 | pr / pull request | `references/pr-workflow.md` | create/update PR via gh |
 | pr review / fix pr comments / threads | `references/pr-review-workflow.md` | review + respond + fix |
