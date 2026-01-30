@@ -6,7 +6,8 @@ description: |
   Auto-activates on: "plan", "spec", "ship", "implement", "build", "make", "write", "change",
   "refactor", "fix", "review", "check code", "review spec", "analyze spec", "challenge spec",
   "done", "finish", "complete", "drop", "abandon",
-  "workflow", "what's next", "next step".
+  "workflow", "what's next", "whats next", "next step", "what now",
+  "what's up", "whats up".
 license: MIT
 compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
 metadata:
@@ -88,7 +89,8 @@ User input
   │  "challenge spec"                    → Load references/actions/spec-review.md
   ├─ "done", "finish", "complete"        → Load references/actions/done.md
   ├─ "drop", "abandon"                   → Load references/actions/drop.md
-  └─ "workflow", "what's next", "status" → Status Action (below)
+  └─ "workflow", "what's next", "what now",
+     "what's up", "whats up", "status"  → Status Action (below)
 ```
 
 **Loading rule:** Read the action file BEFORE executing. The action file contains all logic, task templates, and references needed.
