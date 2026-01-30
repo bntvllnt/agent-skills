@@ -27,6 +27,7 @@ GitHub operations via `gh`.
 | pr / pull request / review | `references/pr.md` | PR create/review/merge workflows |
 | actions / workflow / run / ci | `references/actions.md` | GitHub Actions (workflows + runs) |
 | release / publish release | `references/release.md` | releases + assets + verification |
+| release strategy / release format / versioning | `references/release-strategy.md` | versioning, title/description format, generation protocol |
 | secrets / variables | `references/secrets-vars.md` | manage secrets and variables |
 | project | `references/projects.md` | projects operations |
 | gist | `references/gists.md` | gist operations |

@@ -23,6 +23,8 @@ gh release view vX.Y.Z --web
 
 ## Edit a release (confirm first)
 
+**MANDATORY: When editing release descriptions, follow `release-strategy.md` format.** Read actual git diffs to produce accurate file-level change descriptions.
+
 Update notes from a file:
 
 ```bash

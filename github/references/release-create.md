@@ -2,6 +2,8 @@
 
 Goal: create a GitHub Release for a specific tag with correct notes and safe defaults.
 
+**MANDATORY: Follow `release-strategy.md` for versioning, title format, and description format.** Never publish a release without the enforced description structure (summary + New Files table + Changed Files table).
+
 Requires confirmation before running `gh release create`.
 
 ## Important Safety Fact
