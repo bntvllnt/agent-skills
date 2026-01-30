@@ -5,7 +5,8 @@ description: |
   secrets/variables, projects, gists, searches, and API access.
   Auto-activates on: "gh", "github cli", "github issue", "github pr", "pull request",
   "github actions", "workflow", "run", "github release", "release", "gh api",
-  "github repo", "github secret", "github variable".
+  "github repo", "github secret", "github variable", "ci status", "monitor ci",
+  "check ci", "watch ci", "pr dashboard", "pr overview", "open prs", "my prs", "pr status".
 license: MIT
 compatibility: Requires GitHub CLI (gh) and authentication (gh auth login or GH_TOKEN). Targets GitHub-hosted repos.
 metadata:
@@ -25,7 +26,9 @@ GitHub operations via `gh`.
 | repo / clone / fork / sync | `references/repo.md` | repository operations |
 | issue / issues | `references/issue.md` | issue triage and management |
 | pr / pull request / review | `references/pr.md` | PR create/review/merge workflows |
-| actions / workflow / run / ci | `references/actions.md` | GitHub Actions (workflows + runs) |
+| actions / workflow / run | `references/actions.md` | GitHub Actions (workflows + runs) |
+| ci / monitor ci / check ci / ci status / watch ci | `references/ci-monitor.md` | monitor CI checks with live polling (if user says bare "ci", ask: monitor checks or view workflows?) |
+| pr dashboard / pr overview / open prs / my prs / pr status | `references/pr-dashboard.md` | PR overview with status classification |
 | release / publish release | `references/release.md` | releases + assets + verification |
 | release strategy / release format / versioning | `references/release-strategy.md` | versioning, title/description format, generation protocol |
 | secrets / variables | `references/secrets-vars.md` | manage secrets and variables |
@@ -57,6 +60,7 @@ Require confirmation:
 - `gh repo create/edit/rename/archive/delete/sync`
 - `gh release create/edit/delete`, `gh release upload`, `gh release delete-asset`
 - `gh secret set/delete`, `gh variable set/delete`
+- `gh run rerun`, `gh run cancel`
 - `gh api` calls that mutate state (POST/PATCH/PUT/DELETE)
 
 ## Read-Only (No Confirmation Needed)
@@ -67,4 +71,8 @@ gh release list
 gh release view <tag>
 gh release view <tag> --web
 gh help
+gh pr checks <number> --json ...
+gh run list --branch <branch> --json ...
+gh run view <run-id>
+gh run view <run-id> --log-failed
 ```

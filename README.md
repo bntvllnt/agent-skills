@@ -72,7 +72,7 @@ Unified git workflow: branch-first, worktree-first, security-first commits, PR c
 
 ### [GitHub](./github/) - GitHub CLI (gh)
 
-GitHub operations via GitHub CLI (`gh`): repos, issues, PRs, Actions, releases, secrets/vars, and more.
+GitHub operations via GitHub CLI (`gh`): repos, issues, PRs, Actions, releases, secrets/vars, CI monitoring with live polling, and PR dashboard with status classification.
 
 [View skill documentation →](./github/SKILL.md)
 

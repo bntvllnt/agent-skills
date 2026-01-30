@@ -77,3 +77,18 @@ Merge (confirm first):
 ```bash
 gh pr merge <number>
 ```
+
+## Auto-Monitor CI After PR Creation
+
+After `gh pr create` succeeds, check if repo has CI workflows:
+
+```bash
+gh workflow list
+```
+
+If workflows exist, ask the user:
+
+> CI detected. Monitor checks? [Y/n]
+
+If yes, run the CI Monitor workflow (`ci status` for the new PR number).
+If no, return control immediately.
