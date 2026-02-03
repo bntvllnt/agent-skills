@@ -3,15 +3,14 @@ name: workflow
 description: |
   High-velocity solo development workflow. Idea to production same-day.
   8 commands: plan, spike, ship, review, spec-review, done, drop, workflow.
-  Auto-activates on: "plan", "spec", "ship", "implement", "build", "make", "write", "change",
-  "refactor", "fix", "review", "check code", "review spec", "analyze spec", "challenge spec",
+  Auto-activates on: "plan", "spec", "ship", "spike",
+  "spec-review", "review spec", "analyze spec", "challenge spec",
   "done", "finish", "complete", "drop", "abandon",
-  "workflow", "what's next", "whats next", "next step", "what now",
-  "what's up", "whats up".
+  "workflow", "what's next", "whats next", "next step", "what now".
 license: MIT
 compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
 metadata:
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Workflow
