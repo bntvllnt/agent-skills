@@ -3,6 +3,10 @@ name: workflow
 description: |
   High-velocity solo development workflow. Idea to production same-day.
   8 commands: plan, spike, ship, review, spec-review, done, drop, workflow.
+
+  This skill defines the lifecycle (spec → implement → quality gates → PR-ready → done).
+  For git/PR/release mechanics, pair it with dedicated `git` and `github` skills.
+
   Auto-activates on: "plan", "spec", "ship", "spike",
   "spec-review", "review spec", "analyze spec", "challenge spec",
   "done", "finish", "complete", "drop", "abandon",
@@ -65,6 +69,23 @@ Quick mode (<2h): `ship {idea} → done`
 - **Human controls deployment**: Agent codes, you push/deploy
 - **Done same-day**: Scope to what ships today
 - **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
+
+## Git / PR / Release management (Agent-Skills projects)
+
+This skill defines lifecycle + execution. For repo mechanics:
+
+- **Commits/branches**: use the `git` skill
+- **PRs / CI / releases**: use the `github` skill
+
+### Release format (MANDATORY)
+
+For `agent-skills` (and any repo that adopts this workflow), releases MUST follow the `github` skill’s enforced format:
+
+- SemVer tag: `vMAJOR.MINOR.PATCH`
+- Title: `vX.Y.Z — {Short Description}` (em dash)
+- Notes: strict structure (summary paragraph + New Files table + Changed Files table)
+
+Reference: `github/references/release-strategy.md`
 
 ## Spec Tiers
 
