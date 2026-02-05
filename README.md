@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-6-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -94,6 +94,14 @@ Idea to production same-day. Spec-first, quality-gated, pattern-driven developme
 
 ---
 
+### [tmux](./tmux/) - Terminal Multiplexer Management
+
+Complete tmux management: sessions, windows, panes, layouts, copy mode, configuration, keybindings, and scripting/automation.
+
+[View skill documentation →](./tmux/SKILL.md)
+
+---
+
 ## Installation Options
 
 Install specific skill:
@@ -110,6 +118,8 @@ npx skills add bntvllnt/agent-skills --skill github
 npx skills add bntvllnt/agent-skills --skill convex
 
 npx skills add bntvllnt/agent-skills --skill workflow
+
+npx skills add bntvllnt/agent-skills --skill tmux
 ```
 
 Global install:
@@ -125,6 +135,8 @@ npx skills add bntvllnt/agent-skills --skill github -g
 npx skills add bntvllnt/agent-skills --skill convex -g
 
 npx skills add bntvllnt/agent-skills --skill workflow -g
+
+npx skills add bntvllnt/agent-skills --skill tmux -g
 ```
 
 Specific agent:
@@ -140,6 +152,8 @@ npx skills add bntvllnt/agent-skills --skill github --agent claude-code
 npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill workflow --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill tmux --agent claude-code
 ```
 
 ---
