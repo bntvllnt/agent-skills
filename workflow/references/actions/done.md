@@ -23,6 +23,7 @@ Validate, archive spec, capture learnings. Does NOT deploy — that's human-cont
 | No hardcoded secrets | Yes |
 | Can rollback (git revert works, no irreversible migrations) | Yes |
 | No unresolved bugs (all fixed or deferred) | Yes |
+| Agent docs updated for critical learnings | Advisory |
 
 **New test mandate:** Every new behavior MUST have at least one test. Not just "existing tests pass" — new code needs new tests. If test infrastructure doesn't exist, propose setting it up. If user declines, document the skip reason.
 
@@ -60,13 +61,17 @@ Add done entry to spec Timeline:
 
     | done | {ISO_TIMESTAMP} | {total_duration} | - |
 
-## Step 4: Propose Memory Update
+## Step 4: Propose Memory Update (Agent Self-Improvement)
 
 Follow the full protocol in [memory-update.md](../memory-update.md):
-1. Read existing user + project rules (MANDATORY)
-2. Extract learnings (5 categories)
-3. Classify & target (user-level vs project-level)
-4. Present structured proposal for user approval
+1. Detect agent type, read correct config files (CLAUDE.md for Claude Code, AGENTS.md for others)
+2. Extract learnings (6 categories — including **patterns & anti-patterns**)
+3. Classify & target (user-level vs project-level, route to correct file)
+4. Present file-targeted proposals with exact content for user approval
+
+**Pattern extraction is critical.** Every session produces learnings worth remembering: user preferences (coding style, architecture choices), repeated requests that should become defaults, project knowledge discovered during implementation, and anti-patterns from mistakes or regressions. Capturing these in agent config avoids repeat questions and makes future sessions faster.
+
+If no project agent config exists (no CLAUDE.md or AGENTS.md), propose creating one with initial rules from this session's learnings.
 
 ## Step 5: CI Integration (Optional)
 

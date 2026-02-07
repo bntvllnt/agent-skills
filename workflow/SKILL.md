@@ -147,7 +147,7 @@ Review standards:
 - [Production Standards](references/reviews/production-standards.md)
 
 Specs & gates:
-- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md)
+- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md)
 
 Patterns:
-- [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md)
+- [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md) | [Regression testing](references/patterns/regression-testing.md)

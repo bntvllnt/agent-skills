@@ -1,0 +1,162 @@
+# Regression Testing Patterns
+
+> **Agent:** Load this file during bug fix flows. Enforces anti-cascade TDD: fix A without breaking B.
+
+Core problem: fix A → breaks B → fix B → breaks C. This protocol breaks that cascade.
+
+---
+
+## Anti-Cascade TDD Protocol
+
+```
+1. BASELINE  → Run full test suite, record pass/fail counts
+2. RED       → Write test reproducing the bug (MUST FAIL)
+3. GREEN     → Implement fix, verify regression test passes
+4. DIFF      → Run full test suite again, compare to baseline
+5. BLOCK     → Any NEW failures = regressions → roll back, rethink
+6. SCAN      → Check codebase for sibling bugs (same pattern)
+```
+
+### Step-by-Step
+
+**1. BASELINE** — Capture the world before touching anything.
+
+```
+Run full test suite → record:
+  - Total tests: {N}
+  - Passing: {N}
+  - Failing: {N} (list failing test names)
+  - Skipped: {N}
+
+Store as baseline. This is your diff anchor.
+```
+
+If no test suite exists → propose setup (see [testing-automation.md](../testing-automation.md)). If user declines → document skip, proceed with manual verification.
+
+**2. RED** — Prove the bug exists in test form.
+
+```
+Write test that:
+  - Reproduces the exact bug scenario
+  - Asserts the CORRECT behavior (what should happen)
+  - MUST FAIL against current code
+
+Run test → confirm FAIL
+  If test PASSES → wrong test. Bug not reproduced. Redo.
+```
+
+**3. GREEN** — Fix the bug, nothing more.
+
+```
+Implement minimal fix
+Run regression test → MUST PASS
+  If FAIL → fix isn't correct. Iterate.
+```
+
+**4. DIFF** — Catch regressions immediately.
+
+```
+Run full test suite again → record:
+  - Total tests: {N+1} (added regression test)
+  - Passing: {N}
+  - Failing: {N}
+
+Compare to BASELINE:
+  - New failures (tests that passed in baseline, fail now) = REGRESSIONS
+  - Pre-existing failures (failed in baseline too) = KNOWN ISSUES (ignore)
+```
+
+**5. BLOCK** — Zero tolerance for new failures.
+
+```
+New failures found?
+  YES → BLOCK. Fix introduced regressions.
+        Options:
+        a) Fix the regressions without breaking the original fix
+        b) Roll back fix, find a different approach
+        c) Escalate to user with evidence
+  NO  → PASS. Fix is safe. Continue.
+```
+
+**6. SCAN** — Find sibling bugs.
+
+```
+Search codebase for same pattern that caused the bug:
+  - Same function/method used incorrectly elsewhere
+  - Same assumption made in sibling files
+  - Same missing validation in similar code paths
+
+If siblings found → propose batch fix to user:
+  "Same pattern exists in {files}. Fix those too? [y/n]"
+
+Do NOT auto-fix siblings. Propose only.
+```
+
+## Bug Type → Test Pattern Matrix
+
+| Bug Type | Test Pattern | What to Assert |
+|----------|-------------|----------------|
+| **Null/undefined handling** | Pass null/undefined to affected function | Returns safe default or throws descriptive error |
+| **Off-by-one** | Test boundary values (0, 1, N-1, N, N+1) | Correct result at each boundary |
+| **Race condition** | Simulate concurrent access (parallel calls, shared state) | Consistent state after concurrent operations |
+| **Auth bypass** | Call endpoint/function without valid credentials | Returns 401/403, no data leaked |
+| **State mutation** | Perform operation, check all related state | Only intended state changed, no side effects |
+| **Validation gap** | Pass malformed/edge-case input | Rejected with clear error, no processing |
+| **Type coercion** | Pass wrong types (string where number expected) | Proper type error or safe coercion |
+| **Resource leak** | Open resource, trigger error path | Resource cleaned up (connection closed, file handle released) |
+
+## Sibling Bug Detection
+
+After fixing a bug, scan for the same pattern:
+
+```
+1. Identify the ROOT CAUSE pattern (not the symptom)
+   e.g., "missing null check on user.email" → pattern: "accessing user.email without null check"
+
+2. Search codebase:
+   - Grep for same property/method access pattern
+   - Check sibling files (same directory, same module)
+   - Check callers of the same function
+
+3. Filter results:
+   - Already has null check / validation → SAFE
+   - Missing same check → POTENTIAL SIBLING BUG
+
+4. Report:
+   "Found {N} locations with same pattern:
+    - {file}:{line} — {context}
+    Fix all? [y/n / select]"
+```
+
+## Guard Rails
+
+| Situation | Action |
+|-----------|--------|
+| No test suite exists | Propose setup (link to testing-automation.md). If declined → document, proceed manually |
+| Test suite is partial (low coverage) | Warn: "Coverage is low near fix area. Baseline may miss regressions." |
+| Tests are flaky (intermittent failures) | Run baseline 2x, use consistent results as anchor. Flag flaky tests. |
+| Fix is trivial (typo, config) | Still run BASELINE + DIFF. Skip RED/GREEN only if no testable behavior change. |
+| Emergency/hotfix | Run abbreviated: RED + GREEN + DIFF. Skip SCAN. Document skip. |
+| User says "skip tests" | Document skip reason. Still run DIFF if suite exists (non-blocking). |
+
+## Acceptance Criteria (Bug Mode)
+
+Auto-generate these ACs for any bug fix:
+
+```
+- AC-B1: GIVEN {reproduction steps} WHEN {trigger} THEN bug no longer occurs
+- AC-B2: GIVEN regression test WHEN run against unfixed code THEN test FAILS (RED)
+- AC-B3: GIVEN regression test WHEN run against fixed code THEN test PASSES (GREEN)
+- AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline
+```
+
+AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
+
+## Anti-Patterns (NEVER)
+
+- NEVER fix a bug without running the full suite before AND after
+- NEVER ignore new test failures ("they're probably unrelated")
+- NEVER write a regression test that passes on the broken code
+- NEVER skip SCAN for non-emergency fixes
+- NEVER auto-fix sibling bugs without user approval
+- NEVER treat flaky tests as "acceptable" — flag them

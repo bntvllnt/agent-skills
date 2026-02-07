@@ -24,9 +24,20 @@ Edit this file to customize what the agent returns after `done`. Decision logic:
 - **Didn't:** {insight with root cause}
 - **Next time:** {specific improvement}
 
-### Memory Update Proposed
-- **User-level:** {learning or "None"}
-- **Project-level:** {learning or "None"}
+### Agent Config Updates
+
+1. [P/CLAUDE.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
+
+2. [P/AGENTS.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
+
+3. [~/CLAUDE.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
+
+{or "No learnings to save this session."}
+
+Apply which? [all / 1,3 / none]
 
 ### Next (human)
 1. Commit + push
@@ -44,6 +55,10 @@ Edit this file to customize what the agent returns after `done`. Decision logic:
 **Failing checks:**
 - {check}: {what's wrong}
 - {check}: {what's wrong}
+
+**Learned patterns (add to agent config):**
+- {user preference or anti-pattern}: {context and how to apply}
+- {or "None"}
 
 Run `ship` to fix remaining issues.
 ```
