@@ -65,11 +65,11 @@ Add done entry to spec Timeline:
 
 Follow the full protocol in [memory-update.md](../memory-update.md):
 1. Detect agent type, read correct config files (CLAUDE.md for Claude Code, AGENTS.md for others)
-2. Extract learnings (6 categories — including **anti-patterns/mistakes**)
+2. Extract learnings (6 categories — including **patterns & anti-patterns**)
 3. Classify & target (user-level vs project-level, route to correct file)
 4. Present file-targeted proposals with exact content for user approval
 
-**Anti-pattern extraction is critical.** Every session where mistakes were made, wrong assumptions held, or regressions introduced should capture those as explicit anti-patterns. This is how the agent improves across sessions.
+**Pattern extraction is critical.** Every session produces learnings worth remembering: user preferences (coding style, architecture choices), repeated requests that should become defaults, project knowledge discovered during implementation, and anti-patterns from mistakes or regressions. Capturing these in agent config avoids repeat questions and makes future sessions faster.
 
 If no project agent config exists (no CLAUDE.md or AGENTS.md), propose creating one with initial rules from this session's learnings.
 

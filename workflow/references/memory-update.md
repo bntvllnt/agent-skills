@@ -46,13 +46,14 @@ From the retro and session history, identify learnings in 6 categories:
 | **Project rules** | Codebase conventions the agent should follow | "This project uses barrel exports — add to index.ts" |
 | **Quality checks** | New checklist items from bugs or review findings | "Auth features need rate limiting check" |
 | **Process rules** | Workflow improvements from the session | "Run integration tests before unit tests in this project" |
-| **Anti-patterns / Mistakes** | Mistakes made, wrong assumptions, failed approaches, regressions introduced | "Never modify auth middleware without running full test suite first" |
+| **Patterns & Anti-patterns** | User preferences, repeated requests, mistakes, failed approaches, regressions | "User always wants error boundaries around async components" |
 
-**Anti-patterns** capture what went wrong so it doesn't repeat:
-- Wrong assumptions that led to wasted time
-- Failed approaches that should be avoided
-- Changes that caused regressions in other parts of the system
-- Examples: "This project's DB queries require explicit transaction wrapping", "Changing the user model breaks 3 downstream services — always run integration tests"
+**Patterns** capture what to remember so the agent improves across sessions:
+- **User preferences**: coding style requests, architecture preferences, naming conventions the user enforces ("user prefers explicit return types on all functions")
+- **Repeated requests**: things the user asks for repeatedly that should be default behavior ("always add loading states to async UI")
+- **Project knowledge**: implicit rules learned during the session ("this project's DB queries require explicit transaction wrapping")
+- **Anti-patterns**: wrong assumptions, failed approaches, regressions introduced ("never modify auth middleware without running full test suite first")
+- **Workflow preferences**: how the user likes to work ("user prefers small commits, one per logical change")
 
 For each learning, check:
 
@@ -76,6 +77,8 @@ For each learning, check:
 | Quality check | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
 | Process rule (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
 | Process rule (project) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
+| User preference (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
+| User preference (project-specific) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
 | Anti-pattern (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
 | Anti-pattern (project-specific) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
 
@@ -103,8 +106,9 @@ Present file-targeted proposals with exact content. Each proposal = exact text t
     - ADD pattern: "{exact pattern text}" → Section: {section name}
     - {or "No universal learnings this session"}
 
-    **Anti-patterns (prevent repeat mistakes):**
-    - [{target file}] "{exact anti-pattern}" — learned from: {what went wrong}
+    **Learned patterns (ease future work):**
+    - [{target file}] "{user preference or repeated request}" — observed: {when/how}
+    - [{target file}] "{anti-pattern}" — learned from: {what went wrong}
 
     **Conflicts with existing rules:**
     - {existing rule} vs {proposed rule}: {recommendation}
