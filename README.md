@@ -26,29 +26,7 @@ npx skills add bntvllnt/agent-skills
 
 ### [Analyze](./analyze/) - Universal Multi-Perspective Analyzer
 
-Extract key points, find gaps/risks, identify improvements, and generate actionable plans for ANY topic, file, idea, or decision.
-
-**Modes:**
-- **Quick** (30-60s): Fast key points extraction
-- **Standard** (2-4min): Multi-perspective analysis with 4-6 experts
-- **Deep** (5-8min): Comprehensive analysis with 6-10 experts
-
-**Use cases:**
-- Business decisions ("analyze our pricing strategy")
-- Code review ("analyze deep src/api/")
-- Product ideas ("analyze 'habit tracking app'")
-- Personal decisions ("analyze 'should I take this job'")
-- Documents ("analyze proposal.md")
-- Processes ("analyze 'hiring workflow'")
-
-**Features:**
-- ✅ Standalone - no external dependencies
-- ✅ First-principles decomposition
-- ✅ Failure hypothesis generation
-- ✅ Multi-perspective synthesis
-- ✅ Actionable roadmaps with dependencies
-- ✅ Domain auto-detection (13 domains)
-- ✅ Built-in perspectives library
+Multi-perspective analysis for any topic, file, idea, or decision. Three modes: quick, standard, deep.
 
 [View skill documentation →](./analyze/SKILL.md)
 
@@ -64,7 +42,7 @@ Create/update/delete skills with validated templates, safe defaults, and cross-s
 
 ### [Git](./git/) - Git Workflow + Worktrees + PRs
 
-Unified git workflow: branch-first, worktree-first, security-first commits, PR creation/review flows, and proactive worktree summary with change analysis.
+Unified git workflow: branch-first commits, worktree management, and PR creation/review flows.
 
 [View skill documentation →](./git/SKILL.md)
 
@@ -72,7 +50,7 @@ Unified git workflow: branch-first, worktree-first, security-first commits, PR c
 
 ### [GitHub](./github/) - GitHub CLI (gh)
 
-GitHub operations via GitHub CLI (`gh`): repos, issues, PRs, Actions, releases, secrets/vars, CI monitoring with live polling, and PR dashboard with status classification.
+GitHub operations via `gh` CLI: repos, issues, PRs, Actions, releases, and CI monitoring.
 
 [View skill documentation →](./github/SKILL.md)
 
@@ -88,7 +66,7 @@ Build and operate Convex backends with best practices, validation, and Convex MC
 
 ### [Workflow](./workflow/) - High-Velocity Solo Development
 
-Idea to production same-day. Spec-first, quality-gated, pattern-driven development workflow with 7 commands: plan, spike, ship, review, done, drop, workflow.
+Idea to production same-day. Spec-first, quality-gated development: plan, spike, ship, review, done, drop.
 
 [View skill documentation →](./workflow/SKILL.md)
 
@@ -96,7 +74,7 @@ Idea to production same-day. Spec-first, quality-gated, pattern-driven developme
 
 ### [tmux](./tmux/) - Terminal Multiplexer Management
 
-Complete tmux management: sessions, windows, panes, layouts, copy mode, configuration, keybindings, and scripting/automation.
+Complete tmux management: sessions, windows, panes, layouts, and scripting/automation.
 
 [View skill documentation →](./tmux/SKILL.md)
 
