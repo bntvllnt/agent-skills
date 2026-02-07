@@ -21,6 +21,7 @@ npx skills add bntvllnt/agent-skills --skill workflow -g
 | `spike {question}` | Time-boxed exploration, produces go/no-go |
 | `ship` or `ship {idea}` | Implement with build/review/fix loop |
 | `review` | Multi-perspective code review (5-9 perspectives) |
+| `focus` | Scan codebase, prioritize tasks toward production readiness |
 | `done` | Validate, retro, archive, propose memory update |
 | `drop` | Abandon with learnings preserved |
 | `workflow` | Show current state, suggest next action |
@@ -28,6 +29,29 @@ npx skills add bntvllnt/agent-skills --skill workflow -g
 No flags needed — the agent auto-detects intent from your natural language (e.g., "review the spec", "skip tests", "emergency fix", "production ready").
 
 ## Quickstart
+
+Don't know what to work on? Start with focus:
+
+```
+You:   focus
+
+Agent: Scanning codebase against 9 review perspectives...
+       Goal: Production readiness
+
+       Perspective Summary:
+         Security:    2 gaps (HIGH)
+         Testability: 3 gaps (MEDIUM)
+         Reliability: 1 gap (MEDIUM)
+
+       Do First:
+         1. Add input validation to /api/auth endpoints (Security, ~30min)
+         2. Add error handling to database queries (Reliability, ~1h)
+
+       Quick Wins:
+         3. Add missing test for user creation flow (Testability, ~30min)
+
+       Select tasks → specs created in specs/backlog/
+```
 
 Here's what a real workflow looks like end-to-end:
 
@@ -204,6 +228,7 @@ Start here
 └────┬─────┘
      │ Want to understand a phase?
      │
+     ├── Focus:   references/actions/focus.md
      ├── Plan:    references/actions/plan.md
      ├── Spike:   references/actions/spike.md
      ├── Ship:    references/actions/ship.md
@@ -222,6 +247,7 @@ Start here
 
      │ Want to customize output?
      │
+     ├── Focus:   references/templates/focus-output.md
      ├── Plan:    references/templates/plan-output.md
      ├── Spike:   references/templates/spike-output.md
      ├── Ship:    references/templates/ship-output.md
@@ -238,6 +264,17 @@ Start here
 ```
  YOU                          WORKFLOW                         OUTPUT
 ──────                        ────────                         ──────
+
+ "focus"
+      │
+      ├───────────────────▶  Scan specs (active/backlog/dropped/shipped)
+                             Ask goal (production/MVP/infra/custom)
+                             Dispatch perspective agents
+                             Rank findings ──────────────────▶  prioritized tasks
+      │
+ Select tasks
+      │
+      ├───────────────────▶  Create specs ───────────────────▶  specs/backlog/
 
  "plan {idea}"
       │
@@ -279,21 +316,31 @@ Start here
 ### Lifecycle
 
 ```
-┌──────────┐  plan   ┌──────────┐ review? ┌───────────┐ ready? ┌───────────┐
-│   IDEA   │────────▶│  DRAFT   │────────▶│ REVIEWING │───────▶│ DEV_READY │
-└──────────┘         └──────────┘         └───────────┘        └─────┬─────┘
-                          ▲                    │                     │ ship
-                          │ revise [?][!]      │                     ▼
-                          └────────────────────┘               ┌───────────┐
-                                                               │IMPLEMENTING│
-┌──────────┐  done   ┌──────────┐  clean  ┌───────────┐       └─────┬─────┘
-│ SHIPPED  │◄────────│  READY   │◄────────│   SHIP    │◄────────────┘
-└──────────┘         └──────────┘         │   LOOP    │──── iterate
-      │                                   └─────┬─────┘
-      │              ┌──────────┐               │ stuck
-      │              │ DROPPED  │◄── drop ──────┘
-      ▼              └──────────┘
- specs/shipped/                   specs/dropped/
+┌──────────┐  focus  ┌──────────┐  plan   ┌──────────┐ review? ┌───────────┐
+│ UNFOCUSED│────────▶│   IDEA   │────────▶│  DRAFT   │────────▶│ REVIEWING │
+└──────────┘         └──────────┘         └──────────┘         └───────────┘
+      ▲                                        ▲                    │
+      │                                        │ revise [?][!]      │ ready?
+      │                                        └────────────────────┘
+      │                                                             │
+      │              ┌──────────┐                             ┌───────────┐
+      │              │IMPLEMENTING│◄───────────── ship ───────│ DEV_READY │
+      │              └─────┬─────┘                            └───────────┘
+      │                    │
+      │              ┌───────────┐
+      │              │   SHIP    │──── iterate
+      │              │   LOOP    │
+      │              └─────┬─────┘
+      │                    │ clean          │ stuck
+      │              ┌──────────┐    ┌──────────┐
+      │   done       │  READY   │    │ DROPPED  │
+      └──────────────│          │    └──────────┘
+                     └──────────┘     specs/dropped/
+                          │
+                     ┌──────────┐
+                     │ SHIPPED  │
+                     └──────────┘
+                      specs/shipped/
 ```
 
 ### Quality Gates
@@ -325,6 +372,7 @@ workflow/
 │   │   ├── plan.md ───────────── Spec requirements, dev-readiness gates, review rounds
 │   │   ├── ship.md ───────────── Quality gates, iteration limits, exit criteria
 │   │   ├── review.md ─────────── Perspectives (add/remove/change levels)
+│   │   ├── focus.md ──────────── Codebase scan, perspective weights, ranking formula
 │   │   ├── done.md ───────────── Validation checklist, memory update settings
 │   │   └── drop.md ───────────── Drop flow
 │   │
@@ -333,6 +381,7 @@ workflow/
 │   │   ├── spike-output.md ───── Decision, findings, next step
 │   │   ├── ship-output.md ────── Iteration progress, exit states, spec mutations
 │   │   ├── review-output.md ──── Per-file findings, fix actions, verdict
+│   │   ├── focus-output.md ───── Ranked tasks, perspective scores, readiness
 │   │   ├── done-output.md ────── Validation results, retro, memory updates
 │   │   ├── drop-output.md ────── Drop reason, learnings, reusable pieces
 │   │   └── status-output.md ──── Current state, progress, suggested next action
