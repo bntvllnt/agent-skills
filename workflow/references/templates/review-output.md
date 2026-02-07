@@ -4,6 +4,29 @@ Edit this file to customize what the agent returns after `review`. Decision logi
 
 ---
 
+## Change Overview (ALWAYS FIRST)
+
+Before findings, show the change map from Step 1 of review.md:
+
+```markdown
+## Change Overview
+
+| File | Category | Risk | Language |
+|------|----------|------|----------|
+| src/api/auth.ts | auth/security | HIGH | TypeScript |
+| src/lib/utils.ts | internal logic | LOW | TypeScript |
+
+**Mode:** {MODE} — {reason}
+**Language:** {language} | **Framework:** {framework}
+```
+
+Rules:
+- Always show the change map table before any findings
+- State selected mode and reason on its own line
+- State detected language and framework
+
+---
+
 ## Per-File Findings
 
 For each file with findings, list issues with location:
@@ -17,7 +40,7 @@ Rules:
 - One line per issue — description + fix on next line
 - Always include file path and line number
 - Always include a concrete fix (not just "consider improving")
-- FAIL = must fix. WARN = should fix. No other levels.
+- FAIL = must fix. WARN = should fix. BLOCKS_PRODUCTION = violates production bar (Production mode only).
 - Skip PASS items — only show what needs action
 - Group by file, not by perspective
 
@@ -52,6 +75,44 @@ After all per-file findings:
 - **Concrete fixes** — "Add `await` before `db.save()`" not "Consider handling async properly".
 - **Short** — one line per issue. Description ≤ 80 chars. Fix ≤ 80 chars.
 - **Verdict at the end** — CLEAN (0 FAIL, 0 WARN), WARNINGS_ONLY (0 FAIL, N WARN), HAS_BLOCKERS (N FAIL).
+
+---
+
+## Production Mode Output
+
+When Production mode is active, additional format rules apply:
+
+### BLOCKS_PRODUCTION Severity
+
+Above FAIL. Format:
+
+```
+{file}:{line} — BLOCKS_PRODUCTION [{perspective}] {description}
+  Fix: {concrete action}
+  Standard: {Company} — {rule violated}
+```
+
+The `Standard:` line cites which company bar and specific rule was violated (e.g., `Standard: Google — No bare console.log, use structured logging`).
+
+### Production Verdict
+
+Replace standard verdict with production-specific:
+
+```markdown
+**Production Verdict:** {PRODUCTION_READY / NOT_PRODUCTION_READY / WARNINGS_ONLY}
+```
+
+- `PRODUCTION_READY` — 0 BLOCKS_PRODUCTION, 0 FAIL, 0 WARN
+- `NOT_PRODUCTION_READY` — any BLOCKS_PRODUCTION or FAIL exists
+- `WARNINGS_ONLY` — 0 BLOCKS_PRODUCTION, 0 FAIL, N WARN
+
+### Severity Order
+
+```
+BLOCKS_PRODUCTION > FAIL > WARN
+```
+
+Sort all findings by this order. BLOCKS_PRODUCTION items listed first.
 
 ---
 
