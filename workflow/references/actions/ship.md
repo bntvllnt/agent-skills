@@ -23,11 +23,21 @@ Before starting any implementation, create tasks in your agent's built-in task/t
 [ ] {scope item 1} → AC-{N}
 [ ] {scope item 2} → AC-{N}
 [ ] ...
+[ ] Generate tests for new/changed behavior
 [ ] Quick pass: lint + typecheck (changed files)
 [ ] Review: run perspectives
 [ ] Fix BLOCKING issues
 [ ] Full pass: lint (changed) + typecheck (full) + build (full) + test (related)
 [ ] Exit check: all Must Have ACs + Error ACs + scope items passing
+```
+
+**Bug mode tasks (replace scope items above):**
+```
+[ ] BASELINE: run full test suite, record results
+[ ] RED: write failing regression test
+[ ] GREEN: implement fix, verify test passes
+[ ] DIFF: run full suite, compare to baseline (zero new failures)
+[ ] SCAN: check codebase for sibling bugs
 ```
 
 Update tasks as you work: mark in-progress when starting, complete when done. One task in-progress at a time.
@@ -61,20 +71,41 @@ When fixing bugs, classify:
 
 | Type | Signal | Approach |
 |------|--------|----------|
-| Simple | Clear cause, single file | Direct fix + regression test |
-| Complex | Unclear cause, multiple files, intermittent | Scientific debugging (see patterns/debugging.md) |
+| Simple | Clear cause, single file | Anti-cascade TDD (below) |
+| Complex | Unclear cause, multiple files, intermittent | Scientific debugging (see patterns/debugging.md) → then anti-cascade TDD |
 
-Complex bugs require:
+Complex bugs require scientific debugging FIRST:
 1. Symptom capture (exact error, reproduction steps)
 2. Hypothesis formation (ranked by likelihood)
 3. Evidence collection (binary search, instrumentation)
 4. Root cause confirmation
-5. Fix + regression test
+5. Then apply anti-cascade TDD below
+
+### Anti-Cascade TDD Protocol
+
+All bug fixes follow this protocol. Full details: [regression-testing.md](../patterns/regression-testing.md).
+
+```
+1. BASELINE → Run full test suite, record pass/fail counts
+2. RED      → Write test reproducing the bug (MUST FAIL)
+3. GREEN    → Implement fix, verify regression test passes
+4. DIFF     → Run full test suite again, compare to baseline
+5. BLOCK    → Any NEW failures = fix introduced regressions → roll back, rethink
+6. SCAN     → Check codebase for sibling bugs (same pattern)
+```
+
+**DIFF is the anti-cascade mechanism.** By comparing full suite results before and after, you catch any regression the fix introduces — before it cascades.
+
+If fix introduces regressions (DIFF fails):
+- Option A: Fix regressions without breaking the original fix
+- Option B: Roll back, find a different approach
+- Option C: Escalate to user with evidence
 
 **Bug fix ACs (auto-generate if not in spec):**
 - AC-B1: GIVEN {reproduction steps} WHEN {trigger} THEN bug no longer occurs
-- AC-B2: GIVEN fix applied WHEN regression test runs THEN test passes
-- AC-B3: GIVEN fix applied WHEN existing tests run THEN no regressions
+- AC-B2: GIVEN regression test WHEN run against unfixed code THEN test FAILS (RED)
+- AC-B3: GIVEN regression test WHEN run against fixed code THEN test PASSES (GREEN)
+- AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline
 
 ## ONE-SHOT Flow
 
@@ -104,6 +135,14 @@ WHILE iteration < max_iterations:
   # 1. BUILD
   Pick next unchecked scope item
   Implement it
+
+  # 1b. TEST GENERATION (after implementation)
+  Detect test infra (once per session, cache result)
+  If no test infra → propose setup (load references/testing-automation.md)
+  Generate unit tests for new/changed functions
+  Generate e2e tests for journey-impacting scope items
+  Run tests, verify behavior (RED → GREEN)
+
   Run quick quality pass (lint + typecheck on changed files)
   Mark scope item [x] if passing
 

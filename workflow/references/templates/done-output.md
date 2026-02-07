@@ -24,9 +24,23 @@ Edit this file to customize what the agent returns after `done`. Decision logic:
 - **Didn't:** {insight with root cause}
 - **Next time:** {specific improvement}
 
-### Memory Update Proposed
-- **User-level:** {learning or "None"}
-- **Project-level:** {learning or "None"}
+### Agent Config Updates
+
+**CLAUDE.md** ({project}/CLAUDE.md):
+- ADD rule: "{exact rule text}" → Section: {section name}
+- ADD anti-pattern: "{exact anti-pattern}" → Section: {section name}
+- {or "No updates needed"}
+
+**AGENTS.md** ({project}/AGENTS.md):
+- ADD rule: "{exact rule text}" → Section: {section name}
+- ADD coding standard: "{exact standard}" → Section: {section name}
+- {or "File not found — propose creating with initial rules? [y/n]"}
+
+**User-level** (~/.claude/CLAUDE.md):
+- ADD pattern: "{exact pattern}" → Section: {section name}
+- {or "No universal learnings this session"}
+
+Update? [apply all / select / skip]
 
 ### Next (human)
 1. Commit + push
@@ -44,6 +58,10 @@ Edit this file to customize what the agent returns after `done`. Decision logic:
 **Failing checks:**
 - {check}: {what's wrong}
 - {check}: {what's wrong}
+
+**Critical anti-patterns detected (add to agent config):**
+- {anti-pattern}: {what went wrong and how to prevent}
+- {or "None"}
 
 Run `ship` to fix remaining issues.
 ```
