@@ -26,24 +26,18 @@ Edit this file to customize what the agent returns after `done`. Decision logic:
 
 ### Agent Config Updates
 
-**CLAUDE.md** ({project}/CLAUDE.md):
-- ADD rule: "{exact rule text}" → Section: {section name}
-- ADD preference: "{user preference or repeated request}" → Section: {section name}
-- ADD anti-pattern: "{exact anti-pattern}" → Section: {section name}
-- {or "No updates needed"}
+1. [P/CLAUDE.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
 
-**AGENTS.md** ({project}/AGENTS.md):
-- ADD rule: "{exact rule text}" → Section: {section name}
-- ADD preference: "{user preference}" → Section: {section name}
-- ADD coding standard: "{exact standard}" → Section: {section name}
-- {or "File not found — propose creating with initial rules? [y/n]"}
+2. [P/AGENTS.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
 
-**User-level** (~/.claude/CLAUDE.md):
-- ADD pattern: "{exact pattern}" → Section: {section name}
-- ADD preference: "{user preference}" → Section: {section name}
-- {or "No universal learnings this session"}
+3. [~/CLAUDE.md § {section}] **{type}**: "{exact text to add}"
+   _Context: {why this matters}_
 
-Update? [apply all / select / skip]
+{or "No learnings to save this session."}
+
+Apply which? [all / 1,3 / none]
 
 ### Next (human)
 1. Commit + push

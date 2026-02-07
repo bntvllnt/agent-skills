@@ -86,36 +86,56 @@ For each learning, check:
 
 ## Step 4: Propose
 
-Present file-targeted proposals with exact content. Each proposal = exact text to add + exact target section. No ambiguity, copy-paste ready.
+Present a numbered list so the user can cherry-pick. Each item = exact text + target file + section. No ambiguity, copy-paste ready.
+
+### Presentation Method
+
+**If agent has `AskUserQuestion` (or equivalent multi-select UI):**
+
+Use it with `multiSelect: true`. Each option = one numbered learning. User picks which to apply.
+
+```
+AskUserQuestion:
+  question: "Which learnings should I save to agent config?"
+  multiSelect: true
+  options:
+    - label: "#1 {short summary}"
+      description: "ADD to {file} § {section}: {exact text}"
+    - label: "#2 {short summary}"
+      description: "ADD to {file} § {section}: {exact text}"
+    ...
+```
+
+**If agent has no multi-select UI (fallback):**
+
+Print numbered list, ask user to reply with numbers:
 
     ### Proposed Agent Config Updates
 
-    Based on this session, I suggest updating your agent config:
+    Based on this session, I suggest saving these learnings:
 
-    **{project}/CLAUDE.md** (project-level, Claude Code):
-    - ADD rule: "{exact rule text}" → Section: {section name}
-    - ADD anti-pattern: "{exact anti-pattern text}" → Section: Anti-patterns
-    - {or "No updates needed"}
+    1. [{target file} § {section}] **{type}**: "{exact text to add}"
+       _Context: {why this matters / when observed}_
 
-    **{project}/AGENTS.md** (project-level, other agents):
-    - ADD rule: "{exact rule text}" → Section: {section name}
-    - ADD coding standard: "{exact standard}" → Section: {section name}
-    - {or "File not found — propose creating with initial rules? [y/n]"}
+    2. [{target file} § {section}] **{type}**: "{exact text to add}"
+       _Context: {why this matters / when observed}_
 
-    **~/.claude/CLAUDE.md** (user-level, universal patterns):
-    - ADD pattern: "{exact pattern text}" → Section: {section name}
-    - {or "No universal learnings this session"}
-
-    **Learned patterns (ease future work):**
-    - [{target file}] "{user preference or repeated request}" — observed: {when/how}
-    - [{target file}] "{anti-pattern}" — learned from: {what went wrong}
+    3. [{target file} § {section}] **{type}**: "{exact text to add}"
+       _Context: {why this matters / when observed}_
 
     **Conflicts with existing rules:**
     - {existing rule} vs {proposed rule}: {recommendation}
 
-    Update? [apply all / select / skip]
+    Apply which? [all / 1,3 / none]
 
-If a target file doesn't exist, propose creating it with initial content from this session's learnings.
+**Type labels:** `rule`, `preference`, `anti-pattern`, `coding standard`, `pattern`
+
+**Target file shorthand:**
+- `P/CLAUDE.md` = `{project}/CLAUDE.md`
+- `P/AGENTS.md` = `{project}/AGENTS.md`
+- `~/CLAUDE.md` = `~/.claude/CLAUDE.md`
+
+If a target file doesn't exist, add a final item: "Create {file} with selected rules? [y/n]"
 
 ## Agent Config Targets
 
