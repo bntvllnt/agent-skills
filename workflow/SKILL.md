@@ -2,9 +2,10 @@
 name: workflow
 description: |
   High-velocity solo development workflow. Idea to production same-day.
-  8 commands: plan, spike, ship, review, spec-review, done, drop, workflow.
+  9 commands: plan, spike, ship, review, spec-review, focus, done, drop, workflow.
   Auto-activates on: "plan", "spec", "ship", "spike",
   "spec-review", "review spec", "analyze spec", "challenge spec",
+  "focus", "what should i do", "prioritize", "overwhelmed", "what should i work on",
   "done", "finish", "complete", "drop", "abandon",
   "workflow", "what's next", "whats next", "next step", "what now".
 license: MIT
@@ -39,6 +40,7 @@ High-velocity solo development. Idea to production same-day.
 | `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
 | `review` | Multi-perspective code review | [review.md](references/actions/review.md) |
 | `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
+| `focus` | Priority analysis + task proposals | [focus.md](references/actions/focus.md) |
 | `done` | Validate + retro + archive | [done.md](references/actions/done.md) |
 | `drop` | Abandon, preserve learnings | [drop.md](references/actions/drop.md) |
 | `workflow` | Show state + suggest next | [Status](#status-action) (below) |
@@ -52,10 +54,11 @@ No flags needed. The agent auto-detects intent from context:
 ## Flow
 
 ```
-plan {idea} → ship → [implement/review/fix loop] → done
+focus → plan {idea} → ship → [implement/review/fix loop] → done
 ```
 
 Quick mode (<2h): `ship {idea} → done`
+Don't know what to work on: `focus`
 
 ## Philosophy
 
@@ -86,6 +89,8 @@ User input
   ├─ "review", "check code"              → Load references/actions/review.md
   ├─ "review spec", "analyze spec",
   │  "challenge spec"                    → Load references/actions/spec-review.md
+  ├─ "focus", "what should i do",
+  │  "prioritize", "overwhelmed"         → Load references/actions/focus.md
   ├─ "done", "finish", "complete"        → Load references/actions/done.md
   ├─ "drop", "abandon"                   → Load references/actions/drop.md
   └─ "workflow", "what's next", "what now",
@@ -118,6 +123,7 @@ Output: Follow [status-output.md](references/templates/status-output.md).
 ```
 specs/
   active/       ← Current work (0-1 specs)
+  backlog/      ← Queued work from focus
   shipped/      ← Completed features
   dropped/      ← Abandoned with learnings
   history.log   ← One-line per feature shipped/dropped
@@ -138,10 +144,10 @@ All behavior is configurable by editing the skill files directly.
 ## References
 
 Actions:
-- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Review](references/actions/review.md) | [Spec Review](references/actions/spec-review.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
+- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Review](references/actions/review.md) | [Spec Review](references/actions/spec-review.md) | [Focus](references/actions/focus.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
 
 Output templates:
-- [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Review](references/templates/review-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
+- [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Review](references/templates/review-output.md) | [Focus](references/templates/focus-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
 
 Review standards:
 - [Production Standards](references/reviews/production-standards.md)
