@@ -19,46 +19,31 @@ Fix bugs with scientific debugging and anti-cascade TDD. Prevents cascading fail
 | Simple | Clear cause, single file | Skip Phase 1, go directly to Phase 2 |
 | Complex | Unclear cause, multiple files, intermittent | Full Phase 1 (investigate) then Phase 2 |
 
-## Flow
+## State Machine
 
 ```
-fix {bug description}
-  │
-  ▼
-┌──────────────────────────────────────┐
-│ CLASSIFY: simple or complex?         │
-└──────────┬───────────────────────────┘
-           │
-     ┌─────┴─────┐
-     │           │
-  complex     simple
-     │           │
-     ▼           │
-┌────────────┐   │
-│ Phase 1:   │   │
-│ INVESTIGATE│   │
-│ (debug.md) │   │
-└─────┬──────┘   │
-      │          │
-      ▼          ▼
-┌──────────────────────────────────────┐
-│ Phase 2: FIX (anti-cascade TDD)     │
-│ BASELINE → RED → GREEN → DIFF →    │
-│ BLOCK → SCAN                         │
-└──────────┬───────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────┐
-│ PREVENT: propose rules to avoid      │
-│ recurrence (max 2, advisory)         │
-└──────────┬───────────────────────────┘
-           │
-           ▼
-┌──────────────────────────────────────┐
-│ Phase 3: VALIDATE                    │
-│ lint → typecheck → build → test     │
-└──────────────────────────────────────┘
+CLASSIFY → simple?  → BASELINE
+CLASSIFY → complex? → INVESTIGATE → BASELINE
+
+BASELINE → RED → GREEN → DIFF → BLOCK
+  BLOCK [new failures] → ROLLBACK → rethink approach → BASELINE
+  BLOCK [no new failures] → SCAN → PREVENT → VALIDATE → DONE
 ```
+
+**States:**
+
+| State | Entry condition | Exit condition | Next state |
+|-------|----------------|----------------|------------|
+| CLASSIFY | Fix triggered | Bug classified as simple or complex | INVESTIGATE (complex) or BASELINE (simple) |
+| INVESTIGATE | Complex bug | Root cause confirmed | BASELINE |
+| BASELINE | Investigation done (or simple bug) | Full suite results recorded | RED |
+| RED | Baseline recorded | Regression test written and FAILS | GREEN |
+| GREEN | RED test exists | Fix implemented, regression test PASSES | DIFF |
+| DIFF | Fix passes regression test | Full suite re-run, compared to baseline | BLOCK |
+| BLOCK | DIFF results available | Decision: new failures or not | SCAN (clean) or ROLLBACK (regressions) |
+| SCAN | No new failures | Sibling bugs searched, proposed to user | PREVENT |
+| PREVENT | Scan complete | Max 2 rules proposed, user approved/declined | VALIDATE |
+| VALIDATE | Prevention done | All quality gates pass | DONE |
 
 ## Phase 1: INVESTIGATE (Complex Bugs Only)
 
@@ -109,24 +94,18 @@ If fix introduces regressions (DIFF fails):
 - Option B: Roll back, find a different approach
 - Option C: Escalate to user with evidence
 
-## PREVENT: Update Rules to Avoid Recurrence
+## PREVENT: How To Update Rules to Avoid Recurrence
 
-After SCAN, analyze the root cause and propose rule/memory updates so the same class of error doesn't happen again.
+After SCAN, propose rule/memory updates so the same class of error doesn't happen again.
 
 **When to run:** Non-trivial bugs with a generalizable root cause.
 **When to skip:** Trivial bugs (typos, config), existing rule already covers it, emergency/hotfix.
 
-```
-1. CLASSIFY root cause → map to prevention category
-2. CHECK existing rules → read agent config (CLAUDE.md, AGENTS.md, user rules)
-3. PROPOSE max 2 rules → user approves/declines inline
+### How To (follow exactly)
 
-Output format per proposal:
-  [{target file} § {section}] {type}: "{rule text}"
-  _Prevents: {class of error}_
-```
+**Step 1: Identify the root cause category.**
 
-**Root cause → prevention category:**
+Look at the confirmed root cause from INVESTIGATE or GREEN phase. Map it:
 
 | Root Cause | Category | Example Rule |
 |-----------|----------|-------------|
@@ -138,12 +117,69 @@ Output format per proposal:
 | Missing edge case | Quality check | "Test empty/null/boundary inputs for public functions" |
 | Config/env assumption | Quality check | "Validate required env vars at startup" |
 
-**Rules:**
-- Max 2 proposals per fix — keeps it lightweight
-- Categories: coding rules, anti-patterns, quality checks only
-- Advisory, not blocking — user can decline
-- Uses same targeting logic as [memory-update.md](../memory-update.md) (agent-detection, file routing)
-- Never auto-apply — always propose, user approves
+**Step 2: Read existing agent rules.**
+
+Detect which agent is running and read the correct config files:
+- Claude Code → read `{project}/CLAUDE.md` + `~/.claude/CLAUDE.md` + `~/.claude/rules/`
+- Other agents → read `{project}/AGENTS.md` + agent-specific user config
+- See [memory-update.md](../memory-update.md) Step 1 and Agent Config Targets table for full routing
+
+If the root cause is already covered by an existing rule → **SKIP**. Do not propose duplicates.
+
+**Step 3: Draft max 2 proposals.**
+
+Write each proposal in this exact format:
+```
+[{target file} § {section}] {type}: "{rule text}"
+_Prevents: {class of error}_
+```
+
+Target file routing:
+- Project-specific patterns → `{project config}` (CLAUDE.md or AGENTS.md)
+- Universal patterns → `{user config}` (user-level rules)
+
+Categories allowed: `rule` (coding rules), `anti-pattern`, `quality-check`. No process or thinking patterns.
+
+**Step 4: Present to user for approval.**
+
+If agent has multi-select UI (AskUserQuestion):
+```
+question: "Save prevention rules from this fix?"
+multiSelect: true
+options:
+  - label: "#1 {short summary}"
+    description: "[{target file} § {section}] {type}: {rule text}"
+  - label: "#2 {short summary}"
+    description: "[{target file} § {section}] {type}: {rule text}"
+```
+
+If no multi-select UI (fallback):
+```
+Prevention rules from this fix:
+1. [{target file} § {section}] {type}: "{rule text}"
+   _Prevents: {class of error}_
+2. [{target file} § {section}] {type}: "{rule text}"
+   _Prevents: {class of error}_
+
+Apply which? [all / 1,2 / none]
+```
+
+**Step 5: Apply approved rules.**
+
+For each approved proposal:
+1. Open the target file
+2. Find the target section
+3. Append the rule text
+4. Confirm write to user
+
+Declined proposals → log in output, take no action.
+
+### PREVENT Rules
+
+- Max 2 proposals per fix
+- Advisory, not blocking — user can decline with no gate failure
+- Never auto-apply — always get explicit user approval before writing
+- Never propose vague rules ("be more careful") — must be specific and actionable
 
 ## Phase 3: VALIDATE
 
@@ -203,17 +239,55 @@ AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
 | Emergency/hotfix | Run abbreviated: RED + GREEN + DIFF. Skip SCAN. Document skip. |
 | User says "skip tests" | Document skip reason. Still run DIFF if suite exists (non-blocking). |
 
-## Spec Integration
+## Spec Integration: How To Update Active Specs
 
-If the bug relates to an active spec in `specs/active/`:
+If the bug relates to an active spec in `specs/active/`, follow these steps exactly.
+
+### How To (follow exactly)
+
+**Step 1: Check for active spec.**
 
 ```
-1. Log bug under "## Encountered Bugs" in the spec
-   Format: BUG-{N}: {summary} | Status: Fixed
-2. Record root cause and fix summary
-3. Update Progress section with fix status
-4. If fix changed scope items or ACs → update them
+Read specs/active/ directory
+  Files found? → Continue to Step 2
+  Empty? → Skip to Spec-First Enforcement below
 ```
+
+**Step 2: Determine if bug relates to the active spec.**
+
+Read the spec file. Check:
+- Does the bug affect a scope item in this spec?
+- Was the bug found during implementation of this spec?
+- Does the fix change behavior described in the spec's ACs?
+
+If YES to any → continue. If NO to all → skip (bug is independent).
+
+**Step 3: Log the bug in the spec.**
+
+Open the spec file. Find or create `## Encountered Bugs` section. Append:
+
+```markdown
+## Encountered Bugs
+
+BUG-{N}: {1-line summary}
+- **Root cause:** {why it happened}
+- **Fix:** {what was changed}
+- **Status:** Fixed
+- **Regression test:** {test file}:{test name}
+```
+
+**Step 4: Update spec Progress section.**
+
+Find the `## Progress` table. If the bug blocked a scope item, update its status:
+- Was `[!] Blocked` → change to `[~] In progress` or `[x] Complete`
+- Add note: `Fixed via BUG-{N}`
+
+**Step 5: Update ACs if fix changed behavior.**
+
+If the fix changed how a feature works (not just a bug in implementation):
+- Update affected GIVEN/WHEN/THEN ACs to match new behavior
+- Add new AC if the fix introduced a new user-observable behavior
+- Run traceability check: every scope item maps to an AC, no orphans
 
 If no active spec exists, follow Spec-First Enforcement below.
 
