@@ -79,28 +79,31 @@ Each hypothesis must:
 
 ### Step 3: TEST HYPOTHESES
 
-For **complex** bugs (single-agent): test each hypothesis sequentially, highest probability first.
+For **complex** bugs: test each hypothesis sequentially, highest probability first.
 
-For **highly complex** bugs (multi-agent): spawn parallel sub-agents to investigate different hypotheses or perspectives simultaneously.
+For **highly complex** bugs: if the agent supports parallel execution (sub-agents, concurrent tool calls, or background tasks), investigate multiple hypotheses simultaneously. If not, investigate sequentially but assign a time box per hypothesis to avoid rabbit holes.
 
-#### Highly Complex: Multi-Agent Investigation
+#### Highly Complex: Parallel Investigation
 
-When the bug is cross-cutting, has multiple plausible root causes, or spans several systems, use sub-agents to explore in parallel.
+When the bug is cross-cutting, has multiple plausible root causes, or spans several systems, investigate from multiple perspectives at once.
 
-**How to dispatch:**
+**How to dispatch (adapt to your agent's capabilities):**
 
 ```
-Spawn up to 3 sub-agents in parallel, each with a focused investigation:
+For each hypothesis, create a focused investigation task:
 
-Agent 1 (Explore, haiku): "Investigate H1: {hypothesis}. Search for {pattern}
-  in {area}. Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+Task 1: "Investigate H1: {hypothesis}. Search for {pattern} in {area}.
+  Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
 
-Agent 2 (Explore, haiku): "Investigate H2: {hypothesis}. Search for {pattern}
-  in {area}. Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+Task 2: "Investigate H2: {hypothesis}. Search for {pattern} in {area}.
+  Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
 
-Agent 3 (Explore, haiku): "Investigate H3: {hypothesis}. Alternatively, explore
+Task 3: "Investigate H3: {hypothesis}. Alternatively, explore
   {alternative angle — e.g., git history, dependency changes, config drift}.
   Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+
+If agent supports sub-agents or parallel execution → run all tasks simultaneously.
+If agent is single-threaded → run sequentially, time-box each to 15 min max.
 ```
 
 **Agent perspective assignments (pick based on bug type):**
