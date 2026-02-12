@@ -66,7 +66,7 @@ Build and operate Convex backends with best practices, validation, and Convex MC
 
 ### [Workflow](./workflow/) - High-Velocity Solo Development
 
-Idea to production same-day. Spec-first, quality-gated development: plan, spike, ship, review, done, drop.
+Idea to production same-day. Spec-first, quality-gated development: plan, spike, ship, fix, review, done, drop.
 
 [View skill documentation →](./workflow/SKILL.md)
 
