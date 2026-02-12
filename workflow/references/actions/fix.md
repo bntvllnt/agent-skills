@@ -207,29 +207,7 @@ Look at the confirmed root cause from INVESTIGATE or GREEN phase. Map it:
 
 **Step 2: Read existing agent rules.**
 
-Detect which agent is running and read **all** config files at both levels:
-
-```
-Project-level (check all that exist):
-  {project}/CLAUDE.md
-  {project}/.claude/rules/*
-  {project}/.claude/CLAUDE.md
-  {project}/AGENTS.md
-  {project}/.cursorrules
-  {project}/.windsurfrules
-  {project}/.aider.conf.yml
-  {project}/.continue/config.json
-
-User-level (check all that exist):
-  ~/.claude/CLAUDE.md
-  ~/.claude/rules/*
-  ~/.cursorrules
-  ~/.windsurfrules
-  ~/.aider.conf.yml
-  ~/.continue/config.json
-```
-
-See [memory-update.md](../memory-update.md) Step 1 and Agent Config Targets table for full routing logic.
+Follow [memory-update.md](../memory-update.md) Step 1: detect which agent is running, then read all config files at both project-level and user-level. Use the Agent Config Targets table in memory-update.md to resolve the correct file paths for the detected agent.
 
 If the root cause is already covered by an existing rule at any level → **SKIP**. Do not propose duplicates.
 
@@ -241,9 +219,9 @@ Write each proposal in this exact format:
 _Prevents: {class of error}_
 ```
 
-Target file routing:
-- Project-specific patterns → `{project config}` (CLAUDE.md or AGENTS.md)
-- Universal patterns → `{user config}` (user-level rules)
+Target file routing (resolve via [memory-update.md](../memory-update.md) Agent Config Targets table):
+- Project-specific patterns → `{project config}` (agent's project-level config)
+- Universal patterns → `{user config}` (agent's user-level config)
 
 Categories allowed: `rule` (coding rules), `anti-pattern`, `quality-check`. No process or thinking patterns.
 
