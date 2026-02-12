@@ -114,10 +114,10 @@ Resuming ship loop.
 **SCAN:** Found 2 sibling locations with same pattern → proposed batch fix
 **PREVENT:** 2 rules proposed
 
-  1. [P/CLAUDE.md § Coding Rules] rule: "Always null-check optional user fields (email, phone, avatar) before access"
+  1. [{project config} § Coding Rules] rule: "Always null-check optional user fields (email, phone, avatar) before access"
      _Prevents: null reference errors on incomplete user profiles_
 
-  2. [~/.claude/rules/coding.md § Anti-Patterns] anti-pattern: "Never assume user profile fields are populated — use optional chaining or explicit guards"
+  2. [{user config} § Anti-Patterns] anti-pattern: "Never assume user profile fields are populated — use optional chaining or explicit guards"
      _Prevents: runtime crashes from missing optional fields_
 
   Apply which? [all / 1,2 / none]
