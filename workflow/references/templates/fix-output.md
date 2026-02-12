@@ -20,9 +20,13 @@ Edit this file to customize what the agent returns after `fix`. Decision logic: 
 **GREEN:** {what changed} → PASS
 **DIFF:** {N} pass | {N} fail | {N} skipped (zero new failures)
 **SCAN:** {N} sibling locations | {proposed/none found}
+**PREVENT:** {N} rules proposed | {approved/declined/skipped}
 
 ### Quality Gates
 lint {OK/FAIL} | typecheck {OK/FAIL} | build {OK/FAIL} | test {OK/FAIL}
+
+{If spec updated:}
+**Spec:** {spec name} updated with fix status
 
 Next: Run `done` to validate, retro, and archive.
 ```
@@ -97,6 +101,10 @@ Next: Run `done` to validate, retro, and archive.
 **GREEN:** Added optional chaining in getDisplayName() → PASS
 **DIFF:** 43 pass | 0 fail | 2 skipped (zero new failures)
 **SCAN:** 2 sibling locations with same pattern → proposed batch fix
+**PREVENT:** 1 rule proposed → approved
+
+  [{project config} § Coding Rules] rule: "Always null-check optional user fields (email, phone, avatar) before access"
+  _Prevents: null reference errors on incomplete user profiles_
 
 ### Quality Gates
 lint OK | typecheck OK | build OK | test OK

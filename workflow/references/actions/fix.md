@@ -44,7 +44,13 @@ fix {bug description}
 ┌──────────────────────────────────────┐
 │ Phase 2: FIX (anti-cascade TDD)     │
 │ BASELINE → RED → GREEN → DIFF →    │
-│ BLOCK → SCAN → PREVENT              │
+│ BLOCK → SCAN                         │
+└──────────┬───────────────────────────┘
+           │
+           ▼
+┌──────────────────────────────────────┐
+│ PREVENT: propose rules to avoid      │
+│ recurrence (max 2, advisory)         │
 └──────────┬───────────────────────────┘
            │
            ▼
@@ -103,6 +109,42 @@ If fix introduces regressions (DIFF fails):
 - Option B: Roll back, find a different approach
 - Option C: Escalate to user with evidence
 
+## PREVENT: Update Rules to Avoid Recurrence
+
+After SCAN, analyze the root cause and propose rule/memory updates so the same class of error doesn't happen again.
+
+**When to run:** Non-trivial bugs with a generalizable root cause.
+**When to skip:** Trivial bugs (typos, config), existing rule already covers it, emergency/hotfix.
+
+```
+1. CLASSIFY root cause → map to prevention category
+2. CHECK existing rules → read agent config (CLAUDE.md, AGENTS.md, user rules)
+3. PROPOSE max 2 rules → user approves/declines inline
+
+Output format per proposal:
+  [{target file} § {section}] {type}: "{rule text}"
+  _Prevents: {class of error}_
+```
+
+**Root cause → prevention category:**
+
+| Root Cause | Category | Example Rule |
+|-----------|----------|-------------|
+| Missing null/undefined check | Coding rule | "Always null-check optional fields before access" |
+| Wrong type assumption | Coding rule | "Use discriminated unions, never assume shape" |
+| Missing validation at boundary | Quality check | "Validate external input at API boundaries" |
+| Incorrect error handling | Anti-pattern | "Never swallow errors in catch blocks" |
+| Race condition / shared state | Coding rule | "Wrap shared state mutations in transactions" |
+| Missing edge case | Quality check | "Test empty/null/boundary inputs for public functions" |
+| Config/env assumption | Quality check | "Validate required env vars at startup" |
+
+**Rules:**
+- Max 2 proposals per fix — keeps it lightweight
+- Categories: coding rules, anti-patterns, quality checks only
+- Advisory, not blocking — user can decline
+- Uses same targeting logic as [memory-update.md](../memory-update.md) (agent-detection, file routing)
+- Never auto-apply — always propose, user approves
+
 ## Phase 3: VALIDATE
 
 Same quality gates as ship. Load `references/quality-gates.md`.
@@ -115,7 +157,9 @@ Same quality gates as ship. Load `references/quality-gates.md`.
 
 Auto-detect tooling from project files.
 
-## Task Template
+## Task Tracking (Use Agent Capabilities)
+
+If your agent has built-in task/todo tracking (TaskCreate, TaskUpdate, etc.), use it to track each phase. Create tasks at the start, update status as you progress.
 
 ```
 [ ] Classify bug (simple/complex)
@@ -125,11 +169,15 @@ Auto-detect tooling from project files.
 [ ] GREEN: implement fix, verify test passes
 [ ] DIFF: run full suite, compare to baseline (zero new failures)
 [ ] SCAN: check codebase for sibling bugs
+[ ] PREVENT: propose rules to avoid this class of bug
 [ ] Full pass: lint + typecheck + build + test
+[ ] Update spec (if related to active spec)
 [ ] Output summary
 ```
 
 Update tasks as you work: mark in-progress when starting, complete when done. One task in-progress at a time.
+
+**If agent lacks task tracking:** Track progress in the spec's Progress section instead.
 
 ## Acceptance Criteria
 
@@ -154,6 +202,20 @@ AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
 | Fix is trivial (typo, config) | Still run BASELINE + DIFF. Skip RED/GREEN only if no testable behavior change. |
 | Emergency/hotfix | Run abbreviated: RED + GREEN + DIFF. Skip SCAN. Document skip. |
 | User says "skip tests" | Document skip reason. Still run DIFF if suite exists (non-blocking). |
+
+## Spec Integration
+
+If the bug relates to an active spec in `specs/active/`:
+
+```
+1. Log bug under "## Encountered Bugs" in the spec
+   Format: BUG-{N}: {summary} | Status: Fixed
+2. Record root cause and fix summary
+3. Update Progress section with fix status
+4. If fix changed scope items or ACs → update them
+```
+
+If no active spec exists, follow Spec-First Enforcement below.
 
 ## Spec-First Enforcement
 
@@ -194,6 +256,8 @@ Always document any skipped steps in output.
 ## Never
 
 - Never auto-fix sibling bugs without user approval
+- Never auto-apply prevention rules — always propose, user approves
+- Never propose more than 2 prevention rules per fix
 - Never skip BASELINE + DIFF (anti-cascade core)
 - Never make a change without a hypothesis (complex bugs)
 - Never runs `git push`
