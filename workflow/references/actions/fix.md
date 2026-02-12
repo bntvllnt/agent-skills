@@ -17,13 +17,15 @@ Fix bugs with scientific debugging and anti-cascade TDD. Prevents cascading fail
 | Type | Signal | Approach |
 |------|--------|----------|
 | Simple | Clear cause, single file | Skip Phase 1, go directly to Phase 2 |
-| Complex | Unclear cause, multiple files, intermittent | Full Phase 1 (investigate) then Phase 2 |
+| Complex | Unclear cause, multiple files, intermittent | Phase 1 (single-agent investigation) then Phase 2 |
+| Highly complex | Cross-cutting, multiple possible root causes, reproduces inconsistently | Phase 1 with multi-agent parallel investigation then Phase 2 |
 
 ## State Machine
 
 ```
-CLASSIFY → simple?  → BASELINE
-CLASSIFY → complex? → INVESTIGATE → BASELINE
+CLASSIFY → simple?         → BASELINE
+CLASSIFY → complex?        → INVESTIGATE → CONFIRM → BASELINE
+CLASSIFY → highly complex? → INVESTIGATE (parallel agents) → CONVERGE → CONFIRM → BASELINE
 
 BASELINE → RED → GREEN → DIFF → BLOCK
   BLOCK [new failures] → ROLLBACK → rethink approach → BASELINE
@@ -34,8 +36,9 @@ BASELINE → RED → GREEN → DIFF → BLOCK
 
 | State | Entry condition | Exit condition | Next state |
 |-------|----------------|----------------|------------|
-| CLASSIFY | Fix triggered | Bug classified as simple or complex | INVESTIGATE (complex) or BASELINE (simple) |
-| INVESTIGATE | Complex bug | Root cause confirmed | BASELINE |
+| CLASSIFY | Fix triggered | Bug classified | INVESTIGATE (complex/highly complex) or BASELINE (simple) |
+| INVESTIGATE | Complex or highly complex bug | Hypotheses tested, candidate root cause identified | CONFIRM |
+| CONFIRM | Candidate root cause exists | Root cause passes 3-point validation | BASELINE |
 | BASELINE | Investigation done (or simple bug) | Full suite results recorded | RED |
 | RED | Baseline recorded | Regression test written and FAILS | GREEN |
 | GREEN | RED test exists | Fix implemented, regression test PASSES | DIFF |
@@ -45,32 +48,114 @@ BASELINE → RED → GREEN → DIFF → BLOCK
 | PREVENT | Scan complete | Max 2 rules proposed, user approved/declined | VALIDATE |
 | VALIDATE | Prevention done | All quality gates pass | DONE |
 
-## Phase 1: INVESTIGATE (Complex Bugs Only)
+## Phase 1: INVESTIGATE (Complex and Highly Complex Bugs)
 
 Load [patterns/debugging.md](../patterns/debugging.md) for full method.
 
+### Step 1: SYMPTOM CAPTURE
+
 ```
-1. SYMPTOM CAPTURE
-   - Exact error message/behavior
-   - Steps to reproduce
-   - When it started (last known good state)
-
-2. HYPOTHESIS FORMATION
-   Rank by likelihood:
-   H1: {most likely cause} (probability: X%)
-   H2: {second most likely} (probability: Y%)
-   H3: {least likely} (probability: Z%)
-
-3. TEST HYPOTHESES
-   For each (highest probability first):
-     Design minimal test → execute → CONFIRMED / ELIMINATED
-
-4. BINARY SEARCH (if no hypothesis confirmed)
-   git bisect or manual binary elimination
-
-5. ROOT CAUSE CONFIRMATION
-   Can you explain WHY it broke, not just WHERE?
+Collect before doing anything else:
+  - Exact error message / unexpected behavior
+  - Steps to reproduce (minimal)
+  - When it started (last known good state / commit)
+  - Environment details (OS, runtime version, config)
+  - Frequency: always / intermittent / once
 ```
+
+### Step 2: HYPOTHESIS FORMATION
+
+```
+Generate ranked hypotheses:
+  H1: {most likely cause} (probability: X%)
+  H2: {second most likely} (probability: Y%)
+  H3: {least likely} (probability: Z%)
+
+Each hypothesis must:
+  - Name a specific code path or condition
+  - Be falsifiable (you can design a test that disproves it)
+  - State what evidence would CONFIRM vs ELIMINATE it
+```
+
+### Step 3: TEST HYPOTHESES
+
+For **complex** bugs (single-agent): test each hypothesis sequentially, highest probability first.
+
+For **highly complex** bugs (multi-agent): spawn parallel sub-agents to investigate different hypotheses or perspectives simultaneously.
+
+#### Highly Complex: Multi-Agent Investigation
+
+When the bug is cross-cutting, has multiple plausible root causes, or spans several systems, use sub-agents to explore in parallel.
+
+**How to dispatch:**
+
+```
+Spawn up to 3 sub-agents in parallel, each with a focused investigation:
+
+Agent 1 (Explore, haiku): "Investigate H1: {hypothesis}. Search for {pattern}
+  in {area}. Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+
+Agent 2 (Explore, haiku): "Investigate H2: {hypothesis}. Search for {pattern}
+  in {area}. Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+
+Agent 3 (Explore, haiku): "Investigate H3: {hypothesis}. Alternatively, explore
+  {alternative angle — e.g., git history, dependency changes, config drift}.
+  Report: evidence found, CONFIRMED or ELIMINATED, reasoning."
+```
+
+**Agent perspective assignments (pick based on bug type):**
+
+| Perspective | Focus | When to use |
+|-------------|-------|-------------|
+| Code path tracer | Follow execution path, find where behavior diverges | Logic bugs, wrong output |
+| State inspector | Track state mutations, find unexpected side effects | State bugs, data corruption |
+| History investigator | git log/bisect, find breaking change, review recent commits | Regressions, "it used to work" |
+| Dependency auditor | Check dependency versions, breaking changes, API diffs | Post-upgrade bugs, integration issues |
+| Concurrency analyzer | Identify shared state, race windows, timing dependencies | Intermittent bugs, deadlocks |
+| Environment comparator | Diff configs, env vars, runtime versions across environments | "Works on my machine" bugs |
+
+**Convergence protocol:**
+
+```
+Collect all agent results → synthesize:
+  1. Which hypotheses were CONFIRMED? Which ELIMINATED?
+  2. Do agents agree on root cause? If not, what's the conflict?
+  3. If conflict → form new hypothesis from combined evidence → test directly
+  4. If no hypothesis confirmed → escalate to BINARY SEARCH (Step 4)
+```
+
+### Step 4: BINARY SEARCH (if no hypothesis confirmed)
+
+```
+git bisect or manual binary elimination:
+  Find last known good commit
+  Bisect to identify breaking change
+  Read the breaking commit → form new hypothesis → test
+```
+
+### Step 5: ROOT CAUSE CONFIRMATION
+
+Before proceeding to Phase 2, the root cause must pass **all 3 validation checks**:
+
+```
+Root Cause 3-Point Validation:
+
+  1. EXPLAINS: Does it explain ALL observed symptoms (not just some)?
+     Ask: "If this is the root cause, why does {symptom} happen?"
+     Every symptom must have an answer. If any symptom is unexplained → dig deeper.
+
+  2. PREDICTS: Does it predict the fix?
+     Ask: "If I change {specific code}, will the bug stop AND no new issues appear?"
+     Must be able to name the exact change. Vague fixes = wrong root cause.
+
+  3. REPRODUCES: Can you make the bug appear and disappear at will?
+     The reproduction case must:
+       - FAIL without the fix (proves the root cause triggers the bug)
+       - PASS with the fix (proves the fix addresses the root cause)
+     If you can't toggle it → you found a correlation, not the cause.
+```
+
+**If any check fails:** Do NOT proceed to Phase 2. Go back to Step 2 with new evidence and form new hypotheses.
 
 **Key rule:** Never make a change without a hypothesis for why it will fix the bug.
 
@@ -198,8 +283,9 @@ Auto-detect tooling from project files.
 If your agent has built-in task/todo tracking (TaskCreate, TaskUpdate, etc.), use it to track each phase. Create tasks at the start, update status as you progress.
 
 ```
-[ ] Classify bug (simple/complex)
-[ ] INVESTIGATE: scientific debugging (complex only)
+[ ] Classify bug (simple/complex/highly complex)
+[ ] INVESTIGATE: scientific debugging (complex/highly complex)
+[ ] CONFIRM: root cause passes 3-point validation
 [ ] BASELINE: run full test suite, record results
 [ ] RED: write failing regression test
 [ ] GREEN: implement fix, verify test passes
