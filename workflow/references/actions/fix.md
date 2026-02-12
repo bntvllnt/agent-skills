@@ -207,12 +207,31 @@ Look at the confirmed root cause from INVESTIGATE or GREEN phase. Map it:
 
 **Step 2: Read existing agent rules.**
 
-Detect which agent is running and read the correct config files:
-- Claude Code → read `{project}/CLAUDE.md` + `~/.claude/CLAUDE.md` + `~/.claude/rules/`
-- Other agents → read `{project}/AGENTS.md` + agent-specific user config
-- See [memory-update.md](../memory-update.md) Step 1 and Agent Config Targets table for full routing
+Detect which agent is running and read **all** config files at both levels:
 
-If the root cause is already covered by an existing rule → **SKIP**. Do not propose duplicates.
+```
+Project-level (check all that exist):
+  {project}/CLAUDE.md
+  {project}/.claude/rules/*
+  {project}/.claude/CLAUDE.md
+  {project}/AGENTS.md
+  {project}/.cursorrules
+  {project}/.windsurfrules
+  {project}/.aider.conf.yml
+  {project}/.continue/config.json
+
+User-level (check all that exist):
+  ~/.claude/CLAUDE.md
+  ~/.claude/rules/*
+  ~/.cursorrules
+  ~/.windsurfrules
+  ~/.aider.conf.yml
+  ~/.continue/config.json
+```
+
+See [memory-update.md](../memory-update.md) Step 1 and Agent Config Targets table for full routing logic.
+
+If the root cause is already covered by an existing rule at any level → **SKIP**. Do not propose duplicates.
 
 **Step 3: Draft max 2 proposals.**
 
