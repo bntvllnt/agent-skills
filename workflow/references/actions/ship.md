@@ -38,6 +38,7 @@ Before starting any implementation, create tasks in your agent's built-in task/t
 [ ] GREEN: implement fix, verify test passes
 [ ] DIFF: run full suite, compare to baseline (zero new failures)
 [ ] SCAN: check codebase for sibling bugs
+[ ] PREVENT: propose prevention rules (max 2, non-trivial bugs only)
 ```
 
 Update tasks as you work: mark in-progress when starting, complete when done. One task in-progress at a time.
@@ -92,9 +93,12 @@ All bug fixes follow this protocol. Full details: [regression-testing.md](../pat
 4. DIFF     → Run full test suite again, compare to baseline
 5. BLOCK    → Any NEW failures = fix introduced regressions → roll back, rethink
 6. SCAN     → Check codebase for sibling bugs (same pattern)
+7. PREVENT  → Propose rules to prevent this class of bug (max 2)
 ```
 
 **DIFF is the anti-cascade mechanism.** By comparing full suite results before and after, you catch any regression the fix introduces — before it cascades.
+
+**PREVENT is lightweight:** max 2 proposals, inline approval, advisory (not blocking). Covers coding rules, anti-patterns, quality checks only. Skip for trivial bugs and emergencies. Full details: [regression-testing.md](../patterns/regression-testing.md) Step 7.
 
 If fix introduces regressions (DIFF fails):
 - Option A: Fix regressions without breaking the original fix
