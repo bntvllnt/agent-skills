@@ -28,8 +28,11 @@ CLASSIFY → complex?        → INVESTIGATE → CONFIRM → BASELINE
 CLASSIFY → highly complex? → INVESTIGATE (parallel agents) → CONVERGE → CONFIRM → BASELINE
 
 BASELINE → RED → GREEN → DIFF → BLOCK
-  BLOCK [new failures] → ROLLBACK → rethink approach → BASELINE
+  BLOCK [new failures] → ROLLBACK → rethink approach → BASELINE (max 3 cycles → ESCALATE)
   BLOCK [no new failures] → SCAN → LEARN → VALIDATE → DONE
+
+INVESTIGATE → all hypotheses eliminated + bisect fails → ESCALATE
+ESCALATE → present evidence to user → user decides next step
 ```
 
 **States:**
@@ -37,13 +40,14 @@ BASELINE → RED → GREEN → DIFF → BLOCK
 | State | Entry condition | Exit condition | Next state |
 |-------|----------------|----------------|------------|
 | CLASSIFY | Fix triggered | Bug classified | INVESTIGATE (complex/highly complex) or BASELINE (simple) |
-| INVESTIGATE | Complex or highly complex bug | Hypotheses tested, candidate root cause identified | CONFIRM |
+| INVESTIGATE | Complex or highly complex bug | Hypotheses tested, candidate root cause identified | CONFIRM (or ESCALATE if exhausted) |
 | CONFIRM | Candidate root cause exists | Root cause passes 3-point validation | BASELINE |
 | BASELINE | Investigation done (or simple bug) | Full suite results recorded | RED |
 | RED | Baseline recorded | Regression test written and FAILS | GREEN |
 | GREEN | RED test exists | Fix implemented, regression test PASSES | DIFF |
 | DIFF | Fix passes regression test | Full suite re-run, compared to baseline | BLOCK |
-| BLOCK | DIFF results available | Decision: new failures or not | SCAN (clean) or ROLLBACK (regressions) |
+| BLOCK | DIFF results available | Decision: new failures or not | SCAN (clean) or ROLLBACK (regressions, max 3) |
+| ESCALATE | Investigation exhausted OR 3 rollback cycles | Evidence presented, user decides | User-directed (new approach, defer, or accept risk) |
 | SCAN | No new failures | Sibling bugs searched, proposed to user | LEARN |
 | LEARN | Scan complete | Spec updated + rules proposed, user approved/declined | VALIDATE |
 | VALIDATE | Prevention done | All quality gates pass | DONE |
@@ -136,7 +140,25 @@ git bisect or manual binary elimination:
   Read the breaking commit → form new hypothesis → test
 ```
 
-### Step 5: ROOT CAUSE CONFIRMATION
+### Step 5: ESCALATE (if investigation exhausted)
+
+If all hypotheses are eliminated AND binary search fails (or is not possible):
+
+```
+ESCALATE to user with:
+  1. Summary of all hypotheses tested and evidence
+  2. What was eliminated and why
+  3. Remaining unknowns
+  4. Recommended next steps:
+     a) Bring in domain expert / pair debug
+     b) Add instrumentation and wait for recurrence
+     c) Accept risk and document as known issue
+     d) Try different investigation angle (user suggests)
+```
+
+Do NOT loop back to Step 2 more than once after escalation. If the second round also fails → hard stop, present all evidence, let user decide.
+
+### Step 6: ROOT CAUSE CONFIRMATION
 
 Before proceeding to Phase 2, the root cause must pass **all 3 validation checks**:
 
@@ -158,7 +180,7 @@ Root Cause 3-Point Validation:
      If you can't toggle it → you found a correlation, not the cause.
 ```
 
-**If any check fails:** Do NOT proceed to Phase 2. Go back to Step 2 with new evidence and form new hypotheses.
+**If any check fails:** Do NOT proceed to Phase 2. Go back to Step 2 with new evidence and form new hypotheses. If this is the second failed round → ESCALATE (Step 5).
 
 **Key rule:** Never make a change without a hypothesis for why it will fix the bug.
 
@@ -181,6 +203,8 @@ If fix introduces regressions (DIFF fails):
 - Option A: Fix regressions without breaking the original fix
 - Option B: Roll back, find a different approach
 - Option C: Escalate to user with evidence
+
+**ROLLBACK cap:** Max 3 BLOCK → ROLLBACK cycles. If the 3rd approach still introduces regressions → ESCALATE. Present all 3 attempts + their regressions to the user. Do not loop indefinitely.
 
 ## LEARN: Capture Learnings & Prevent Recurrence
 
@@ -377,6 +401,32 @@ AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
 | Fix is trivial (typo, config) | Still run BASELINE + DIFF. Skip RED/GREEN only if no testable behavior change. |
 | Emergency/hotfix | Run abbreviated: RED + GREEN + DIFF. Skip SCAN. Document skip. |
 | User says "skip tests" | Document skip reason. Still run DIFF if suite exists (non-blocking). |
+| Non-deterministic bug (race condition, heisenbug) | Use Concurrency analyzer perspective. RED test may need stress/repeated runs. If can't reproduce reliably → document conditions, write best-effort test, note uncertainty. |
+| Can't reproduce locally | Skip RED (can't write failing test). Investigate via logs/history/code review. Propose fix based on code analysis. Run DIFF to ensure no regressions. Document that RED was skipped and why. |
+| Root cause is in dependency | Document dependency + version. Propose workaround (pin version, patch, or wrapper). Do NOT attempt to fix external code. File upstream issue if applicable. |
+| Investigation exhausted (no root cause found) | ESCALATE with all evidence. Do NOT guess-and-fix. Present hypotheses tested + results to user. |
+
+## Time Limits
+
+### Investigation Time-Box
+
+| Bug Type | Max Investigation Time | Max Hypotheses | Escalation |
+|----------|----------------------|----------------|------------|
+| Simple | N/A (skip Phase 1) | N/A | — |
+| Complex | 30 min | 5 | ESCALATE with evidence |
+| Highly complex | 60 min | 8 (across all agents) | ESCALATE with evidence |
+
+If time-box expires without confirmed root cause → ESCALATE (Step 5). Do not continue investigating indefinitely.
+
+### Fix Iteration Limits
+
+| Bug Complexity | Max ROLLBACK Cycles | Max Total Fix Time |
+|----------------|--------------------|--------------------|
+| Simple | 2 | 30 min |
+| Complex | 3 | 60 min |
+| Highly complex | 3 | 90 min |
+
+Exceeding any limit → ESCALATE to user with all evidence collected.
 
 ## Spec-First Enforcement
 

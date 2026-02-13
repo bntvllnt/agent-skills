@@ -11,7 +11,7 @@ Edit this file to customize what the agent returns after `fix`. Decision logic: 
 
 **Bug:** {description}
 **Root cause:** {1-line cause}
-**Classification:** simple | complex
+**Classification:** simple | complex | highly complex
 **Fix:** {1-line what changed}
 
 ### Anti-Cascade TDD
@@ -60,7 +60,38 @@ When DIFF detects regressions:
 **Regressions:**
 - {test name}: {what broke}
 
+**Rollback cycle:** {N}/3
 Options: fix regressions (keep original fix) | roll back (different approach) | escalate
+```
+
+---
+
+## Fix Escalated
+
+When investigation is exhausted or rollback cap (3) reached:
+
+```markdown
+## Fix Escalated
+
+**Bug:** {description}
+**Classification:** {complex/highly complex}
+**Reason:** {investigation exhausted | rollback cap reached}
+
+### Evidence Collected
+**Hypotheses tested:** {N}
+**Eliminated:** {list with reasons}
+**Rollback attempts:** {N}/3 (if applicable)
+
+### What We Know
+- {confirmed fact 1}
+- {confirmed fact 2}
+
+### What's Unknown
+- {remaining uncertainty}
+
+### Recommended Next Steps
+1. {suggestion — e.g., add instrumentation, pair debug, domain expert}
+2. {alternative — e.g., defer, accept risk, workaround}
 ```
 
 ---
