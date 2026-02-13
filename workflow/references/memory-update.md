@@ -173,6 +173,46 @@ If a target file doesn't exist, add a final item: "Create {file} with selected r
 - `{project}/AGENTS.md` is the universal fallback for any agent without its own project config
 - Auto-detect which agent is running. If unknown, ask the user.
 
+### Proposal Format Examples (by agent)
+
+When proposing a rule, target the correct file for the detected agent:
+
+Claude Code:
+```
+[{project}/CLAUDE.md § Coding Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Cursor:
+```
+[{project}/.cursorrules § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Windsurf:
+```
+[{project}/.windsurfrules § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Codex:
+```
+[{project}/codex.md § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+OpenCode:
+```
+[{project}/.opencode/config § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Universal (any agent):
+```
+[{project}/AGENTS.md § Coding Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
 ## Rules
 
 - **Read before proposing** — ALWAYS read existing rules first. No blind proposals.

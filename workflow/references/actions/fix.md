@@ -257,24 +257,9 @@ Look at the confirmed root cause from INVESTIGATE or GREEN phase. Map it:
 
 **2b. Read existing agent rules.**
 
-Detect which agent CLI is running, then read all config files at both project and user level to check for existing rules that already cover this root cause.
-
-**Where to look (by agent):**
-
-| Agent | Project-level config | User-level config |
-|-------|---------------------|-------------------|
-| Claude Code | `{project}/CLAUDE.md`, `{project}/.claude/CLAUDE.md`, `{project}/.claude/rules/*` | `~/.claude/CLAUDE.md`, `~/.claude/rules/*` |
-| Cursor | `{project}/.cursorrules` | `~/.cursorrules` |
-| Windsurf | `{project}/.windsurfrules` | `~/.windsurfrules` |
-| Codex | `{project}/codex.md` | `~/.codex/config` or `~/codex.md` |
-| OpenCode | `{project}/.opencode/config` | `~/.opencode/config` |
-| Aider | `{project}/.aider.conf.yml` | `~/.aider.conf.yml` |
-| Continue | `{project}/.continue/config.json` | `~/.continue/config.json` |
-| Any agent | `{project}/AGENTS.md` (universal fallback) | Ask user for path |
+Detect which agent CLI is running, then read all config files at both project and user level. Use the **Agent Config Targets** table in [memory-update.md](../memory-update.md) to resolve the correct file paths for the detected agent.
 
 If the root cause is already covered by an existing rule at any level → **SKIP**. Do not propose duplicates.
-
-Full protocol for reading/writing agent config: [memory-update.md](../memory-update.md).
 
 **2c. Draft max 2 proposals.**
 
@@ -284,44 +269,14 @@ Write each proposal in this exact format:
 _Prevents: {class of error}_
 ```
 
-Target file routing:
+Target file routing (resolve via [memory-update.md](../memory-update.md) Agent Config Targets table):
 - Project-specific patterns → agent's project-level config
 - Universal patterns → agent's user-level config
 - Unknown agent → `{project}/AGENTS.md` (universal fallback)
 
 Categories allowed: `rule` (coding rules), `anti-pattern`, `quality-check`.
 
-**Example proposals by agent:**
-
-Claude Code:
-```
-[{project}/CLAUDE.md § Coding Rules] rule: "Always null-check optional user fields (email, phone, avatar) before access"
-_Prevents: null reference errors on incomplete profiles_
-```
-
-Cursor:
-```
-[{project}/.cursorrules § Rules] rule: "Always null-check optional user fields before access"
-_Prevents: null reference errors on incomplete profiles_
-```
-
-Codex:
-```
-[{project}/codex.md § Rules] rule: "Always null-check optional user fields before access"
-_Prevents: null reference errors on incomplete profiles_
-```
-
-OpenCode:
-```
-[{project}/.opencode/config § Rules] rule: "Always null-check optional user fields before access"
-_Prevents: null reference errors on incomplete profiles_
-```
-
-Universal (any agent):
-```
-[{project}/AGENTS.md § Coding Rules] rule: "Always null-check optional user fields before access"
-_Prevents: null reference errors on incomplete profiles_
-```
+See [memory-update.md](../memory-update.md) **Proposal Format Examples** for per-agent targeting (Claude Code, Cursor, Windsurf, Codex, OpenCode, etc.).
 
 **2d. Present to user for approval.**
 
