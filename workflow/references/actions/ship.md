@@ -203,6 +203,19 @@ When a bug is found during feature implementation:
 5. All bugs must be Fixed or Deferred before `done`
 ```
 
+**Resume after fix:** When the `fix` action completes, it updates the spec's Encountered Bugs section and Progress table (LEARN step). Ship resumes automatically:
+
+```
+fix completes → spec updated with BUG-{N} status: Fixed
+  → ship detects RESUMING state (session-management.md)
+  → reads spec Progress section
+  → finds first non-[x] scope item
+  → continues implementation from that point
+  → runs quick quality pass before continuing
+```
+
+The handoff is seamless because both actions share the same spec file and session management state machine.
+
 ## Review Integration
 
 Review runs automatically during ship loop. Perspectives:
