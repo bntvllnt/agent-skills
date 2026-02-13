@@ -48,6 +48,8 @@ From the retro and session history, identify learnings in 6 categories:
 | **Process rules** | Workflow improvements from the session | "Run integration tests before unit tests in this project" |
 | **Patterns & Anti-patterns** | User preferences, repeated requests, mistakes, failed approaches, regressions | "User always wants error boundaries around async components" |
 
+**Note on bug fixes:** Bug fixes trigger lightweight PREVENT proposals inline during `ship` (max 2, coding rules/anti-patterns/quality checks only). See regression-testing.md Step 7. PREVENT uses the same agent-detection and file-targeting logic from Step 3 (Classify & Target) above. The `done` memory update handles session-wide learnings across all categories. When extracting learnings here, **skip proposals already saved during PREVENT** to avoid duplicates.
+
 **Patterns** capture what to remember so the agent improves across sessions:
 - **User preferences**: coding style requests, architecture preferences, naming conventions the user enforces ("user prefers explicit return types on all functions")
 - **Repeated requests**: things the user asks for repeatedly that should be default behavior ("always add loading states to async UI")

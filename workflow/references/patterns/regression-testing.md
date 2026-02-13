@@ -15,6 +15,7 @@ Core problem: fix A → breaks B → fix B → breaks C. This protocol breaks th
 4. DIFF      → Run full test suite again, compare to baseline
 5. BLOCK     → Any NEW failures = regressions → roll back, rethink
 6. SCAN      → Check codebase for sibling bugs (same pattern)
+7. PREVENT   → Propose rules to prevent this class of bug (max 2)
 ```
 
 ### Step-by-Step
@@ -92,6 +93,48 @@ If siblings found → propose batch fix to user:
 Do NOT auto-fix siblings. Propose only.
 ```
 
+**7. PREVENT** — Propose rules to prevent this class of bug.
+
+**When to run:** After SCAN, for non-trivial bugs with a generalizable root cause.
+
+**When to skip:**
+- Trivial bugs (typos, config one-liners, obvious mistakes)
+- Existing rule already covers this class of error
+- Emergency/hotfix (speed > prevention)
+
+```
+Protocol:
+
+1. CLASSIFY root cause → map to prevention category (see table below)
+2. GENERATE max 2 proposals → concise, actionable rules
+3. CHECK existing rules → read user/project rules, skip if covered
+4. PROPOSE inline → user approves/declines immediately
+
+Output format per proposal:
+  [{target file} § {section}] {type}: "{rule text}"
+  _Prevents: {class of error}_
+```
+
+**Root cause → prevention category:**
+
+| Root Cause | Prevention Category | Example Rule |
+|-----------|-------------------|-------------|
+| Missing null/undefined check | Coding rule | "Always null-check optional fields before access" |
+| Wrong type assumption | Coding rule | "Use discriminated unions for API responses, never assume shape" |
+| Missing validation at boundary | Quality check | "Validate all external input at API boundaries with Zod" |
+| Incorrect error handling | Anti-pattern | "Never swallow errors in catch blocks — rethrow or log with context" |
+| Race condition / shared state | Coding rule | "Wrap shared state mutations in transactions or locks" |
+| Missing edge case | Quality check | "Test empty/null/boundary inputs for all public functions" |
+| Wrong API usage | Anti-pattern | "Never call {API} without {required precondition}" |
+| Config/env assumption | Quality check | "Validate required env vars at startup, fail fast if missing" |
+
+**Proposal rules:**
+- Max 2 proposals per fix — keeps it lightweight
+- Categories: coding rules, anti-patterns, quality checks only (no process/thinking patterns)
+- Advisory, not blocking — user can decline with no gate failure
+- Uses same targeting logic as memory-update.md (project CLAUDE.md, user rules, AGENTS.md)
+- Never auto-apply — always propose, user approves
+
 ## Bug Type → Test Pattern Matrix
 
 | Bug Type | Test Pattern | What to Assert |
@@ -160,3 +203,7 @@ AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
 - NEVER skip SCAN for non-emergency fixes
 - NEVER auto-fix sibling bugs without user approval
 - NEVER treat flaky tests as "acceptable" — flag them
+- NEVER propose more than 2 prevention rules per fix
+- NEVER auto-apply prevention rules — always propose, user approves
+- NEVER propose vague rules ("be more careful") — must be specific and actionable
+- NEVER duplicate existing rules — check before proposing
