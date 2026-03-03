@@ -13,18 +13,19 @@ Save specs to: `specs/active/{YYYY-MM-DD}-{slug}.md`
 Sections MUST be generated in this order. Each section feeds the next.
 
 ```
-1. Context           ← from user input
-2. Codebase Impact   ← from reading the actual codebase (MANDATORY)
-3. User Journey      ← from context + codebase understanding (MANDATORY)
+1. Context            ← from user input
+2. Codebase Impact    ← from reading the actual codebase (MANDATORY)
+3. User Journey       ← from context + codebase understanding (MANDATORY)
 4. Acceptance Criteria ← derived from journey steps (MANDATORY)
-5. Scope             ← derived from ACs + codebase impact
-6. Quality Checklist ← derived from scope + codebase patterns
-7. Risks             ← from codebase impact + pre-mortem
-8. State Machine     ← if stateful (from journey analysis)
-9. Analysis          ← assumptions, blind spots, failures, reframe (MANDATORY output)
+5. Scope              ← derived from ACs + codebase impact
+6. Quality Checklist  ← derived from scope + codebase patterns
+7. Test Strategy      ← from ACs + Error Journeys + test setup discovery (MANDATORY)
+8. Risks              ← from codebase impact + pre-mortem
+9. State Machine      ← if stateful (from journey analysis)
+10. Analysis          ← assumptions, blind spots, failures, reframe (MANDATORY output)
 ```
 
-**Rule: Never skip ahead. Journey drives ACs. ACs drive scope. Codebase drives everything.**
+**Rule: Never skip ahead. Journey drives ACs. ACs drive scope. Test Strategy maps ACs to tests. Codebase drives everything.**
 
 ---
 
@@ -251,6 +252,73 @@ Result: every scope ↔ at least 1 AC, bidirectional
 
 ---
 
+<!-- TEMPLATE: Test Strategy -->
+
+### Section: Test Strategy
+
+**Spec output:**
+
+    ## Test Strategy (MANDATORY)
+
+    ### Test Environment
+
+    | Component | Status | Detail |
+    |-----------|--------|--------|
+    | Test runner | {detected/not configured} | {vitest/jest/pytest/etc.} |
+    | E2E framework | {detected/not configured} | {playwright/cypress/maestro/etc.} |
+    | Test DB | {real/docker/in-memory/none} | {strategy detail} |
+    | Mock inventory | {count} existing mocks | {what's mocked} |
+
+    ### AC → Test Mapping
+
+    | AC | Test Type | Test Intention |
+    |----|-----------|----------------|
+    | AC-1 | E2E | {what the test proves} |
+    | AC-E1 | E2E | {error scenario test} |
+    | EC-1 | E2E | {edge case test} |
+
+    ### Failure Mode Tests (MANDATORY)
+
+    | Source | ID | Test Intention | Priority |
+    |--------|----|----------------|----------|
+    | Error Journey | E1 | E2E: {what E1 proves doesn't happen} | BLOCKING |
+    | Error Journey | E2 | E2E: {what E2 proves doesn't happen} | BLOCKING |
+    | Edge Case | EC1 | E2E: {boundary behavior verified} | Advisory |
+    | Failure Hypothesis | FH-1 (HIGH) | E2E: IF {trigger} THEN {failure} doesn't happen | BLOCKING |
+    | Failure Hypothesis | FH-2 (MED) | E2E: IF {trigger} THEN {failure} doesn't happen | BLOCKING |
+    | Failure Hypothesis | FH-3 (LOW) | Advisory — skip or note only | Advisory |
+
+    ### Mock Boundary
+
+    | Dependency | Strategy | Justification |
+    |------------|----------|---------------|
+    | {third-party API} | Sandbox / Docker / Mock | {why this level, what's lost if mocked} |
+
+    ### TDD Commitment
+
+    All tests written BEFORE implementation (RED → GREEN → REFACTOR).
+    Every Must Have + Error AC tracked in e2e-scenarios registry.
+
+**Generation rules:**
+- Generated at plan time (Step 3.3), NOT ship time
+- Test environment data comes from plan Step 0 deep test discovery
+- Every Must Have AC → E2E test (default). Unit test ONLY for pure functions.
+- Every Error Journey → E2E test intention
+- Every Edge Case → E2E test intention
+- Every HIGH/MED Failure Hypothesis → defensive E2E test (BLOCKING)
+- LOW Failure Hypotheses → advisory (test optional)
+- Mock boundary: document every third-party dependency with chosen strategy
+- If no E2E infra detected: note "not configured — propose setup at ship"
+
+**Mini tier:** compressed version:
+
+    ## Test Strategy
+    Runner: {detected/none} | E2E: {detected/none} | TDD: RED → GREEN per AC
+    AC-1 → E2E | AC-E1 → E2E | FH-1 → defensive E2E
+    Mocks: {none / list with justification}
+
+---
+
 <!-- TEMPLATE: Risks -->
 
 ### Section: Risks
@@ -423,6 +491,11 @@ For <100 LOC features. Same rules, shorter format. Codebase Impact + Journey + A
     - [ ] No regressions
     - [ ] Error states handled
 
+    ## Test Strategy
+    Runner: {detected/none} | E2E: {detected/none} | TDD: RED → GREEN per AC
+    AC-1 → E2E | AC-E1 → E2E | FH-1 → defensive E2E
+    Mocks: {none / list with justification}
+
     ## Analysis
 
     **Assumptions:** {assumption} → {VALID/RISKY/WRONG} | {assumption} → {verdict} | ...
@@ -460,6 +533,7 @@ A spec missing ANY of these cannot proceed to `ship`.
 | 11 | No orphan scope | Scope item with no AC mapping → cut | YES |
 | 12 | No uncovered AC | Must Have AC with no scope item → add scope | YES |
 | 13 | Analysis present | Assumptions + Blind Spots + Failure Hypotheses + Open Items sections exist | YES |
+| 14 | Test Strategy exists | Test Strategy section present with AC mapping + failure mode coverage | YES |
 
 ---
 

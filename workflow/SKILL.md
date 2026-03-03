@@ -64,7 +64,13 @@ Don't know what to work on: `focus`
 
 - **Spec-first**: All work needs a spec (creates one if missing)
 - **Ship loop**: Build → review → fix until clean
-- **Quality gates**: lint → typecheck → build → test (auto-detected per project)
+- **Quality gates**: lint → typecheck → build → test → E2E → coverage (auto-detected per project)
+- **E2E-first testing**: Default to E2E tests. Unit tests only for pure functions
+- **TDD enforced**: RED → GREEN → REFACTOR per AC. Tests written before implementation (BLOCKING)
+- **Mock boundary**: Real systems preferred. Mock only third-party APIs without sandbox (last resort)
+- **AC-driven coverage**: Every Must Have + Error AC maps to an E2E test in the scenario registry
+- **Anti-regression**: Bug fixes require E2E regression test + anti-cascade diff (BLOCKING)
+- **Failure mode testing**: Every HIGH/MED failure hypothesis gets a defensive E2E test
 - **Human controls deployment**: Agent codes, you push/deploy
 - **Done same-day**: Scope to what ships today
 - **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
@@ -153,7 +159,7 @@ Review standards:
 - [Production Standards](references/reviews/production-standards.md)
 
 Specs & gates:
-- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md)
+- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md)
 
 Patterns:
 - [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md) | [Regression testing](references/patterns/regression-testing.md)

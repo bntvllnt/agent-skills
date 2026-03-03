@@ -9,11 +9,11 @@ Core problem: fix A → breaks B → fix B → breaks C. This protocol breaks th
 ## Anti-Cascade TDD Protocol
 
 ```
-1. BASELINE  → Run full test suite, record pass/fail counts
-2. RED       → Write test reproducing the bug (MUST FAIL)
-3. GREEN     → Implement fix, verify regression test passes
-4. DIFF      → Run full test suite again, compare to baseline
-5. BLOCK     → Any NEW failures = regressions → roll back, rethink
+1. BASELINE  → Run full test suite, record pass/fail counts (BLOCKING)
+2. RED       → Write E2E regression test reproducing bug (MUST FAIL) (BLOCKING)
+3. GREEN     → Implement fix, E2E test MUST PASS, no mocking own code (BLOCKING)
+4. DIFF      → Run full test suite again, compare to baseline (BLOCKING)
+5. BLOCK     → Any NEW failures = BLOCKING — rollback or fix regressions, no workaround
 6. SCAN      → Check codebase for sibling bugs (same pattern)
 7. PREVENT   → Propose rules to prevent this class of bug (max 2)
 ```
@@ -34,24 +34,30 @@ Store as baseline. This is your diff anchor.
 
 If no test suite exists → propose setup (see [testing-automation.md](../testing-automation.md)). If user declines → document skip, proceed with manual verification.
 
-**2. RED** — Prove the bug exists in test form.
+**2. RED** — Prove the bug exists in E2E test form.
 
 ```
-Write test that:
-  - Reproduces the exact bug scenario
+Write E2E test that:
+  - Reproduces the exact bug scenario end-to-end (real systems, no mocks of own code)
   - Asserts the CORRECT behavior (what should happen)
   - MUST FAIL against current code
+  - Uses real DB, real server, real auth — follows mock avoidance hierarchy
 
 Run test → confirm FAIL
   If test PASSES → wrong test. Bug not reproduced. Redo.
+  Log RED_CONFIRMED in e2e-scenarios registry.
 ```
+
+Regression tests must be E2E even if the bug is in a "unit-testable" function — proves the fix works at system level, not just function level.
 
 **3. GREEN** — Fix the bug, nothing more.
 
 ```
 Implement minimal fix
-Run regression test → MUST PASS
-  If FAIL → fix isn't correct. Iterate.
+Run E2E regression test → MUST PASS
+  No mocking own code — real system must pass
+  If FAIL → fix implementation, not the test. Iterate.
+  Log GREEN_CONFIRMED in e2e-scenarios registry.
 ```
 
 **4. DIFF** — Catch regressions immediately.
@@ -67,15 +73,16 @@ Compare to BASELINE:
   - Pre-existing failures (failed in baseline too) = KNOWN ISSUES (ignore)
 ```
 
-**5. BLOCK** — Zero tolerance for new failures.
+**5. BLOCK** — Zero tolerance for new failures. BLOCKING — no workaround.
 
 ```
 New failures found?
-  YES → BLOCK. Fix introduced regressions.
+  YES → BLOCKING. Fix introduced regressions. Must resolve before proceeding.
         Options:
         a) Fix the regressions without breaking the original fix
         b) Roll back fix, find a different approach
         c) Escalate to user with evidence
+        NO option to skip or proceed with regressions.
   NO  → PASS. Fix is safe. Continue.
 ```
 
@@ -137,16 +144,28 @@ Output format per proposal:
 
 ## Bug Type → Test Pattern Matrix
 
-| Bug Type | Test Pattern | What to Assert |
-|----------|-------------|----------------|
-| **Null/undefined handling** | Pass null/undefined to affected function | Returns safe default or throws descriptive error |
-| **Off-by-one** | Test boundary values (0, 1, N-1, N, N+1) | Correct result at each boundary |
-| **Race condition** | Simulate concurrent access (parallel calls, shared state) | Consistent state after concurrent operations |
-| **Auth bypass** | Call endpoint/function without valid credentials | Returns 401/403, no data leaked |
-| **State mutation** | Perform operation, check all related state | Only intended state changed, no side effects |
-| **Validation gap** | Pass malformed/edge-case input | Rejected with clear error, no processing |
-| **Type coercion** | Pass wrong types (string where number expected) | Proper type error or safe coercion |
-| **Resource leak** | Open resource, trigger error path | Resource cleaned up (connection closed, file handle released) |
+| Bug Type | Test Type | Test Pattern | What to Assert |
+|----------|-----------|-------------|----------------|
+| **Null/undefined handling** | E2E | Trigger null scenario via user action or API call | System handles gracefully — error message or safe default |
+| **Off-by-one** | E2E | Test boundary values through real system path | Correct result at each boundary in system output |
+| **Race condition** | E2E | Simulate concurrent access (parallel API calls, multi-tab) | Consistent state after concurrent operations |
+| **Auth bypass** | E2E | Call endpoint without valid credentials via real HTTP | Returns 401/403, no data leaked, redirect works |
+| **State mutation** | E2E | Perform operation through UI/API, verify all related state | Only intended state changed in real DB/store |
+| **Validation gap** | E2E | Submit malformed input through real form/API | Rejected with clear error, no processing, user sees message |
+| **Type coercion** | E2E | Submit wrong types through real input path | Proper error or safe coercion in system output |
+| **Resource leak** | E2E | Trigger error path through real system, check cleanup | Resource cleaned up (connection closed, file handle released) |
+| **Pure function bug** | E2E* | *Still E2E — proves fix at system level, not just function level | System-level output correct after fix |
+
+*Even bugs in pure functions get E2E regression tests — proves the fix works at the integration level where users actually experience the bug.
+
+## Mock Boundary for Regression Tests
+
+Regression tests follow the same mock avoidance hierarchy as all tests:
+- **NEVER mock**: own code, own DB, own endpoints, own auth, internal calls
+- **ALLOW mock**: third-party APIs without sandbox (last resort only)
+- Every mock requires `// MOCK: {reason real system not available}` comment
+
+See [testing-automation.md](../testing-automation.md) for full mock avoidance hierarchy.
 
 ## Sibling Bug Detection
 
@@ -207,3 +226,5 @@ AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
 - NEVER auto-apply prevention rules — always propose, user approves
 - NEVER propose vague rules ("be more careful") — must be specific and actionable
 - NEVER duplicate existing rules — check before proposing
+- NEVER write a unit test when an E2E test is possible — system-level proof required
+- NEVER mock own code in regression tests — real system must pass
