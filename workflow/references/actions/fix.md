@@ -1,6 +1,6 @@
 # Fix Action
 
-> **Agent:** Load this file when `fix` triggers. Also load `references/quality-gates.md` for gate commands and `references/session-management.md` for resume/stuck detection.
+> **Agent:** Load this file when `fix` triggers. Also load `references/quality-gates.md` for gate commands, `references/testing-automation.md` for E2E-first test generation + mock avoidance, and `references/session-management.md` for resume/stuck detection.
 
 Fix bugs with scientific debugging and anti-cascade TDD. Prevents cascading failures.
 
@@ -189,15 +189,24 @@ Root Cause 3-Point Validation:
 All bug fixes follow this protocol. Full details: [regression-testing.md](../patterns/regression-testing.md).
 
 ```
-1. BASELINE → Run full test suite, record pass/fail counts
-2. RED      → Write test reproducing the bug (MUST FAIL)
-3. GREEN    → Implement fix, verify regression test passes
-4. DIFF     → Run full test suite again, compare to baseline
-5. BLOCK    → Any NEW failures = fix introduced regressions → roll back, rethink
-6. SCAN     → Check codebase for sibling bugs (same pattern)
+1. BASELINE → Run full test suite, record pass/fail counts (BLOCKING)
+2. RED      → Write E2E regression test reproducing the bug (MUST FAIL) (BLOCKING)
+               Log RED_CONFIRMED in e2e-scenarios registry
+               Use real systems — never mock own code (see testing-automation.md mock avoidance hierarchy)
+               Even if bug is in a "unit-testable" function → E2E proves fix at system level
+3. GREEN    → Implement fix, E2E regression test MUST PASS (BLOCKING)
+               Log GREEN_CONFIRMED in e2e-scenarios registry
+               No mocking own code — real DB, real server, real auth
+4. DIFF     → Run full test suite again, compare to baseline (BLOCKING)
+5. BLOCK    → Any NEW failures = fix introduced regressions → roll back, rethink (BLOCKING)
+6. SCAN     → Check codebase for sibling bugs (same pattern) (advisory)
 ```
 
+**All steps except SCAN are BLOCKING — cannot skip.**
+
 **DIFF is the anti-cascade mechanism.** By comparing full suite results before and after, you catch any regression the fix introduces — before it cascades.
+
+**Mock boundary:** Regression tests follow the same mock avoidance hierarchy as all tests (see `references/testing-automation.md`). DENY mocking own application code, own DB, own HTTP endpoints, own auth. ALLOW mocking only third-party APIs without sandbox/Docker/in-memory alternatives.
 
 If fix introduces regressions (DIFF fails):
 - Option A: Fix regressions without breaking the original fix
@@ -243,7 +252,8 @@ BUG-{N}: {1-line summary}
 - **Root cause:** {why it happened}
 - **Fix:** {what was changed}
 - **Status:** Fixed
-- **Regression test:** {test file}:{test name}
+- **Regression test:** {test file}:{test name} (E2E)
+- **Registry:** AC-B1 through AC-B4 in e2e-scenarios.md — RED_CONFIRMED + GREEN_CONFIRMED
 ```
 
 **1d. Update spec Progress section.**
@@ -348,13 +358,19 @@ Declined proposals → log in output, take no action.
 
 Same quality gates as ship. Load `references/quality-gates.md`.
 
-**Full pass** (before marking complete):
-- Lint changed files
-- Typecheck full project
-- Build full project
-- Test related tests + anti-cascade DIFF
+**Full pass** (before marking complete — all 6 gates + TDD proof):
 
-Auto-detect tooling from project files.
+| # | Gate | Scope | Level |
+|---|------|-------|-------|
+| 1 | Lint | Changed files | BLOCKING |
+| 2 | Typecheck | Full project | BLOCKING |
+| 3 | Build | Full project | BLOCKING |
+| 4 | Test | Related tests + anti-cascade DIFF | BLOCKING |
+| 5 | E2E registry | All bug fix ACs (AC-B1 through AC-B4) GREEN_CONFIRMED | BLOCKING |
+| 6 | TDD proof | Every GREEN_CONFIRMED has prior RED_CONFIRMED | BLOCKING |
+| 7 | Coverage | Advisory — warn on >5% drop | ADVISORY |
+
+Auto-detect tooling from project files. See `references/quality-gates.md`.
 
 ## Task Tracking (Use Agent Capabilities)
 
@@ -364,13 +380,15 @@ If your agent has built-in task/todo tracking (TaskCreate, TaskUpdate, etc.), us
 [ ] Classify bug (simple/complex/highly complex)
 [ ] INVESTIGATE: scientific debugging (complex/highly complex)
 [ ] CONFIRM: root cause passes 3-point validation
-[ ] BASELINE: run full test suite, record results
-[ ] RED: write failing regression test
-[ ] GREEN: implement fix, verify test passes
-[ ] DIFF: run full suite, compare to baseline (zero new failures)
+[ ] BASELINE: run full test suite, record results (BLOCKING)
+[ ] Create e2e-scenarios.md registry entries for bug fix ACs (AC-B1 through AC-B4)
+[ ] RED: write E2E regression test → MUST FAIL → log RED_CONFIRMED (BLOCKING)
+[ ] GREEN: implement fix → E2E test MUST PASS → log GREEN_CONFIRMED (BLOCKING)
+[ ] DIFF: run full suite, compare to baseline (zero new failures) (BLOCKING)
+[ ] Mock audit: verify no mocking of own code in regression test
 [ ] SCAN: check codebase for sibling bugs
 [ ] LEARN: update spec (if related) + propose prevention rules
-[ ] Full pass: lint + typecheck + build + test
+[ ] Full pass: lint + typecheck + build + test + E2E registry + TDD proof + coverage
 [ ] Output summary
 ```
 
@@ -384,18 +402,21 @@ Auto-generate these ACs for any bug fix:
 
 ```
 - AC-B1: GIVEN {reproduction steps} WHEN {trigger} THEN bug no longer occurs
-- AC-B2: GIVEN regression test WHEN run against unfixed code THEN test FAILS (RED)
-- AC-B3: GIVEN regression test WHEN run against fixed code THEN test PASSES (GREEN)
-- AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline
+- AC-B2: GIVEN E2E regression test WHEN run against unfixed code THEN test FAILS (RED_CONFIRMED in registry)
+- AC-B3: GIVEN E2E regression test WHEN run against fixed code THEN test PASSES (GREEN_CONFIRMED in registry)
+- AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline (DIFF clean)
 ```
 
-AC-B2 + AC-B3 = TDD proof. AC-B4 = anti-cascade proof.
+AC-B2 + AC-B3 = TDD proof (tracked in `e2e-scenarios.md` registry). AC-B4 = anti-cascade proof.
+
+All bug fix ACs are registered in `e2e-scenarios.md` with type prefix `AC-BN`. See `references/e2e-scenarios.md` for registry format.
 
 ## Guard Rails
 
 | Situation | Action |
 |-----------|--------|
-| No test suite exists | Propose setup (link to testing-automation.md). If declined, document and proceed manually |
+| No test suite exists | Propose setup (load testing-automation.md for recommendation). If declined, document and downgrade E2E gate to ADVISORY |
+| No E2E framework exists | Propose E2E framework setup (Playwright/Cypress/Maestro/Detox per stack). If declined, downgrade E2E gate to ADVISORY for this session |
 | Test suite is partial (low coverage) | Warn: "Coverage is low near fix area. Baseline may miss regressions." |
 | Tests are flaky (intermittent failures) | Run baseline 2x, use consistent results as anchor. Flag flaky tests. |
 | Fix is trivial (typo, config) | Still run BASELINE + DIFF. Skip RED/GREEN only if no testable behavior change. |
