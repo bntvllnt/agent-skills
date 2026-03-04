@@ -18,8 +18,10 @@ Before starting planning, create tasks in your agent's built-in task/todo system
 
 ```
 [ ] Parse idea and identify scope
+[ ] Discover test environment (read existing tests, identify patterns)
 [ ] Codebase impact analysis (read affected code, map dependencies)
 [ ] Generate spec (following spec-template.md generation order)
+[ ] Generate test strategy (AC mapping + failure mode tests + mock avoidance plan)
 [ ] Spec analysis (adversarial review of generated spec)
 [ ] Run dev-readiness check (spec-template.md validation rules)
 [ ] All dev-readiness gates PASS
@@ -27,14 +29,22 @@ Before starting planning, create tasks in your agent's built-in task/todo system
 
 Update tasks as you work. One in-progress at a time.
 
-## Step 0: Detect Project
+## Step 0: Detect Project + Test Environment
 
 ```
 Check project for:
   - Monorepo (turbo.json)
   - Package manager (pnpm/yarn/bun/npm from lockfile)
   - Test runner (vitest/jest/pytest from config)
+  - E2E framework (playwright/cypress/maestro/detox from config)
   - Framework (next/expo/convex from package.json)
+
+Deep test discovery (feeds spec Test Strategy):
+  - Read 3+ existing test files → understand patterns, conventions, helpers
+  - Identify: test DB strategy, mock inventory, existing E2E tests, test utilities
+  - Produce "Test Environment Profile" for spec's Test Strategy section
+  - If no test infra: flag "not configured" with specific recommendation
+  - If no E2E infra but unit tests exist: flag "partial — E2E setup needed at ship"
 ```
 
 ## Step 1: Parse Idea
@@ -57,7 +67,7 @@ Extract from user input:
 ## Step 3: Generate Spec
 
 **Follow `references/spec-template.md` exactly.** The template defines:
-- Generation order (context → codebase → journey → ACs → scope → checklist → risks → state → analysis)
+- Generation order (context → codebase → journey → ACs → scope → checklist → test strategy → risks → state → analysis)
 - Per-section generation rules
 - Traceability requirements
 - Validation rules
@@ -89,9 +99,32 @@ For each risk:
 
 For stateful features, include state machine analysis (see spec-template.md).
 
+## Step 3.3: Generate Test Strategy (MANDATORY for mini/standard)
+
+After spec generation, before analysis. Write the Test Strategy section into the spec.
+
+```
+1. Include Test Environment Profile from Step 0 discovery
+2. Map each AC to test type:
+   - Pure function (no I/O, no side effects) → unit test
+   - Everything else → E2E test (default)
+3. Map each Error Journey (E1, E2...) → E2E test intention
+4. Map each Edge Case (EC1, EC2...) → E2E test intention
+5. Mock avoidance plan — for each external dependency:
+   - Does it have a sandbox/test mode? → use real
+   - Docker image available? → containerize
+   - In-memory equivalent? → use it
+   - None available? → mock with justification
+6. Write Test Strategy section into spec (see spec-template.md)
+```
+
+Failure hypotheses from Step 3.5 will feed back into Test Strategy (see below).
+
 ## Step 3.5: Spec Analysis (MANDATORY for mini/standard)
 
-After generating the spec, run adversarial analysis to populate the Analysis section.
+After generating the spec and Test Strategy, run adversarial analysis to populate the Analysis section.
+
+**Failure hypothesis → Test Strategy feedback:** After analysis generates failure hypotheses, add defensive E2E test for each HIGH/MED hypothesis to the Test Strategy section. Update the Failure Mode Tests table.
 
 ### Mode by Tier
 
@@ -138,7 +171,8 @@ Before finalizing, self-verify:
 |-------|----------|
 | Clarity | Could another developer implement from this spec alone? |
 | Scope | Can this ship today? Anything cuttable? |
-| Testability | Is every scope item verifiable? |
+| Testability | Is every scope item verifiable? Does every failure mode have a planned test? |
+| Test Strategy | Does Test Strategy exist? Are all ACs mapped? Are failure hypotheses covered? |
 | Risks | Are kill criteria defined for high risks? |
 | Completeness | Quality checklist covers edge cases? |
 | Codebase | Did I actually read the code? Are affected files mapped? |
@@ -187,7 +221,7 @@ Max 3 rounds. After round 3: must reach READY or user says "proceed anyway".
 
 **BLOCKING gate before `ship` can start.**
 
-Run the validation rules from `references/spec-template.md` (Validation Rules table). All 13 rules must pass.
+Run the validation rules from `references/spec-template.md` (Validation Rules table). All 14 rules must pass.
 
 ### Readiness Algorithm
 
@@ -196,7 +230,7 @@ ready_to_dev(spec):
   Run all validation rules from spec-template.md
 
   mandatory_fails = rules 1-8 that fail
-  standard_fails = rules 9-13 that fail
+  standard_fails = rules 9-14 that fail
 
   IF len(all_fails) == 0:
     RETURN READY

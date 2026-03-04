@@ -23,31 +23,39 @@ Before starting any implementation, create tasks in your agent's built-in task/t
 [ ] {scope item 1} → AC-{N}
 [ ] {scope item 2} → AC-{N}
 [ ] ...
-[ ] Generate tests for new/changed behavior
+[ ] Create e2e-scenarios.md registry from spec ACs
+[ ] Generate E2E tests (TDD: RED before implementation)
 [ ] Quick pass: lint + typecheck (changed files)
 [ ] Review: run perspectives
 [ ] Fix BLOCKING issues
-[ ] Full pass: lint (changed) + typecheck (full) + build (full) + test (related)
-[ ] Exit check: all Must Have ACs + Error ACs + scope items passing
+[ ] Full pass: lint (changed) + typecheck (full) + build (full) + test (related) + E2E (registry) + coverage (advisory)
+[ ] Exit check: all Must Have ACs + Error ACs + scope items + e2e_coverage passing
 ```
 
 **Bug mode tasks (replace scope items above):**
 ```
-[ ] BASELINE: run full test suite, record results
-[ ] RED: write failing regression test
-[ ] GREEN: implement fix, verify test passes
-[ ] DIFF: run full suite, compare to baseline (zero new failures)
-[ ] SCAN: check codebase for sibling bugs
-[ ] PREVENT: propose prevention rules (max 2, non-trivial bugs only)
+[ ] BASELINE: run full test suite, record results (BLOCKING)
+[ ] RED: write failing E2E regression test — MUST FAIL (BLOCKING)
+[ ] GREEN: implement fix, E2E test MUST PASS — no mocking own code (BLOCKING)
+[ ] DIFF: run full suite, compare to baseline — zero new failures (BLOCKING)
+[ ] SCAN: check codebase for sibling bugs (propose only)
+[ ] PREVENT: propose prevention rules (max 2, advisory, non-trivial bugs only)
 ```
 
 Update tasks as you work: mark in-progress when starting, complete when done. One task in-progress at a time.
 
 ## Phase 0: Setup
 
-1. **Detect project stack** (monorepo, framework, test runner, linter)
-2. **Load active spec** (if LOOP mode) or create inline spec (ONE-SHOT)
-3. **Detect resume state** (see session-management.md):
+1. **Detect project stack** (monorepo, framework, test runner, linter, E2E framework)
+2. **Validate test environment:**
+   - Load spec's Test Strategy (from plan phase, if exists)
+   - If no Test Strategy: run test setup discovery now (load references/testing-automation.md)
+   - If no E2E infra detected: PROPOSE setup to user with specific recommendation
+   - If user declines: document, downgrade E2E gate to ADVISORY for this session
+   - If user accepts: install + configure before first iteration
+   - Validate mock avoidance plan: check if proposed mocks can use real alternatives
+3. **Load active spec** (if LOOP mode) or create inline spec (ONE-SHOT)
+4. **Detect resume state** (see session-management.md):
    - FRESH: No prior work — start from beginning
    - RESUMING: Prior progress found — resume from last checkpoint
    - STUCK: Multiple failed iterations — escalate
@@ -82,19 +90,21 @@ Complex bugs require scientific debugging FIRST:
 4. Root cause confirmation
 5. Then apply anti-cascade TDD below
 
-### Anti-Cascade TDD Protocol
+### Anti-Cascade TDD Protocol (BLOCKING)
 
-All bug fixes follow this protocol. Full details: [regression-testing.md](../patterns/regression-testing.md).
+All bug fixes follow this protocol. E2E regression tests required. Full details: [regression-testing.md](../patterns/regression-testing.md).
 
 ```
-1. BASELINE → Run full test suite, record pass/fail counts
-2. RED      → Write test reproducing the bug (MUST FAIL)
-3. GREEN    → Implement fix, verify regression test passes
-4. DIFF     → Run full test suite again, compare to baseline
-5. BLOCK    → Any NEW failures = fix introduced regressions → roll back, rethink
-6. SCAN     → Check codebase for sibling bugs (same pattern)
-7. PREVENT  → Propose rules to prevent this class of bug (max 2)
+1. BASELINE → Run full test suite, record pass/fail counts (BLOCKING)
+2. RED      → Write E2E regression test reproducing bug (MUST FAIL) (BLOCKING)
+3. GREEN    → Implement fix, E2E test MUST PASS, no mocking own code (BLOCKING)
+4. DIFF     → Run full test suite again, compare to baseline (BLOCKING)
+5. BLOCK    → Any NEW failures = BLOCKING rollback — fix regressions or revert
+6. SCAN     → Check codebase for sibling bugs (same pattern) — propose only
+7. PREVENT  → Propose max 2 rules (advisory, user approves)
 ```
+
+All steps except SCAN/PREVENT are BLOCKING — cannot skip.
 
 **DIFF is the anti-cascade mechanism.** By comparing full suite results before and after, you catch any regression the fix introduces — before it cascades.
 
@@ -107,9 +117,10 @@ If fix introduces regressions (DIFF fails):
 
 **Bug fix ACs (auto-generate if not in spec):**
 - AC-B1: GIVEN {reproduction steps} WHEN {trigger} THEN bug no longer occurs
-- AC-B2: GIVEN regression test WHEN run against unfixed code THEN test FAILS (RED)
-- AC-B3: GIVEN regression test WHEN run against fixed code THEN test PASSES (GREEN)
+- AC-B2: GIVEN E2E regression test WHEN run against unfixed code THEN test FAILS (RED_CONFIRMED)
+- AC-B3: GIVEN E2E regression test WHEN run against fixed code THEN test PASSES (GREEN_CONFIRMED)
 - AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline
+- **All AC-B entries logged in e2e-scenarios registry. AC-B2 + AC-B3 + AC-B4 are BLOCKING.**
 
 ## ONE-SHOT Flow
 
@@ -117,11 +128,14 @@ For quick fixes and small features without an active spec:
 
 ```
 1. Analyze scope (files affected, estimated LOC)
-2. Create plan (brief, inline)
-3. Implement
-4. Quality gates (lint → typecheck → build → test)
-5. Self-review (re-read all changes)
-6. Output summary
+2. Run test setup discovery (load references/testing-automation.md)
+3. Create plan (brief, inline)
+4. Write E2E test for key behavior (RED — MUST FAIL)
+5. Implement
+6. Run E2E test (GREEN — MUST PASS)
+7. Quality gates (lint → typecheck → build → test → E2E → coverage)
+8. Self-review (re-read all changes)
+9. Output summary
 ```
 
 ## LOOP Flow (Ship Loop)
@@ -136,16 +150,20 @@ stuck_threshold = max(3, max_iterations / 2)
 WHILE iteration < max_iterations:
   iteration++
 
-  # 1. BUILD
+  # 1. SELECT
   Pick next unchecked scope item
-  Implement it
 
-  # 1b. TEST GENERATION (after implementation)
-  Detect test infra (once per session, cache result)
-  If no test infra → propose setup (load references/testing-automation.md)
-  Generate unit tests for new/changed functions
-  Generate e2e tests for journey-impacting scope items
-  Run tests, verify behavior (RED → GREEN)
+  # 1b. TDD-ENFORCED TEST GENERATION (BEFORE implementation)
+  Load ACs + Test Strategy for current scope item
+  Create e2e-scenarios.md registry entries if not exists (iteration 1)
+  Write E2E test asserting correct behavior (use real systems per mock avoidance hierarchy)
+  Run test → MUST FAIL (RED). Log RED_CONFIRMED in registry.
+    If PASS → wrong test — rewrite to test new behavior
+  Implement scope item (minimal — just enough to pass)
+  Run test → MUST PASS (GREEN). Log GREEN_CONFIRMED in registry.
+    If FAIL → fix implementation, not test
+  Refactor if needed → re-run → still PASS
+  Mock audit: if any mock added, verify it follows avoidance hierarchy
 
   Run quick quality pass (lint + typecheck on changed files)
   Mark scope item [x] if passing
@@ -163,10 +181,12 @@ WHILE iteration < max_iterations:
   all_error_acs = all Error Criteria ACs checked [x]
   all_scope_complete = all spec scope items checked [x]
   quality_clean = lint + typecheck + build + test all pass
+  e2e_coverage = all BLOCKING e2e-scenarios entries GREEN_CONFIRMED
+  tdd_proof = every GREEN_CONFIRMED has prior RED_CONFIRMED
   no_blockers = no BLOCKING review issues
 
   IF all_must_have_acs AND all_error_acs AND all_scope_complete
-     AND quality_clean AND no_blockers:
+     AND quality_clean AND e2e_coverage AND tdd_proof AND no_blockers:
     EXIT → clean (suggest `done`)
 
   # ACs are the source of truth for "is work done?"
@@ -194,11 +214,19 @@ WHILE iteration < max_iterations:
 - Lint changed files
 - Typecheck changed files
 
+**E2E pass** (after each scope item TDD cycle):
+- Verify RED_CONFIRMED logged for current AC
+- Verify GREEN_CONFIRMED logged after implementation
+- Mock audit: no new mocks of own code
+
 **Full pass** (before exit):
 - Lint changed files
 - Typecheck full project
 - Build full project
 - Test related tests
+- E2E registry validation (all BLOCKING entries GREEN_CONFIRMED)
+- TDD proof (every GREEN has prior RED)
+- Coverage check (advisory — warn on >5% drop)
 
 Auto-detect tooling from project files. See `references/quality-gates.md`.
 
@@ -263,7 +291,7 @@ Exit states:
 
 | State | Condition |
 |-------|-----------|
-| Clean | All Must Have + Error ACs pass, all scope done, gates green, no blockers |
+| Clean | All Must Have + Error ACs pass, all scope done, gates green (6 gates), e2e_coverage 100%, tdd_proof clean, no blockers |
 | Partial | Scope done but ACs failing |
 | Stuck | Hit stuck threshold, user chose to stop |
 | Hard stop | Hit max iterations |

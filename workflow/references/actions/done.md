@@ -16,20 +16,66 @@ Validate, archive spec, capture learnings. Does NOT deploy — that's human-cont
 | All Error Criteria ACs passing [x] | Yes (MANDATORY) |
 | All scope items checked [x] | Yes |
 | Ship exit was CLEAN (not partial/stuck/hard-stop) | Yes |
-| New tests for new behavior | Yes (BLOCKING) |
+| New tests for new behavior (E2E default) | Yes (BLOCKING) |
 | Existing tests passing | Yes |
 | No typecheck/lint errors | Yes |
 | No debug statements (console.log, debugger, print, pdb, etc.) | Yes |
 | No hardcoded secrets | Yes |
 | Can rollback (git revert works, no irreversible migrations) | Yes |
 | No unresolved bugs (all fixed or deferred) | Yes |
+| E2E scenario registry: 100% Must Have + Error AC coverage | Yes (BLOCKING) |
+| TDD proof: every AC has RED_CONFIRMED + GREEN_CONFIRMED | Yes (BLOCKING) |
+| Mock boundary: no mocks of own code in new tests | Yes (BLOCKING) |
+| Bug regressions: AC-B2 (RED) + AC-B3 (GREEN) + AC-B4 (DIFF) confirmed | Yes (BLOCKING, bug fixes only) |
+| Coverage threshold met | Advisory |
 | Agent docs updated for critical learnings | Advisory |
 
-**New test mandate:** Every new behavior MUST have at least one test. Not just "existing tests pass" — new code needs new tests. If test infrastructure doesn't exist, propose setting it up. If user declines, document the skip reason.
+**New test mandate:** Every new behavior MUST have at least one E2E test (unit only for pure functions). Tests must follow TDD: RED_CONFIRMED before GREEN_CONFIRMED. No mocking of own code — real systems required. If E2E infrastructure doesn't exist, propose setting it up. If user declines, document the skip and downgrade E2E gate to ADVISORY.
 
 ACs are the definition of DONE. Scope items track implementation tasks, but ACs determine if the feature actually works as specified in the user journey.
 
 If any check fails: STOP. Show what's remaining. Suggest `ship` to continue.
+
+### Step 1.5: E2E Coverage + TDD Validation (BLOCKING)
+
+```
+validate_e2e_coverage(spec, registry):
+  # Registry exists?
+  IF not exists(registry):
+    IF spec.tier in [trivial, micro]: SKIP
+    IF spec created before e2e protocol: WARN (advisory)
+    ELSE: FAIL "E2E registry missing"
+
+  # All ACs mapped?
+  unmapped = [ac for ac in spec.must_have + spec.error_acs if ac not in registry]
+  IF unmapped: FAIL "Unmapped ACs: {unmapped}"
+
+  # TDD proof: RED before GREEN
+  for entry in registry:
+    IF entry.status == GREEN_CONFIRMED AND NOT entry.had_red:
+      FAIL "TDD violation: {entry.ac} — no RED_CONFIRMED before GREEN"
+
+  # All BLOCKING entries GREEN?
+  blocking = [e for e in registry if e.required == BLOCKING]
+  not_green = [e for e in blocking if e.status != GREEN_CONFIRMED]
+  IF not_green: FAIL "Incomplete: {not_green}"
+
+  # Mock boundary clean?
+  new_test_files = get_new_test_files(git_diff)
+  for file in new_test_files:
+    IF contains_mock_of_own_code(file): FAIL "Mock boundary violation in {file}"
+
+  # Bug fix validation
+  IF spec.is_bug_fix:
+    IF NOT registry.has("AC-B2") OR registry["AC-B2"].status != GREEN_CONFIRMED:
+      FAIL "Bug fix missing RED proof (AC-B2)"
+    IF NOT registry.has("AC-B3") OR registry["AC-B3"].status != GREEN_CONFIRMED:
+      FAIL "Bug fix missing GREEN proof (AC-B3)"
+    IF NOT registry.has("AC-B4") OR registry["AC-B4"].status != GREEN_CONFIRMED:
+      FAIL "Bug fix DIFF not confirmed (AC-B4)"
+
+  PASS "100% E2E coverage, TDD proof clean"
+```
 
 **Unresolved bugs are blocking.** All entries in "Encountered Bugs" must be Fixed or Deferred before done.
 
