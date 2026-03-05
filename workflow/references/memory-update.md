@@ -1,8 +1,8 @@
 # Memory Update Protocol
 
-> **Agent:** Load this file during `done` Step 4. Read the user's agent config (global + project rules) before proposing.
+> **Agent:** Load this file whenever proposing rule/memory updates: `done` Step 4 (session learnings), `fix` PREVENT step (bug prevention rules), or any action that produces learnings worth persisting. Read the user's agent config (global + project rules) before proposing.
 
-After retro, propose updating the agent's persistent memory with learnings from this session.
+Shared protocol for reading agent config, classifying learnings, targeting the right files, and proposing updates. Used by multiple actions.
 
 ---
 
@@ -10,18 +10,32 @@ After retro, propose updating the agent's persistent memory with learnings from 
 
 **Before proposing anything, understand what already exists.**
 
-Detect which agent is running, then read the correct target files:
+Detect which agent is running, then read **all** config files that exist at both levels:
 
 ```
-Claude Code detected?
-  → Read {project}/CLAUDE.md (project root)
-  → Read ~/.claude/CLAUDE.md and ~/.claude/rules/ (user-level)
+Project-level (check all that exist):
+  {project}/CLAUDE.md
+  {project}/.claude/CLAUDE.md
+  {project}/.claude/rules/*
+  {project}/AGENTS.md
+  {project}/.cursorrules
+  {project}/.windsurfrules
+  {project}/.aider.conf.yml
+  {project}/.continue/config.json
+  {project}/codex.md
+  {project}/.opencode/config
 
-Other agent (Cursor, Windsurf, Aider, etc.)?
-  → Read {project}/AGENTS.md (universal agent config)
-  → Read agent-specific user-level config (see targets table)
+User-level (check all that exist):
+  ~/.claude/CLAUDE.md
+  ~/.claude/rules/*
+  ~/.cursorrules
+  ~/.windsurfrules
+  ~/.aider.conf.yml
+  ~/.continue/config.json
+  ~/.codex/config or ~/codex.md
+  ~/.opencode/config
 
-Neither file exists?
+No config files found at either level?
   → Flag for Step 4: propose creating with initial rules from session
 ```
 
@@ -70,21 +84,21 @@ For each learning, check:
 
 | Learning Type | Target Level | Where to Add |
 |---------------|-------------|--------------|
-| Thinking pattern (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
-| Thinking pattern (project) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| Coding rule (universal) | User-level | `~/.claude/rules/coding-{language}.md` |
-| Coding rule (language-specific) | User-level | `~/.claude/rules/coding-{language}.md` |
-| Coding rule (project-specific) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| Project convention | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| Quality check | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| Process rule (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
-| Process rule (project) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| User preference (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
-| User preference (project-specific) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
-| Anti-pattern (universal) | User-level | `~/.claude/CLAUDE.md` or `~/.claude/rules/` |
-| Anti-pattern (project-specific) | Project-level | Claude Code → `{project}/CLAUDE.md`; Others → `{project}/AGENTS.md` |
+| Thinking pattern (universal) | User-level | Agent's user-level config (see targets table) |
+| Thinking pattern (project) | Project-level | Agent's project-level config (see targets table) |
+| Coding rule (universal) | User-level | Agent's user-level config |
+| Coding rule (language-specific) | User-level | Agent's user-level config (prefer topic-specific file if supported) |
+| Coding rule (project-specific) | Project-level | Agent's project-level config |
+| Project convention | Project-level | Agent's project-level config |
+| Quality check | Project-level | Agent's project-level config |
+| Process rule (universal) | User-level | Agent's user-level config |
+| Process rule (project) | Project-level | Agent's project-level config |
+| User preference (universal) | User-level | Agent's user-level config |
+| User preference (project-specific) | Project-level | Agent's project-level config |
+| Anti-pattern (universal) | User-level | Agent's user-level config |
+| Anti-pattern (project-specific) | Project-level | Agent's project-level config |
 
-**Routing rule:** Claude Code project learnings → `{project}/CLAUDE.md`. All other agents → `{project}/AGENTS.md`. If target file doesn't exist → propose creating it in Step 4.
+**Routing rule:** Use the Agent Config Targets table below to resolve "agent's project/user-level config" to the correct file path. If the detected agent has both agent-specific and universal (`AGENTS.md`) project config, prefer agent-specific. If target file doesn't exist → propose creating it in Step 4.
 
 ## Step 4: Propose
 
@@ -133,9 +147,9 @@ Print numbered list, ask user to reply with numbers:
 **Type labels:** `rule`, `preference`, `anti-pattern`, `coding standard`, `pattern`
 
 **Target file shorthand:**
-- `P/CLAUDE.md` = `{project}/CLAUDE.md`
-- `P/AGENTS.md` = `{project}/AGENTS.md`
-- `~/CLAUDE.md` = `~/.claude/CLAUDE.md`
+- `{project config}` = agent's project-level config (resolved via Agent Config Targets table)
+- `{user config}` = agent's user-level config (resolved via Agent Config Targets table)
+- `P/AGENTS.md` = `{project}/AGENTS.md` (universal fallback)
 
 If a target file doesn't exist, add a final item: "Create {file} with selected rules? [y/n]"
 
@@ -143,19 +157,61 @@ If a target file doesn't exist, add a final item: "Create {file} with selected r
 
 | Agent | User-level | Project-level (agent-specific) | Project-level (universal) |
 |-------|-----------|-------------------------------|--------------------------|
-| Claude Code | `~/.claude/CLAUDE.md` or `~/.claude/rules/{topic}.md` | `{project}/CLAUDE.md` | `{project}/AGENTS.md` |
+| Claude Code | `~/.claude/CLAUDE.md` or `~/.claude/rules/{topic}.md` | `{project}/CLAUDE.md` or `{project}/.claude/rules/` | `{project}/AGENTS.md` |
 | Cursor | `~/.cursorrules` | `{project}/.cursorrules` | `{project}/AGENTS.md` |
 | Windsurf | `~/.windsurfrules` | `{project}/.windsurfrules` | `{project}/AGENTS.md` |
 | Aider | `~/.aider.conf.yml` | `{project}/.aider.conf.yml` | `{project}/AGENTS.md` |
 | Continue | `~/.continue/config.json` | `{project}/.continue/config.json` | `{project}/AGENTS.md` |
-| Codex | Agent config | Project config | `{project}/AGENTS.md` |
+| Codex | `~/.codex/config` or `~/codex.md` | `{project}/codex.md` | `{project}/AGENTS.md` |
+| OpenCode | `~/.opencode/config` | `{project}/.opencode/config` | `{project}/AGENTS.md` |
 | Other | Ask user for path | Ask user for path | `{project}/AGENTS.md` |
 
 **Routing logic:**
-- Claude Code project learnings → `{project}/CLAUDE.md` (standard location)
-- All other agents → `{project}/AGENTS.md` (universal agent config, project root)
-- Universal patterns (any agent) → user-level config
+- Detect which agent is running → use Agent Config Targets table to find correct file paths
+- Project-specific learnings → agent's project-level config (agent-specific column preferred)
+- Universal patterns → agent's user-level config
+- `{project}/AGENTS.md` is the universal fallback for any agent without its own project config
 - Auto-detect which agent is running. If unknown, ask the user.
+
+### Proposal Format Examples (by agent)
+
+When proposing a rule, target the correct file for the detected agent:
+
+Claude Code:
+```
+[{project}/CLAUDE.md § Coding Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Cursor:
+```
+[{project}/.cursorrules § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Windsurf:
+```
+[{project}/.windsurfrules § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Codex:
+```
+[{project}/codex.md § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+OpenCode:
+```
+[{project}/.opencode/config § Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
+
+Universal (any agent):
+```
+[{project}/AGENTS.md § Coding Rules] rule: "Always null-check optional user fields before access"
+_Prevents: null reference errors on incomplete profiles_
+```
 
 ## Rules
 

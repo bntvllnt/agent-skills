@@ -1,6 +1,6 @@
 # Session Management
 
-> **Agent:** Load this file when `ship` references session/resume/stuck logic. Also loaded by `done` for context reload.
+> **Agent:** Load this file when `ship` or `fix` references session/resume/stuck logic. Also loaded by `done` for context reload.
 
 Track progress, detect stuck states, resume across sessions.
 
@@ -56,6 +56,8 @@ When `ship` is invoked, detect current state:
 | RESUMING | Resume from last incomplete scope item |
 | STUCK | Present escalation options to user |
 | READY_FOR_DONE | Suggest `done` |
+
+**Fix action resume:** For `fix` mode, RESUMING detects which TDD phase was last completed (BASELINE/RED/GREEN/DIFF) from the spec Progress section and resumes from the next incomplete phase.
 
 ## Resume Protocol
 

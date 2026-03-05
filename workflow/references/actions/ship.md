@@ -4,6 +4,8 @@
 
 Implement features with a build/review/fix loop. Handles both quick one-shot and iterative spec-driven work.
 
+**Bug fix?** Use the `fix` action instead. See [fix.md](fix.md).
+
 ---
 
 ## Mode Detection
@@ -30,16 +32,6 @@ Before starting any implementation, create tasks in your agent's built-in task/t
 [ ] Fix BLOCKING issues
 [ ] Full pass: lint (changed) + typecheck (full) + build (full) + test (related) + E2E (registry) + coverage (advisory)
 [ ] Exit check: all Must Have ACs + Error ACs + scope items + e2e_coverage passing
-```
-
-**Bug mode tasks (replace scope items above):**
-```
-[ ] BASELINE: run full test suite, record results (BLOCKING)
-[ ] RED: write failing E2E regression test — MUST FAIL (BLOCKING)
-[ ] GREEN: implement fix, E2E test MUST PASS — no mocking own code (BLOCKING)
-[ ] DIFF: run full suite, compare to baseline — zero new failures (BLOCKING)
-[ ] SCAN: check codebase for sibling bugs (propose only)
-[ ] PREVENT: propose prevention rules (max 2, advisory, non-trivial bugs only)
 ```
 
 Update tasks as you work: mark in-progress when starting, complete when done. One task in-progress at a time.
@@ -73,54 +65,6 @@ Has spec?
     standard (100+)   → Create full spec (suggest `plan` first)
     emergency/hotfix   → Skip spec, log reason
 ```
-
-## Bug Mode Detection
-
-When fixing bugs, classify:
-
-| Type | Signal | Approach |
-|------|--------|----------|
-| Simple | Clear cause, single file | Anti-cascade TDD (below) |
-| Complex | Unclear cause, multiple files, intermittent | Scientific debugging (see patterns/debugging.md) → then anti-cascade TDD |
-
-Complex bugs require scientific debugging FIRST:
-1. Symptom capture (exact error, reproduction steps)
-2. Hypothesis formation (ranked by likelihood)
-3. Evidence collection (binary search, instrumentation)
-4. Root cause confirmation
-5. Then apply anti-cascade TDD below
-
-### Anti-Cascade TDD Protocol (BLOCKING)
-
-All bug fixes follow this protocol. E2E regression tests required. Full details: [regression-testing.md](../patterns/regression-testing.md).
-
-```
-1. BASELINE → Run full test suite, record pass/fail counts (BLOCKING)
-2. RED      → Write E2E regression test reproducing bug (MUST FAIL) (BLOCKING)
-3. GREEN    → Implement fix, E2E test MUST PASS, no mocking own code (BLOCKING)
-4. DIFF     → Run full test suite again, compare to baseline (BLOCKING)
-5. BLOCK    → Any NEW failures = BLOCKING rollback — fix regressions or revert
-6. SCAN     → Check codebase for sibling bugs (same pattern) — propose only
-7. PREVENT  → Propose max 2 rules (advisory, user approves)
-```
-
-All steps except SCAN/PREVENT are BLOCKING — cannot skip.
-
-**DIFF is the anti-cascade mechanism.** By comparing full suite results before and after, you catch any regression the fix introduces — before it cascades.
-
-**PREVENT is lightweight:** max 2 proposals, inline approval, advisory (not blocking). Covers coding rules, anti-patterns, quality checks only. Skip for trivial bugs and emergencies. Full details: [regression-testing.md](../patterns/regression-testing.md) Step 7.
-
-If fix introduces regressions (DIFF fails):
-- Option A: Fix regressions without breaking the original fix
-- Option B: Roll back, find a different approach
-- Option C: Escalate to user with evidence
-
-**Bug fix ACs (auto-generate if not in spec):**
-- AC-B1: GIVEN {reproduction steps} WHEN {trigger} THEN bug no longer occurs
-- AC-B2: GIVEN E2E regression test WHEN run against unfixed code THEN test FAILS (RED_CONFIRMED)
-- AC-B3: GIVEN E2E regression test WHEN run against fixed code THEN test PASSES (GREEN_CONFIRMED)
-- AC-B4: GIVEN full test suite WHEN run after fix THEN no NEW failures vs baseline
-- **All AC-B entries logged in e2e-scenarios registry. AC-B2 + AC-B3 + AC-B4 are BLOCKING.**
 
 ## ONE-SHOT Flow
 
@@ -248,16 +192,29 @@ Three levels, triggered by lack of progress:
 
 ## Bug Encounter Protocol
 
-When a bug is found during implementation:
+When a bug is found during feature implementation:
 
 ```
 1. Log bug in spec under "## Encountered Bugs"
    Format: BUG-{N}: {summary} | Status: Investigating/Fixed/Deferred
 2. Classify: blocks current scope item? (Y/N)
-3. If blocking: fix immediately, add regression test
+3. If blocking: pause ship, run `fix` action (see fix.md)
 4. If non-blocking: defer, continue with scope
 5. All bugs must be Fixed or Deferred before `done`
 ```
+
+**Resume after fix:** When the `fix` action completes, it updates the spec's Encountered Bugs section and Progress table (LEARN step). Ship resumes automatically:
+
+```
+fix completes → spec updated with BUG-{N} status: Fixed
+  → ship detects RESUMING state (session-management.md)
+  → reads spec Progress section
+  → finds first non-[x] scope item
+  → continues implementation from that point
+  → runs quick quality pass before continuing
+```
+
+The handoff is seamless because both actions share the same spec file and session management state machine.
 
 ## Review Integration
 
@@ -365,7 +322,7 @@ No flags needed. The agent detects intent from natural language:
 
 | User Says | Agent Does |
 |-----------|-----------|
-| "emergency fix", "hotfix" | Skip spec ceremony |
+| "emergency fix", "hotfix" | Route to `fix` action with abbreviated mode |
 | "skip tests", "don't run tests" | Skip test gate (log reason) |
 | "skip review" | Skip review perspectives |
 | "deploy to production", "production ready" | Run production validation |
