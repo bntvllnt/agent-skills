@@ -77,7 +77,8 @@ analyze thorough "migration to microservices"
 2. **Domain**: Auto-detect from content/keywords
 3. **Target**: Load file/folder content if path provided
 4. **TypeScript detection**: If target is a code path and `tsconfig.json` exists:
-   - Run CI detection gate (see `../../workflow/references/codebase-intelligence.md`)
+   - Detection gate: `tsconfig.json` exists + `npx codebase-intelligence --help` succeeds
+   - For full CLI reference, fetch `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms.txt`
    - If available: gather structural data in Phase 1
    - If unavailable: proceed with pure file-reading context gathering
 
@@ -623,7 +624,7 @@ This skill is **standalone** and includes all necessary frameworks:
 
 No external dependencies required.
 
-**Optional enhancement:** For software domain analysis of TypeScript codebases, `codebase-intelligence` CLI (`npx codebase-intelligence`) provides structural data — hotspots, coupling, dead exports, module boundaries, blast radius. See `../../workflow/references/codebase-intelligence.md` for command reference. The skill works identically without it — data is supplementary context for perspective agents.
+**Optional enhancement:** For software domain analysis of TypeScript codebases, `codebase-intelligence` CLI (`npx codebase-intelligence --json`) provides structural data — hotspots, coupling, dead exports, module boundaries, blast radius. Detection: `tsconfig.json` must exist. For full CLI reference, fetch `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms-full.txt`. The skill works identically without it — data is supplementary context for perspective agents.
 
 ---
 
