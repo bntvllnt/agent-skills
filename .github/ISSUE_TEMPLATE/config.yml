@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/bntvllnt/agent-skills/security/advisories/new
+    about: Report security vulnerabilities privately
+  - name: Discord Community
+    url: https://bntvllnt.com/discord
+    about: Questions, discussion, and support
+  - name: Website
+    url: https://bntvllnt.com
+    about: Learn more about the project and maintainer
+  - name: Book a Meeting
+    url: https://bntvllnt.com/book
+    about: Schedule a meeting for consultation or collaboration

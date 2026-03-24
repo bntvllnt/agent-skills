@@ -180,6 +180,17 @@ Feel free to:
 
 ---
 
+## Community
+
+- [Website](https://bntvllnt.com) — about the maintainer and projects
+- [Discord](https://bntvllnt.com/discord) — questions, discussion, support
+- [GitHub](https://bntvllnt.com/github) — issues, PRs, code
+- [X / Twitter](https://bntvllnt.com/x) — updates, DMs for security
+- [LinkedIn](https://bntvllnt.com/linkedin) — professional inquiries
+- [Book a meeting](https://bntvllnt.com/book) — consultation, collaboration, or anything
+
+---
+
 ## License
 
 MIT License - Free to use, modify, and distribute.
