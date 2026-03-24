@@ -6,6 +6,19 @@
 
 ---
 
+## Documentation (Single Source of Truth)
+
+Command reference, flags, metrics, data model, and tool selection guide live in the upstream repo — not here. Fetch the appropriate doc before first use:
+
+| Doc | URL | When to Use |
+|-----|-----|-------------|
+| **llms.txt** (summary) | `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms.txt` | Quick orientation — commands, capabilities, tool selection |
+| **llms-full.txt** (complete) | `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms-full.txt` | Full reference — architecture, data model, metrics, all CLI syntax, flags |
+
+**Fetch once per session** using WebFetch or `curl`. These files are always up-to-date with the latest release.
+
+---
+
 ## Detection Gate
 
 Before using any command, verify both conditions:
@@ -24,73 +37,56 @@ Cache detection result per session. Do not re-check on every command.
 ## Invocation Pattern
 
 ```bash
-npx codebase-intelligence <command> --json <path> [flags]
+npx codebase-intelligence <command> <path> [flags] --json
 ```
 
 Always use `--json` for machine-readable output. Timeout: 30s per command. Non-zero exit or timeout = silent fallback to grep/glob/read.
 
 ---
 
-## Commands
+## Quick Reference (Common Workflows)
 
-### Discovery
+For full command syntax and flags, see `llms-full.txt` above.
 
-| Command | Purpose | Example | Fallback |
-|---------|---------|---------|----------|
-| `overview` | Codebase snapshot: file count, module count, graph shape, top metrics | `npx codebase-intelligence overview --json ./src` | `find` + manual counting |
-| `modules` | Module structure and cross-dependencies | `npx codebase-intelligence modules --json ./src` | Grep for import paths |
-| `groups` | Top-level directory aggregates with metrics | `npx codebase-intelligence groups --json ./src` | `ls` + manual inspection |
-| `clusters` | Louvain community detection — file groupings | `npx codebase-intelligence clusters --json ./src` | Manual folder analysis |
-| `search` | BM25 keyword search across codebase | `npx codebase-intelligence search --json ./src "query"` | `grep` / Grep tool |
-
-### Analysis
-
-| Command | Purpose | Example | Fallback |
-|---------|---------|---------|----------|
-| `hotspots` | Rank files by architectural metric | `npx codebase-intelligence hotspots --json ./src --metric complexity --limit 10` | Manual code review |
-| `forces` | Cohesion/tension analysis per module | `npx codebase-intelligence forces --json ./src` | Manual architecture review |
-| `dead-exports` | Unused exports safe for removal | `npx codebase-intelligence dead-exports --json ./src --limit 20` | Grep for unused exports |
-| `file` | Detailed context for a single file: imports, exports, coupling, complexity | `npx codebase-intelligence file --json ./src/index.ts` | Read + manual analysis |
-| `changes` | Git diff analysis with risk assessment (coupling, blast radius, complexity delta) | `npx codebase-intelligence changes --json ./src` | `git diff` + manual risk classification |
-
-### Impact & Tracing
-
-| Command | Purpose | Example | Fallback |
-|---------|---------|---------|----------|
-| `dependents` | File-level blast radius — who imports this file? | `npx codebase-intelligence dependents --json ./src/utils.ts` | Grep for import references |
-| `symbol` | Callers/callees for a specific function or export | `npx codebase-intelligence symbol --json ./src functionName` | Grep for function references |
-| `impact` | Symbol-level transitive blast radius | `npx codebase-intelligence impact --json ./src parseCodebase` | Manual call chain tracing |
-| `processes` | Entry-point execution flow tracing | `npx codebase-intelligence processes --json ./src` | Manual code path tracing |
-| `rename` | Discover all references for safe refactoring | `npx codebase-intelligence rename --json ./src oldName` | Grep + find-replace |
+| Question | Command |
+|----------|---------|
+| What does this codebase look like? | `npx codebase-intelligence overview ./src --json` |
+| What are the riskiest files? | `npx codebase-intelligence hotspots ./src --metric complexity --json` |
+| Tell me about file X | `npx codebase-intelligence file ./src <file> --json` |
+| What breaks if I change file X? | `npx codebase-intelligence dependents ./src <file> --json` |
+| What breaks if I change function X? | `npx codebase-intelligence impact ./src <symbol> --json` |
+| Who calls this function? | `npx codebase-intelligence symbol ./src <name> --json` |
+| What changed + risk? | `npx codebase-intelligence changes ./src --json` |
+| Find unused exports | `npx codebase-intelligence dead-exports ./src --json` |
+| Module architecture | `npx codebase-intelligence modules ./src --json` |
+| Architectural tensions | `npx codebase-intelligence forces ./src --json` |
+| Find all references for rename | `npx codebase-intelligence rename ./src <oldName> <newName> --json` |
+| Execution flow tracing | `npx codebase-intelligence processes ./src --json` |
+| File community clusters | `npx codebase-intelligence clusters ./src --json` |
 
 ---
 
-## Flags
+## Fallback (When CI Unavailable)
 
-| Flag | Applies To | Description |
-|------|-----------|-------------|
-| `--json` | All commands | Machine-readable JSON output (ALWAYS use) |
-| `--force` | All commands | Rebuild cache even if valid |
-| `--limit <n>` | hotspots, dead-exports, others | Restrict result count |
-| `--metric <m>` | hotspots | Select ranking metric (see below) |
+Every CI command has a grep/glob/read equivalent. If CI is unavailable or fails, fall back silently:
 
----
-
-## Metrics (for `--metric` flag)
-
-| Metric | What It Measures |
-|--------|-----------------|
-| `pagerank` | Most-referenced files by graph importance |
-| `betweenness` | Bridge files connecting disconnected modules |
-| `coupling` | File entanglement (fan-out ratio) |
-| `cohesion` | Module internal cohesiveness |
-| `tension` | Files pulled across modules (entropy-based) |
-| `churn` | Git commit frequency |
-| `complexity` | Average cyclomatic complexity of exports |
-| `blast-radius` | Transitive dependents affected by change |
-| `dead-exports` | Unused exports safe for removal |
-| `coverage` | Test file existence per source file |
-| `escape-velocity` | Module should become its own package |
+| CI Command | Fallback |
+|------------|----------|
+| `overview` | `find` + manual file counting |
+| `dependents` | Grep for import references |
+| `symbol` | Grep for function references |
+| `impact` | Manual call chain tracing |
+| `hotspots` | Manual code review |
+| `changes` | `git diff` + manual risk classification |
+| `file` | Read + manual analysis |
+| `forces` | Manual architecture review |
+| `dead-exports` | Grep for unused exports |
+| `modules` | Grep for import paths |
+| `rename` | Grep + find-replace |
+| `processes` | Manual code path tracing |
+| `clusters` | Manual folder analysis |
+| `groups` | `ls` + manual inspection |
+| `search` | Grep tool |
 
 ---
 
@@ -110,4 +106,3 @@ Command fails or times out (30s)?
   → Never surface CI errors to user
   → Never block workflow on CI availability
 ```
-
