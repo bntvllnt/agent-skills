@@ -1,0 +1,1978 @@
+# Agent Skills
+
+> Collection of reusable AI agent skills — capabilities for any domain via skills.sh.
+
+Agent Skills is a collection of reusable AI agent skills compatible with Claude Code, OpenCode, Windsurf, Cursor, and more via [skills.sh](https://skills.sh). Install with `npx skills add bntvllnt/agent-skills`. Available skills include Analyze (multi-perspective analyzer), Skill Builder (create/validate skills), Git (workflow + worktrees + PRs), GitHub (CLI operations), Convex (backend + MCP), Workflow (high-velocity solo development), and tmux (terminal multiplexer management).
+
+## Docs
+
+### README
+
+<div align="center">
+
+# 🎯 Agent Skills
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Skills](https://img.shields.io/badge/skills-7-blue.svg)](./#available-skills)
+[![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
+
+**Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
+
+[GitHub](https://github.com/bntvllnt) • [Twitter](https://twitter.com/bntvllnt) • [Web](https://bntvllnt.com)
+
+</div>
+
+---
+
+## Installation
+
+```bash
+npx skills add bntvllnt/agent-skills
+```
+
+---
+
+## Available Skills
+
+### [Analyze](./analyze/) - Universal Multi-Perspective Analyzer
+
+Multi-perspective analysis for any topic, file, idea, or decision. Three modes: quick, standard, deep.
+
+[View skill documentation →](./analyze/SKILL.md)
+
+---
+
+### [Skill Builder](./skill-builder/) - Build Correct Skills
+
+Create/update/delete skills with validated templates, safe defaults, and cross-skill consistency checks.
+
+[View skill documentation →](./skill-builder/SKILL.md)
+
+---
+
+### [Git](./git/) - Git Workflow + Worktrees + PRs
+
+Unified git workflow: branch-first commits, worktree management, and PR creation/review flows.
+
+[View skill documentation →](./git/SKILL.md)
+
+---
+
+### [GitHub](./github/) - GitHub CLI (gh)
+
+GitHub operations via `gh` CLI: repos, issues, PRs, Actions, releases, and CI monitoring.
+
+[View skill documentation →](./github/SKILL.md)
+
+---
+
+### [Convex](./convex/) - Convex Backend + MCP
+
+Build and operate Convex backends with best practices, validation, and Convex MCP workflows.
+
+[View skill documentation →](./convex/SKILL.md)
+
+---
+
+### [Workflow](./workflow/) - High-Velocity Solo Development
+
+Idea to production same-day. Spec-first, quality-gated development: plan, spike, ship, fix, review, done, drop.
+
+[View skill documentation →](./workflow/SKILL.md)
+
+---
+
+### [tmux](./tmux/) - Terminal Multiplexer Management
+
+Complete tmux management: sessions, windows, panes, layouts, and scripting/automation.
+
+[View skill documentation →](./tmux/SKILL.md)
+
+---
+
+## Installation Options
+
+Install specific skill:
+
+```bash
+npx skills add bntvllnt/agent-skills --skill analyze
+
+npx skills add bntvllnt/agent-skills --skill skill-builder
+
+npx skills add bntvllnt/agent-skills --skill git
+
+npx skills add bntvllnt/agent-skills --skill github
+
+npx skills add bntvllnt/agent-skills --skill convex
+
+npx skills add bntvllnt/agent-skills --skill workflow
+
+npx skills add bntvllnt/agent-skills --skill tmux
+```
+
+Global install:
+```bash
+npx skills add bntvllnt/agent-skills --skill analyze -g
+
+npx skills add bntvllnt/agent-skills --skill skill-builder -g
+
+npx skills add bntvllnt/agent-skills --skill git -g
+
+npx skills add bntvllnt/agent-skills --skill github -g
+
+npx skills add bntvllnt/agent-skills --skill convex -g
+
+npx skills add bntvllnt/agent-skills --skill workflow -g
+
+npx skills add bntvllnt/agent-skills --skill tmux -g
+```
+
+Specific agent:
+```bash
+npx skills add bntvllnt/agent-skills --skill analyze --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill skill-builder --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill git --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill github --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill workflow --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill tmux --agent claude-code
+```
+
+---
+
+## Usage Examples
+
+Quick analysis:
+```bash
+analyze quick "our pricing strategy"
+```
+
+Standard analysis (default):
+```bash
+analyze "SaaS product for developers"
+```
+
+Deep analysis:
+```bash
+analyze deep "migration to microservices"
+```
+
+Analyze files:
+```bash
+analyze src/auth.ts
+```
+
+```bash
+analyze package.json
+```
+
+Personal decisions:
+```bash
+analyze "should I accept this job offer"
+```
+
+---
+
+## Contributing
+
+This is a public collection of skills developed by [@bntvllnt](https://github.com/bntvllnt).
+
+Feel free to:
+- Fork and adapt for your needs
+- Submit issues for bugs or improvement suggestions
+- Share your own variations
+
+---
+
+## License
+
+MIT License - Free to use, modify, and distribute.
+
+### Contributing
+
+# Contributing to Agent Skills
+
+Thanks for your interest in contributing! This guide explains how to get involved.
+
+## Code of Conduct
+
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). By participating, you agree to uphold this code. Report unacceptable behavior via [Discord](https://bntvllnt.com/discord).
+
+## How to Contribute
+
+### Reporting Bugs
+
+1. Check [existing issues](https://github.com/bntvllnt/agent-skills/issues) first
+2. Use the [bug report template](https://github.com/bntvllnt/agent-skills/issues/new?template=bug_report.yml)
+3. Include: steps to reproduce, expected vs actual behavior, environment details, relevant logs
+
+### Suggesting Features
+
+1. Check [existing requests](https://github.com/bntvllnt/agent-skills/issues?q=label%3Aenhancement)
+2. Use the [feature request template](https://github.com/bntvllnt/agent-skills/issues/new?template=feature_request.yml)
+3. Describe the problem you're solving, not just the solution
+
+### Submitting Changes
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feat/your-feature`
+3. Make your changes
+4. Commit using [conventional commits](https://www.conventionalcommits.org/):
+   - `feat: add new feature`
+   - `fix: resolve bug`
+   - `docs: update documentation`
+   - `chore: maintenance task`
+5. Push and open a Pull Request against `master`
+
+## Development Setup
+
+```bash
+git clone https://github.com/bntvllnt/agent-skills.git
+cd agent-skills
+```
+
+No build step required — skills are pure Markdown files.
+
+## Skill Structure
+
+Each skill follows this structure:
+
+```
+skill-name/
+├── SKILL.md          # Main skill file (required)
+├── README.md         # Skill documentation
+├── references/       # Reference docs loaded on-demand
+└── EXAMPLE.md        # Usage examples (optional)
+```
+
+### Key Conventions
+
+- `SKILL.md` must include YAML frontmatter (`name`, `description`)
+- Reference files are loaded by the action router, not eagerly
+- Skills must be agent-agnostic (Claude Code, OpenCode, Cursor, etc.)
+- Use relative paths for cross-references within a skill
+- Skills must NOT cross-reference other skills (independence)
+
+## Pull Request Guidelines
+
+- Keep PRs focused — one skill or feature per PR
+- Update the skill's README.md for any behavior changes
+- Follow existing patterns in similar skills
+- Request review from maintainers
+
+## First-Time Contributors
+
+Look for issues labeled [`good first issue`](https://github.com/bntvllnt/agent-skills/labels/good%20first%20issue).
+
+## Community
+
+- [Website](https://bntvllnt.com) — about the maintainer and projects
+- [Discord](https://bntvllnt.com/discord) — questions, discussion, support
+- [GitHub](https://bntvllnt.com/github) — issues, PRs, code
+- [X / Twitter](https://bntvllnt.com/x) — updates, DMs for security
+- [LinkedIn](https://bntvllnt.com/linkedin) — professional inquiries
+- [Book a meeting](https://bntvllnt.com/book) — consultation, collaboration, or anything
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the same license as the project (MIT).
+
+### Changelog
+
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+## [1.10.1] - 2026-03-24
+
+- feat(workflow,analyze): integrate codebase-intelligence CLI for TypeScript repos (#12)
+
+## [1.10.0] - 2026-03-24
+
+- feat(workflow): extract fix action from ship for dedicated bug fixing (#10)
+- feat(workflow): add E2E-first testing with TDD enforcement & anti-regression (#11)
+- feat(workflow): add PREVENT step to bug fix anti-cascade protocol (#9)
+- docs(readme): standardize skill descriptions to concise one-liners
+
+## [1.9.0] - 2026-03-22
+
+- feat(workflow): add focus action for codebase priority analysis (#8)
+- feat(workflow): add auto testing, agent self-improvement, anti-regression (#7)
+- feat(workflow): add production-grade auto-selecting code review (#6)
+- feat(tmux): add complete tmux management skill (#5)
+
+## [1.8.0] - 2026-03-21
+
+- feat(tmux): add complete tmux management skill (#5)
+
+## [1.7.1] - 2026-03-20
+
+- chore(workflow): tighten activation triggers to avoid cross-skill overlap
+- chore(github): add sponsor funding config
+
+## Skills
+
+### Analyze
+Source: analyze/SKILL.md
+
+---
+name: analyze
+description: Universal multi-perspective analyzer for any topic, file, idea, or decision. Extract key points, find gaps/risks, identify improvements with actionable plans.
+---
+
+# Universal Analyzer
+
+**A standalone skill for multi-perspective analysis of any topic, file, idea, or decision.**
+
+Use when:
+- Need to extract KEY POINTS from anything
+- Want multi-perspective gap/risk analysis (4-10 experts)
+- Need improvement opportunities with actionable plans
+- Want quick summary OR deep analysis mode
+- Need first-principles brief that challenges assumptions
+
+Triggers: "analyze", "key points", "what's important", "improve this", "review", "examine", "assess", "analysis", "deep analysis", "run deep analysis", "brief", "challenge assumptions", "first principles"
+
+## Agent Capabilities
+
+| Capability | Used For | Required | Fallback |
+|------------|----------|----------|----------|
+| File read | Load target files/folders | Yes | — |
+| Sub-agent dispatch | Parallel perspective analysis | Recommended | Sequential in main thread |
+| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX software domain | No | Pure reasoning from file contents |
+
+This skill remains fully functional without CLI tools. Codebase intelligence is an optional enhancement for the software domain only.
+
+---
+
+## Table of Contents
+
+1. [Quick Start](#quick-start)
+2. [Analysis Modes](#analysis-modes)
+3. [Execution Flow](#execution-flow)
+4. [Output Formats](#output-formats)
+5. [Perspectives Library](#perspectives-library)
+6. [Thinking Framework](#thinking-framework)
+7. [First-Principles Analysis](#first-principles-analysis)
+8. [Examples](#examples)
+
+---
+
+## Quick Start
+
+```bash
+# Quick analysis (fast key points)
+analyze quick "our pricing strategy"
+analyze brief src/api/auth.ts
+
+# Standard analysis (default)
+analyze "SaaS product for developers"
+analyze "should I accept this job offer"
+analyze package.json
+
+# Deep analysis (comprehensive)
+analyze deep "company rebrand strategy"
+analyze thorough "migration to microservices"
+```
+
+---
+
+## Analysis Modes
+
+| Mode | Triggers | Agents | Duration | Output |
+|------|----------|--------|----------|--------|
+| **Quick** | "quick", "fast", "brief", "summary" | 0-1 | 30-60s | Key Points + Actions |
+| **Standard** | (default) | 4-6 | 2-4min | Multi-Perspective + Roadmap |
+| **Deep** | "deep", "thorough", "comprehensive" | 6-10 | 5-8min | Full Synthesis + Detailed Plan |
+
+---
+
+## Execution Flow
+
+### Phase 0: Detection
+1. **Mode**: Detect from keywords (quick/standard/deep)
+2. **Domain**: Auto-detect from content/keywords
+3. **Target**: Load file/folder content if path provided
+4. **TypeScript detection**: If target is a code path and `tsconfig.json` exists:
+   - Detection gate: `tsconfig.json` exists + `npx codebase-intelligence --help` succeeds
+   - For full CLI reference, fetch `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms.txt`
+   - If available: gather structural data in Phase 1
+   - If unavailable: proceed with pure file-reading context gathering
+
+### Phase 1: Context Gathering
+- **File/folder path** → Read files
+- **Software domain + TypeScript + CI available** → Augment file reading with:
+  - `npx codebase-intelligence overview --json <path>` → project structure snapshot
+  - `npx codebase-intelligence modules --json <path>` → module boundaries and cross-deps
+  - `npx codebase-intelligence groups --json <path>` → directory-level aggregates
+  Include as structured context alongside file contents. If CI unavailable: read files only.
+- **Topic/idea** → Use provided context
+- **Unfamiliar domain** → Optional web search
+
+### Phase 2: Analysis
+
+#### Quick Mode
+Direct analysis by primary agent, no sub-agents
+
+#### Standard Mode
+1. Select 4-6 perspectives based on domain
+2. Launch all perspectives in parallel (single message block)
+3. Each agent answers 7 core questions
+
+#### Deep Mode
+1. Select 6-10 perspectives based on domain
+2. Launch all perspectives in parallel (single message block)
+3. Each agent answers 12 questions (7 core + 5 deep)
+
+#### Software Domain Enhancement (TypeScript + CI available)
+
+Include pre-computed structural data in software domain agent prompts:
+- `npx codebase-intelligence hotspots --json --metric complexity --limit 20` → complexity/churn hotspots
+- `npx codebase-intelligence forces --json` → cohesion/coupling tensions per module
+- `npx codebase-intelligence dead-exports --json --limit 20` → unused export analysis
+- `npx codebase-intelligence clusters --json` → dependency community clusters
+
+Agents receive this as structured context alongside the target content. Supplements their analysis — does not replace independent reasoning. If CI unavailable: agents analyze from file contents only.
+
+### Phase 3: Synthesis
+After ALL agents complete:
+1. Aggregate Failure Hypotheses → prioritize Critical→High→Med→Low
+2. Extract TOP 10 key points → rank by consensus
+3. Identify gaps → Critical/High/Medium/Low
+4. Generate actionable roadmap with dependencies
+
+---
+
+## Output Formats
+
+### Quick Mode
+
+```markdown
+# Quick Analysis: [Target]
+
+**Mode**: Quick | **Domain**: [Domain] | **Date**: [Date]
+
+## The Essence
+[1-2 sentences: What this ACTUALLY is at its core, stripped of complexity]
+
+## Verified Facts
+- [Fact 1] — evidence: `path/file:line` or [source]
+- [Fact 2] — evidence: ...
+- [Fact 3] — evidence: ...
+
+## Key Points (Top 5-10)
+1. **[Most Important]**: [Explanation]
+2. **[Second]**: [Explanation]
+...
+
+## Assumptions to Challenge
+
+| Assumption | Evidence For | Evidence Against | Verdict |
+|------------|-------------|------------------|---------|
+| [Assumed thing] | [If any] | [If any] | Validate/Keep/Discard |
+
+## What You Haven't Considered
+
+1. **[Critical Item]**: [Why this matters, what to do about it]
+2. **[Hidden Risk/Opportunity]**: [Explanation]
+3. **[Simpler Alternative?]**: [If exists, describe it]
+
+## The Real Question
+[Reframe what the user should actually be asking about this]
+
+## Quick Actions (Top 3-5)
+- [ ] [Action 1] - [Why/Impact]
+- [ ] [Action 2] - [Why/Impact]
+- [ ] [Action 3] - [Why/Impact]
+
+## Critical Risk to Watch
+[The one thing that could derail this]
+```
+
+### Standard Mode
+
+```markdown
+# Analysis: [Target]
+
+**Mode**: Standard | **Domain**: [Domain] | **Perspectives**: [Count]
+**Date**: [Date] | **Hypotheses**: [Count] total
+
+## The Essence
+[1-2 sentences: What this ACTUALLY is at its core, stripped of complexity]
+
+## Executive Summary
+[2-3 sentences capturing most critical findings]
+
+## First-Principles Analysis
+
+### Verified Facts
+- [Fact 1] — evidence: `path/file:line` or [source] — confidence: High/Medium/Low
+- [Fact 2] — evidence: ... — confidence: ...
+
+### Assumptions to Challenge
+
+| Assumption | Evidence For | Evidence Against | Verdict |
+|------------|-------------|------------------|---------|
+| [Assumed thing] | [If any] | [If any] | Validate/Keep/Discard |
+
+### What You Haven't Considered
+
+1. **[Critical Item]**: [Why this matters, what to do about it]
+2. **[Hidden Risk/Opportunity]**: [Explanation]
+3. **[Simpler Alternative?]**: [If exists, describe it]
+4. **[Downstream Impact]**: [What this affects that wasn't mentioned]
+
+### The Real Question
+[Reframe what the user should actually be asking about this]
+
+## Failure Hypotheses (Aggregated)
+
+| ID | Type | IF (Trigger) | THEN (Failure) | BECAUSE | Sev | Mitigation |
+|----|------|--------------|----------------|---------|-----|------------|
+| S001 | Security | ... | ... | ... | Crit | ... |
+| M001 | Misuse | ... | ... | ... | High | ... |
+
+### Critical Mitigations Required
+- [ ] {mitigation} ← Addresses: S001, M001
+
+## Key Points (Ranked by Importance)
+
+### Consensus Points (Flagged by 3+ perspectives)
+1. **[Point]** - [Why important] (Flagged by: [Perspectives])
+
+### Important Points
+2. **[Point]** - [Explanation]
+
+### Divergent Views
+- **[Topic]**: [Perspective A] sees X, [Perspective B] sees Y
+  - *Implication*: [What this tension means]
+
+## Gap Analysis
+
+### Critical Gaps (Action Required)
+| Gap | Flagged By | Impact | Suggested Action |
+|-----|------------|--------|------------------|
+| ... | ... | High | ... |
+
+### High Priority Gaps
+[Grouped by theme]
+
+## Improvement Opportunities
+
+### Top 5 Improvements
+1. **[Improvement]**: [Details] - Expected Impact: [High/Medium/Low]
+
+## Action Plan & Roadmap
+
+### Immediate Actions (This Week)
+| Action | Owner | Dependencies | Success Criteria |
+|--------|-------|--------------|------------------|
+| ... | [TBD] | None | ... |
+
+### Short-term (1-2 Weeks)
+| Action | Dependencies | Resources Needed | Outcome |
+|--------|--------------|------------------|---------|
+| ... | Immediate #1 | ... | ... |
+
+## Cross-cutting Concerns
+[Issues flagged by 3+ perspectives]
+```
+
+### Deep Mode
+
+Deep mode extends Standard format with:
+- Additional 5 questions per agent (12 total)
+- Medium-term (1 Month) and Long-term (3+ Months) roadmap sections
+- Dependency map visualization
+- Risk mitigation table
+- More detailed failure hypotheses
+
+---
+
+## Perspectives Library
+
+### Domain Detection
+
+Analyze content/keywords to auto-detect domain:
+
+| Domain | Trigger Keywords | Example Targets |
+|--------|------------------|-----------------|
+| **business** | startup, business, market, revenue | "coffee subscription", business-plan.md |
+| **product** | product, feature, user, MVP | "habit tracking app", roadmap.md |
+| **software** | API, code, function, class, tech | src/auth, package.json |
+| **process** | workflow, process, SOP, operations | "hiring workflow", "incident response" |
+| **document** | doc, article, proposal, report | "resume", proposal.docx |
+| **research** | research, study, hypothesis, data | "hypothesis: remote work" |
+| **creative** | design, art, brand, visual | "rebrand", logo-designs/ |
+| **personal** | decision, "should I", career, life | "moving to Austin", "career change" |
+| **legal** | contract, legal, policy, terms | "employment contract" |
+| **financial** | budget, investment, cost, ROI | "Q4 budget", "pricing strategy" |
+| **marketing** | campaign, marketing, sales, brand | "email campaign", "launch strategy" |
+| **event** | event, conference, launch | "product launch", "conference plan" |
+| **education** | course, curriculum, teaching | "bootcamp curriculum" |
+| **general** | (fallback when no domain matches) | Any general topic |
+
+### Perspective Roles by Domain
+
+#### Business Domain
+1. **Startup Founder** - Viability, growth, scalability
+2. **Investor** - ROI, risk, market size
+3. **CFO** - Unit economics, burn rate, margins
+4. **Customer** - Value proposition, willingness to pay
+5. **Competitor** - Differentiation, competitive moats
+6. **Market Analyst** - TAM, trends, timing
+
+#### Product Domain
+1. **Product Manager** - User needs, roadmap, prioritization
+2. **Designer (UX)** - Usability, user flows, accessibility
+3. **Customer** - Actual use cases, pain points
+4. **QA Engineer** - Edge cases, error states
+5. **Data Analyst** - Metrics, success criteria
+6. **Support Lead** - Maintenance burden, user confusion
+
+#### Software Domain
+1. **Security Engineer** - Vulnerabilities, attack vectors
+2. **DevOps** - Deployment, monitoring, reliability
+3. **Architect** - Design patterns, scalability, debt
+4. **QA Engineer** - Test coverage, edge cases
+5. **Performance Engineer** - Bottlenecks, resource usage
+6. **Tech Lead** - Maintainability, team velocity
+
+#### Process Domain
+1. **Operator** - Daily execution, friction points
+2. **Manager** - Efficiency, bottlenecks, metrics
+3. **Employee** - Experience, clarity, pain points
+4. **Auditor** - Compliance, documentation, risks
+5. **Improvement Specialist** - Waste, optimization
+
+#### Personal Domain
+1. **Future You (1 year)** - Long-term impact
+2. **Future You (5 years)** - Career trajectory
+3. **Skeptic** - Risks, downsides, failure modes
+4. **Supporter** - Strengths, opportunities
+5. **Financial Advisor** - Money implications
+6. **Life Coach** - Values alignment, fulfillment
+
+#### General Domain (Fallback)
+1. **Analyst** - Facts, data, patterns
+2. **Critic** - Weaknesses, risks, gaps
+3. **Advocate** - Strengths, opportunities
+4. **Pragmatist** - Feasibility, resources, timeline
+5. **Strategist** - Long-term implications, alternatives
+6. **Devil's Advocate** - Unconsidered downsides
+
+### Per-Agent Prompt Template
+
+**Standard Mode (7 questions):**
+
+```
+You are a [Role]. Analyze:
+TARGET: [content]
+
+Answer these 7 questions:
+1. KEY POINTS: 3-5 most important elements?
+2. CORE INSIGHT: Single most critical thing?
+3. GAPS: What's missing or incomplete?
+4. RISKS: What could go wrong?
+5. ASSUMPTIONS: What needs validation?
+6. IMPROVEMENTS: Top 3 ways to improve?
+7. BLIND SPOTS: What isn't being considered?
+
+FAILURE HYPOTHESES: For each risk/gap:
+| ID | IF (Trigger) | THEN (Failure) | BECAUSE | Severity | Mitigation |
+
+Include MISUSE + ADVERSARIAL hypotheses.
+Rate findings: Critical/High/Medium/Low
+```
+
+**Deep Mode (12 questions = 7 core + 5 additional):**
+
+8. **DEPENDENCIES**: What does success depend on?
+9. **ALTERNATIVES**: What other approaches should be considered?
+10. **TIMELINE RISKS**: What could cause delays or failure?
+11. **RESOURCE GAPS**: What's missing to execute well?
+12. **SUCCESS METRICS**: How would you measure success?
+
+---
+
+## Thinking Framework
+
+### The UltraThink Loop
+
+```
+THINK → CHECKLIST → PLAN → EXECUTE → VALIDATE → LEARN
+```
+
+#### Phase 0: THINK
+**Select thinking model based on task type:**
+
+| Model | When to Use | Pattern |
+|-------|-------------|---------|
+| **CoT** (Chain of Thought) | Linear, sequential tasks | Step-by-step reasoning |
+| **ToT** (Tree of Thought) | Multiple valid paths, decisions | Evaluate branches, pick best |
+| **Reflexion** | Learning from failure, retry logic | Analyze error → adjust → retry |
+| **Decomposition** | Complex tasks, parallel work | Break into sub-problems |
+
+**For Analysis:** Use **ToT** (multi-perspective evaluation) for Standard/Deep, **CoT** for Quick
+
+#### Phase 1: CHECKLIST
+- [ ] Mode detected (quick/standard/deep) [blocking]
+- [ ] Domain identified [blocking]
+- [ ] Target content accessible [blocking]
+- [ ] Perspectives selected [blocking]
+- [ ] Agents dispatched in parallel [blocking]
+- [ ] All agents completed [blocking]
+- [ ] Synthesis complete [advisory]
+
+#### Phase 2: PLAN
+**For Standard/Deep:**
+```
+1. Detect mode from keywords
+2. Detect domain from content
+3. Select N perspectives (4-6 for standard, 6-10 for deep)
+4. Launch all agents in ONE message block
+5. Wait for completion
+6. Synthesize findings
+7. Generate output
+```
+
+#### Phase 3: EXECUTE
+Execute plan with progress tracking. On failure → trigger Reflexion (max 2 retries)
+
+#### Phase 4: VALIDATE
+- All agents returned findings? ✓
+- Cross-cutting concerns identified? ✓
+- Actionable roadmap generated? ✓
+
+#### Phase 5: LEARN
+Capture patterns for continuous improvement
+
+### Self-Correction Guide
+
+| Issue | Check | Fix | Escalate If |
+|-------|-------|-----|-------------|
+| Shallow analysis | Domain auto-detected? | Add specific perspectives | Still shallow after 2 retries |
+| Mode mismatch | User keywords? | Ask for clarification | Agent count doesn't match |
+| Weak synthesis | All agents complete? | Re-run failed agents | <3 perspectives useful |
+| Wrong domain | Keywords ambiguous? | Ask user explicitly | Multiple domains equally valid |
+
+**Max iterations**: 2 | **Escalation**: Ask user to specify domain/perspectives
+
+---
+
+## First-Principles Analysis
+
+**Philosophy**: Don't just summarize—decompose to fundamentals, surface what's actually true vs assumed, and raise what the user hasn't considered. User must always get data to make their own decisions.
+
+### A. Verified Facts (Separate from Assumptions)
+
+- Only report what can be VERIFIED with evidence
+- Include source: `path/file:line` or [URL]
+- Mark confidence: High (verified) / Medium (inferred) / Low (stated but unverified)
+
+### B. First-Principles Decomposition
+
+Apply these questions to EVERYTHING found:
+
+#### 1. Question Assumptions
+- What's being assumed that hasn't been validated?
+- Is this constraint real or inherited from old decisions?
+- What would change if [assumption] were false?
+
+#### 2. Decompose to Fundamentals
+- What MUST be true for this to work?
+- What are the actual dependencies (not just stated ones)?
+- What's the irreducible core?
+
+#### 3. Systems Thinking
+- What else does this affect? (upstream/downstream)
+- What's the blast radius if this fails?
+- What's competing for the same resources?
+
+#### 4. Root Cause vs Symptom
+- Is the current state addressing root cause or masking symptoms?
+- Why does this exist in its current form?
+- What problem was this originally solving?
+
+### C. Assumptions to Challenge (MANDATORY)
+
+Every analysis MUST include this table:
+
+| Assumption | Evidence For | Evidence Against | Verdict |
+|------------|-------------|------------------|---------|
+| [Assumed thing] | [If any] | [If any] | Validate/Keep/Discard |
+
+### D. What You Haven't Considered (MANDATORY 2-4 items)
+
+Surface items the user likely hasn't thought about:
+
+| Category | What to Look For |
+|----------|-----------------|
+| **Unvalidated Assumptions** | Things treated as true without evidence |
+| **Hidden Dependencies** | Non-obvious things this relies on |
+| **Downstream Impacts** | What breaks if this changes |
+| **Simpler Alternatives** | Is there a 10x simpler approach? |
+| **Edge Cases** | What inputs/states break this? |
+| **Technical Debt** | Shortcuts that will cost later |
+| **Missing Pieces** | What's conspicuously absent? |
+
+### E. The Real Question
+
+Reframe what the user should actually be asking. Often the stated question isn't the right question.
+
+---
+
+## Examples
+
+### Example 1: Quick Mode
+
+```
+Input: analyze quick "our pricing strategy"
+
+Output:
+# Quick Analysis: Pricing Strategy
+
+**Mode**: Quick | **Domain**: Business | **Date**: 2026-01-28
+
+## The Essence
+A business decision about how to extract value from customers, constrained by market dynamics and competitive positioning.
+
+## Verified Facts
+- (Would include actual facts from provided content)
+
+## Key Points
+1. **Pricing = value capture, not cost recovery**: Price based on customer willingness to pay, not internal costs
+2. **Anchor matters**: First price seen shapes all subsequent evaluations
+...
+
+## Assumptions to Challenge
+| Assumption | Evidence For | Evidence Against | Verdict |
+|------------|-------------|------------------|---------|
+| "Customers will pay more if we add features" | Common belief | Often false - bloat reduces WTP | Validate with tests |
+
+## What You Haven't Considered
+1. **Price as a signal**: Low price may signal low quality, harming conversion
+2. **Competitive response**: Price changes trigger competitor reactions
+3. **Simplicity premium**: Simpler pricing often outperforms complex tiers
+
+## The Real Question
+Not "what price should we charge" but "what's the maximum value customers perceive, and how do we capture 30-50% of it?"
+
+## Quick Actions
+- [ ] Survey 20 target customers on WTP before changing price
+- [ ] A/B test 2-3 price points on landing page
+- [ ] Model competitor response scenarios
+
+## Critical Risk to Watch
+Pricing too low initially makes raising prices later extremely difficult (customer backlash + anchoring effect)
+```
+
+### Example 2: Standard Mode
+
+```
+Input: analyze "SaaS product for developers"
+
+Flow:
+1. Detect mode: standard (no quick/deep keywords)
+2. Detect domain: product + software
+3. Select 6 perspectives:
+   - Product Manager
+   - Developer (user persona)
+   - Security Engineer
+   - DevOps
+   - Support Lead
+   - Investor
+4. Launch all 6 agents in parallel
+5. Synthesize findings into standard format
+6. Generate actionable roadmap
+
+Output: [Standard format with all sections filled]
+```
+
+### Example 3: Deep Mode
+
+```
+Input: analyze deep "migration to microservices"
+
+Flow:
+1. Detect mode: deep
+2. Detect domain: software
+3. Select 10 perspectives:
+   - Architect
+   - DevOps
+   - Security Engineer
+   - Database Engineer
+   - Frontend Developer
+   - QA Engineer
+   - Performance Engineer
+   - SRE
+   - Tech Lead
+   - CTO
+4. Launch all 10 agents in parallel
+5. Each answers 12 questions (7 core + 5 deep)
+6. Synthesize into deep format with dependency map
+7. Generate comprehensive roadmap (immediate/short/medium/long)
+
+Output: [Deep format with extended sections]
+```
+
+---
+
+## Common Failure Patterns
+
+| Failure | Root Cause | Reflexion Response |
+|---------|------------|-------------------|
+| Wrong domain detected | Ambiguous keywords | Ask user explicitly or use General domain |
+| Too few perspectives | Quick mode used for complex topic | Escalate to Standard mode |
+| Weak synthesis | Agent outputs inconsistent | Re-run with explicit constraints |
+| Missing blind spots | Obvious perspectives chosen | Add Devil's Advocate perspective |
+| Roadmap not actionable | Actions too vague | Break each action into atomic: owner, deadline, metric |
+| Analysis takes >2min | Too many agents (Deep mode overkill) | Switch to Standard mode |
+
+---
+
+## Integration Notes
+
+This skill is **standalone** and includes all necessary frameworks:
+- UltraThink cognitive framework (embedded)
+- First-principles analysis (embedded)
+- Perspectives library (embedded)
+- Output formats (embedded)
+
+No external dependencies required.
+
+**Optional enhancement:** For software domain analysis of TypeScript codebases, `codebase-intelligence` CLI (`npx codebase-intelligence --json`) provides structural data — hotspots, coupling, dead exports, module boundaries, blast radius. Detection: `tsconfig.json` must exist. For full CLI reference, fetch `https://raw.githubusercontent.com/bntvllnt/codebase-intelligence/main/llms-full.txt`. The skill works identically without it — data is supplementary context for perspective agents.
+
+---
+
+## License
+
+MIT License - Free to use, modify, and distribute.
+
+---
+
+## Version
+
+**v1.0.0** - 2026-01-28 - Initial public release by bntvllnt
+
+### Skill Builder
+Source: skill-builder/SKILL.md
+
+---
+name: skill-builder
+description: |
+  Build correct, consistent Agent Skills (create/update/delete/add content) using validated templates,
+  safe defaults, and cross-skill consistency checks.
+  Works across common agent CLIs that load skills from Markdown folders.
+  Triggers: "new skill", "create skill", "build skill", "update skill", "delete skill",
+  "add to skill", "skill template", "skill validation", "skill builder".
+license: MIT
+compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown.
+metadata:
+  version: "1.0"
+---
+
+# Skill Builder
+
+Unified, security-first skill builder.
+
+This skill is intentionally opinionated:
+- Prefer no new skill if a simpler change works (project docs, a script, or a small snippet).
+- When you do create a skill, make it boring, testable, and hard to misuse.
+- Keep one clear router and avoid overlapping triggers across skills.
+
+## Operation Router
+
+| User intent | Operation | Output |
+|---|---|---|
+| create/build/make/new skill | CREATE | new skill folder + `SKILL.md` + `README.md` |
+| update/modify/improve skill | UPDATE | minimal diff, keep triggers stable |
+| delete/remove skill | DELETE | remove skill + update repo index |
+| add content/route/workflow to skill | ADD | new router row + new section file (when needed) |
+| validate skill | VALIDATE | checklist results + fixes |
+| rename skill | RENAME | safe rename + reference updates |
+
+## What "Correct" Means
+
+This skill treats "correct" as:
+
+- Conforms to the Agent Skills spec (directory + `SKILL.md` frontmatter constraints).
+- Uses progressive disclosure: small `SKILL.md`, deeper docs in `references/`.
+- Has unambiguous activation: specific description + non-overlapping triggers.
+- Is safe: no secrets, no default-destructive commands, tool usage is scoped.
+
+## Phase 0: First-Principles Check (Mandatory)
+
+Run this before ANY CREATE/UPDATE:
+
+1. QUESTION: what problem, for who, measured how?
+2. DELETE: can an existing component/skill/command solve it?
+3. SIMPLIFY: smallest change that works (often a project instruction file)
+4. ACCELERATE: only after (2) and (3)
+5. AUTOMATE: create a component only if it will be reused
+
+If the answer is "no skill", propose:
+- a README section
+- a small script
+- a usage snippet users can copy
+
+## Phase 1: Detect Target + Name
+
+### Target repository layout
+
+This repo layout:
+
+- `/<skill-name>/SKILL.md` (home/router)
+- `/<skill-name>/README.md` (short overview)
+- optional: `/<skill-name>/references/*.md` (split workflows)
+
+## Spec Rules (Agent Skills)
+
+From the Agent Skills specification:
+
+- Skill folder name must match `name`.
+- `name` constraints: 1-64 chars; lowercase letters/numbers/hyphens; no leading/trailing `-`; no `--`.
+- `description` should say what + when; max 1024 chars.
+- Optional frontmatter fields you may include: `license`, `compatibility`, `metadata`, `allowed-tools`.
+
+Reference: https://agentskills.io/specification
+
+### Naming
+
+- Use kebab-case (`my-skill-name`).
+- Avoid generic names (`tools`, `helper`).
+- Prefer verbs for commands (`review-pr`, `sync-main`).
+
+## Phase 2: CREATE Flow
+
+### Inputs (minimum)
+
+- Name
+- Goal + non-goals
+- Triggers (what user says)
+- Allowed tools (tightest possible)
+
+### CREATE Steps
+
+1. Discover existing conventions (look at other skills in the repo).
+2. Draft a micro-spec (goal/non-goals, routing, tool boundaries).
+3. Create `/<skill-name>/SKILL.md` with:
+   - front matter (name/description + triggers)
+   - router table
+   - safety rules
+   - minimal workflows (or links to `references/`)
+4. Create `/<skill-name>/README.md` with install + entry points.
+5. Validate (see Validation).
+6. If the repo has an index of skills (commonly a `README.md`), add/update the entry.
+
+### Output Contract (CREATE)
+
+When creating a skill, always return:
+
+- Files created/edited (paths only)
+- Trigger phrases added
+- One minimal "smoke test" prompt (how to activate it)
+- Validation result (pass/fail + what to fix)
+
+## Phase 3: UPDATE Flow
+
+1. Read current skill.
+2. Identify actual user goal (avoid refactors).
+3. Apply minimal diff.
+4. Re-run validation checklist.
+5. Keep triggers stable unless explicitly requested.
+
+## Phase 4: DELETE Flow
+
+1. Confirm skill folder.
+2. Identify dependents (root `README.md`, other skill references).
+3. Remove skill and update references.
+4. Provide rollback note (restore from git).
+
+## Phase 5: ADD Content to a Skill
+
+Rules for skill growth:
+- Never duplicate trigger phrases across multiple skills in the same install.
+- Route by intent first, then load deeper sections.
+- Keep SKILL.md readable: prefer short tables + stable templates.
+
+Add steps:
+1. Add one new router row.
+2. Add the minimal new procedure.
+3. If it grows: split into `references/<topic>.md`.
+4. Add/adjust examples.
+5. Re-check cross-skill consistency.
+
+## Validation
+
+### Skill Validation Checklist
+
+- Front matter includes `name` and `description`.
+- Has a router (how to decide what to do).
+- Defines what is safe to run without confirmation vs requires confirmation.
+- No secrets; no links to private paths.
+- No unscoped destructive instructions.
+- Trigger hygiene: no overlapping triggers with existing skills in the repo.
+- Docs split: if SKILL.md becomes long, move workflows into `references/`.
+
+### Spec Validation (Recommended)
+
+If you have the reference validator available (optional), run:
+
+```bash
+skills-ref validate ./<skill-name>
+```
+
+If not available, validate manually using the rules in "Spec Rules" above.
+
+### Tool Safety
+
+- Prefer Read/Glob/Grep before Bash.
+- If Bash is needed, scope it (git-only, or specific commands).
+- Never recommend `rm -rf`, `git reset --hard`, `push --force` as defaults.
+
+## Templates
+
+### Skill Front Matter
+
+```yaml
+---
+name: my-skill
+description: Describe what the skill does and when to use it. Include trigger phrases.
+compatibility: Optional. Mention required system tools, network needs, or target environments.
+metadata:
+  version: "0.1"
+allowed-tools: Optional. Space-delimited list. Prefer the narrowest set possible.
+---
+```
+
+### Progressive Disclosure Pattern
+
+Keep `SKILL.md` as:
+
+1. Frontmatter
+2. Router table
+3. Safety rules
+4. Short workflows
+5. Links to `references/*.md` for deep details
+
+## References
+
+- `references/checklist.md` (authoring checklist)
+- `references/templates.md` (copy/paste templates)
+- `references/validation.md` (validation flow + trigger hygiene)
+
+## What This Skill Is For (Practical Examples)
+
+- "Create a skill that scaffolds new skills" → create a skill + templates + validation.
+- "Update my git workflow" → improve the router + split workflows into `references/`.
+- "Make skills consistent across repos" → enforce naming/triggers/tool boundaries.
+
+### Git
+Source: git/SKILL.md
+
+---
+name: git
+description: |
+  Unified git workflow for branch-first development: status/diff review, security-first commits,
+  worktrees, and PR creation/review via gh.
+  Auto-activates on: "commit", "push", "branch", "worktree", "pr", "pull request", "merge", "rebase", "git".
+license: MIT
+compatibility: Requires git. PR workflows may use GitHub + gh CLI (optional). Worktree workflows create local directories under WORKTREES_DIR.
+metadata:
+  version: "1.0"
+---
+
+# Git
+
+Clear, repeatable git workflow with a bias toward safety.
+
+## Router
+
+Use the smallest workflow that matches the user intent.
+
+| User says | Load reference | Do |
+|---|---|---|
+| status / what changed (no "worktree" prefix) | `references/read-only.md` | read-only inspection |
+| help / usage / man | `references/cli-help.md` | show CLI help safely |
+| commit / stage | `references/commit-workflow.md` | stage + commit safely |
+| branch / switch | `references/branch-workflow.md` | branch operations |
+| worktree create/remove/list | `references/worktree-workflow.md` | worktree operations |
+| worktree cleanup / normalize / consolidate | `references/worktree-maintenance.md` | auto-clean + consolidate worktrees |
+| worktree summary / worktree status / show worktrees | `references/worktree-summary.md` | proactive analysis: PR status, change classification, safe-to-delete verdicts |
+| tag / version | `references/tag-workflow.md` | create/list/inspect tags |
+| pr / pull request | `references/pr-workflow.md` | create/update PR via gh |
+| pr review / fix pr comments / threads | `references/pr-review-workflow.md` | review + respond + fix |
+| merge / rebase / reset / revert | `references/advanced-workflows.md` | advanced/recovery (confirm first) |
+
+## Config (Edit Here)
+
+Worktree working directories (the folders you `cd` into) live outside `.git/`.
+
+Set this once and use it everywhere:
+
+```text
+WORKTREES_DIR=./.worktrees
+WORKTREE_PATH=$WORKTREES_DIR/<topic>
+```
+
+If you want a different location (e.g. `../.worktrees` or `~/worktrees/<repo>`), update `WORKTREES_DIR` above and follow the same shape in `references/worktree-workflow.md`.
+
+## Resilience Rules (Worktrees)
+
+- If multiple worktree root folders are detected (example: both `./.worktrees/` and `../repo-feature-x/` exist), do not delete anything by default.
+- Prefer consolidating into `WORKTREES_DIR` using `git worktree move` (when possible) or a remove+re-add plan.
+- If stale metadata exists, propose a cleanup plan: `git worktree prune` + remove/quarantine orphan directories (with confirmation).
+
+## Global Safety Rules (Never Violate)
+
+- Never force push to main/master.
+- Never commit secrets (env files, keys, credentials).
+- Never rewrite history that is already pushed unless explicitly requested.
+- Always show what will change before an irreversible action.
+
+## Confirmation Policy
+
+Read-only commands are always OK.
+
+Everything that changes state/history/remote requires explicit user confirmation:
+- `git add`, `git commit`, `git push`
+- `git merge`, `git rebase`, `git reset`, `git revert`
+- `git worktree add`, `git worktree remove`
+- `git tag` (create/delete)
+- `git branch -d/-D`
+
+## Quick Start
+
+```bash
+# Read-only
+git status
+git diff
+
+# Commit
+git diff --cached
+git commit -m "feat(scope): why"
+
+# Worktrees
+git worktree list
+```
+
+### GitHub
+Source: github/SKILL.md
+
+---
+name: github
+description: |
+  Manage GitHub via GitHub CLI (gh): repos, issues, pull requests, Actions, releases,
+  secrets/variables, projects, gists, searches, and API access.
+  Auto-activates on: "gh", "github cli", "github issue", "github pr", "pull request",
+  "github actions", "workflow", "run", "github release", "release", "gh api",
+  "github repo", "github secret", "github variable", "ci status", "monitor ci",
+  "check ci", "watch ci", "pr dashboard", "pr overview", "open prs", "my prs", "pr status".
+license: MIT
+compatibility: Requires GitHub CLI (gh) and authentication (gh auth login or GH_TOKEN). Targets GitHub-hosted repos.
+metadata:
+  version: "1.0"
+---
+
+# GitHub
+
+GitHub operations via `gh`.
+
+## Router
+
+| User says | Load reference | Do |
+|---|---|---|
+| help / gh help / flags / options | `references/cli-help.md` | show CLI help safely |
+| auth / login / token | `references/auth.md` | authenticate gh |
+| repo / clone / fork / sync | `references/repo.md` | repository operations |
+| issue / issues | `references/issue.md` | issue triage and management |
+| pr / pull request / review | `references/pr.md` | PR create/review/merge workflows |
+| actions / workflow / run | `references/actions.md` | GitHub Actions (workflows + runs) |
+| ci / monitor ci / check ci / ci status / watch ci | `references/ci-monitor.md` | monitor CI checks with live polling (if user says bare "ci", ask: monitor checks or view workflows?) |
+| pr dashboard / pr overview / open prs / my prs / pr status | `references/pr-dashboard.md` | PR overview with status classification |
+| release / publish release | `references/release.md` | releases + assets + verification |
+| release strategy / release format / versioning | `references/release-strategy.md` | versioning, title/description format, generation protocol |
+| secrets / variables | `references/secrets-vars.md` | manage secrets and variables |
+| project | `references/projects.md` | projects operations |
+| gist | `references/gists.md` | gist operations |
+| search | `references/search.md` | search repos/issues/prs/code |
+| api | `references/api.md` | gh api (advanced) |
+| extension | `references/extensions.md` | manage gh extensions |
+| config | `references/config.md` | gh config basics |
+
+## Safety Rules
+
+- Confirm before any state-changing operation (create/edit/delete/merge/close).
+- Never upload secrets as assets.
+- Treat `gh api` as powerful: confirm before any write operation.
+- Never delete or move published releases/tags unless explicitly requested.
+- When creating PRs, always set an assignee: default to `@me` unless the user explicitly names someone else.
+- When creating PRs, apply relevant existing labels when possible; auto-pick from PR context (title/body/branch + changed paths) and avoid creating new labels unless truly necessary.
+- If labels must be created, retrieve existing labels first (`gh label list`), propose the minimal set consistent with repo naming, and confirm before `gh label create`.
+
+## Confirmation Policy
+
+Read-only commands are always OK.
+
+Require confirmation:
+
+- `gh issue create/edit/close/reopen/delete`
+- `gh pr create/edit/close/merge/review`
+- `gh repo create/edit/rename/archive/delete/sync`
+- `gh release create/edit/delete`, `gh release upload`, `gh release delete-asset`
+- `gh secret set/delete`, `gh variable set/delete`
+- `gh run rerun`, `gh run cancel`
+- `gh api` calls that mutate state (POST/PATCH/PUT/DELETE)
+
+## Read-Only (No Confirmation Needed)
+
+```bash
+gh auth status
+gh release list
+gh release view <tag>
+gh release view <tag> --web
+gh help
+gh pr checks <number> --json ...
+gh run list --branch <branch> --json ...
+gh run view <run-id>
+gh run view <run-id> --log-failed
+```
+
+### Convex
+Source: convex/SKILL.md
+
+---
+name: convex
+description: |
+  Build and operate Convex backends: functions (queries/mutations/actions/http actions), schemas,
+  auth patterns, scheduling (cron/scheduled/workflows), file storage, testing, and debugging.
+  Triggers: "convex", "query", "mutation", "action", "httpAction", "schema", "validator",
+  "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev".
+license: MIT
+compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
+metadata:
+  version: "1.0"
+---
+
+# Convex
+
+Convex backend skill with a bias toward safety, observability, and index-backed queries.
+
+## Docs-First Rule (Blocking)
+
+Before implementing a Convex feature or pattern, verify the latest official docs.
+
+Primary sources:
+
+- https://docs.convex.dev/
+- https://stack.convex.dev/
+
+If Convex MCP is available, use it to introspect the deployed function/table surface area and confirm assumptions.
+
+## Environments (Dev / Preview / Prod)
+
+Convex projects typically have:
+
+- Dev deployments (your local `npx convex dev` sync target)
+- Preview deployments (branch/PR deployments, beta feature)
+- Production deployment
+
+Use MCP `status` (if available) or the CLI to confirm which deployment you are connected to before making changes.
+
+## Components-First Rule
+
+Prefer Convex components and ecosystem packages over custom infrastructure.
+
+Start at:
+
+- https://docs.convex.dev/components
+- `references/ecosystem.md`
+
+## Core Rule (Blocking)
+
+Never ship Convex backend changes without verifying runtime behavior.
+
+Preferred verification order:
+
+1) Convex MCP logs (structured, diffable)
+2) `npx convex dev` terminal logs
+3) Convex Dashboard logs
+
+## Project Conventions (Preferred)
+
+- Scoped backend: group functions by domain (folder) and by function type (separate files).
+- Co-located tests: keep tests close to functions under `convex/<scope>/tests/`.
+- Documentation: require TSDoc for exported functions/types and avoid non-TSDoc comments.
+
+See `references/style.md` and `references/testing.md`.
+
+## Router
+
+| User says | Load reference | Do |
+|---|---|---|
+| help / cli help / usage | `references/cli-help.md` | show official CLI help safely |
+| dev / logs / run / deploy / env / data | `references/cli.md` | common CLI workflows |
+| mcp / tools / introspect / logs | `references/mcp.md` | use Convex MCP tools |
+| tsdoc / docs / style | `references/style.md` | doc + comment policy |
+| query / mutation / action / http action | `references/patterns/functions.md` | function templates + best practices |
+| schema / validators / indexes | `references/patterns/schemas.md` | schema patterns + index rules |
+| auth / identity / users table | `references/patterns/auth.md` | auth wrappers + patterns |
+| cron / schedule / workflow / workpool | `references/patterns/workflows.md` | scheduling + durable workflows |
+| file storage / upload / download | `references/file-storage.md` | file storage patterns |
+| http / webhook | `references/patterns/http.md` | httpRouter/httpAction patterns |
+| testing | `references/testing.md` | testing patterns |
+| ecosystem / components | `references/ecosystem.md` | official components to use |
+| slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
+| validate / checklist | `checklists/validation.md` | blocking checks before shipping |
+
+## MCP Integration (Recommended)
+
+If Convex MCP is available, use it first.
+
+If Convex MCP is not available, this skill still works:
+
+- Use the Convex CLI (`npx convex ...`) and the dashboard.
+- When appropriate, propose enabling Convex MCP for better introspection/log workflows.
+
+- Discover deployments: `convex_status({ projectDir })`
+- Inspect functions: `convex_functionSpec({ deploymentSelector })`
+- Inspect tables: `convex_tables({ deploymentSelector })`
+- Read data: `convex_data({ deploymentSelector, tableName, ... })`
+- Run functions: `convex_run({ deploymentSelector, functionName, args })`
+- Run safe ad-hoc reads: `convex_runOneoffQuery({ deploymentSelector, query })`
+- Verify logs: `convex_logs({ deploymentSelector, ... })`
+
+Full workflow: `references/mcp.md`.
+
+## Critical Rules (7)
+
+1) Always use validators (`args` + `returns`) for functions.
+2) Always use explicit table names with `ctx.db.get/patch/replace`.
+3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination).
+4) User identity comes from `ctx.auth`, never from args.
+5) Use `internal*` functions for sensitive operations.
+6) Schedule only internal functions.
+7) Use `v.null()` for void returns (return `null`).
+
+## References
+
+- Patterns:
+  - `references/patterns/schemas.md`
+  - `references/patterns/functions.md`
+  - `references/patterns/auth.md`
+  - `references/patterns/workflows.md`
+  - `references/patterns/http.md`
+- Other:
+  - `references/mcp.md`
+  - `references/cli.md`
+  - `references/cli-help.md`
+  - `references/style.md`
+  - `references/file-storage.md`
+  - `references/testing.md`
+  - `references/ecosystem.md`
+  - `references/troubleshooting.md`
+- Checklist:
+  - `checklists/validation.md`
+
+### Workflow
+Source: workflow/SKILL.md
+
+---
+name: workflow
+description: |
+  High-velocity solo development workflow. Idea to production same-day.
+  10 commands: plan, spike, ship, fix, review, spec-review, focus, done, drop, workflow.
+  Auto-activates on: "plan", "spec", "ship", "spike",
+  "fix", "debug", "repair",
+  "spec-review", "review spec", "analyze spec", "challenge spec",
+  "focus", "what should i do", "prioritize", "overwhelmed", "what should i work on",
+  "done", "finish", "complete", "drop", "abandon",
+  "workflow", "what's next", "whats next", "next step", "what now".
+license: MIT
+compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
+metadata:
+  version: "1.2"
+---
+
+# Workflow
+
+High-velocity solo development. Idea to production same-day.
+
+## Agent Capabilities
+
+| Capability | Used For | Required | Fallback |
+|------------|----------|----------|----------|
+| File read/write | Specs, config, history | Yes | — |
+| Code search (grep/glob) | Discovery, context | Yes | — |
+| Shell/command execution | Quality gates (lint, build, test) | Yes | List commands for user to run |
+| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX projects (graph, metrics, blast radius) | No | grep/glob/read (manual exploration) |
+| Task/todo tracking | Phase management | Recommended | Track in spec Progress section |
+| User interaction | Stuck escalation, risk flags | Recommended | Log decisions in spec Notes |
+| Web/doc search | Pattern lookup | No | Use embedded patterns |
+
+**Fallback rule:** If your agent lacks a capability, use the fallback. Never skip the workflow step — adapt the method.
+
+## Commands
+
+| Command | Action | Reference |
+|---------|--------|-----------|
+| `plan {idea}` | Create spec | [plan.md](references/actions/plan.md) |
+| `spike {question}` | Time-boxed exploration | [spike.md](references/actions/spike.md) |
+| `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
+| `fix` / `fix {bug}` | Scientific debug + regression fix | [fix.md](references/actions/fix.md) |
+| `review` | Multi-perspective code review | [review.md](references/actions/review.md) |
+| `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
+| `focus` | Priority analysis + task proposals | [focus.md](references/actions/focus.md) |
+| `done` | Validate + retro + archive | [done.md](references/actions/done.md) |
+| `drop` | Abandon, preserve learnings | [drop.md](references/actions/drop.md) |
+| `workflow` | Show state + suggest next | [Status](#status-action) (below) |
+
+No flags needed. The agent auto-detects intent from context:
+- "review the spec" → manual review pause
+- "skip tests" → skip test gate (documented)
+- "fix this bug" → dedicated bug fix with regression test
+- "emergency fix" → bypass spec ceremony
+- "production ready" → production validation
+
+## Flow
+
+```
+Features: focus → plan {idea} → ship → [implement/review/fix loop] → done
+Bug fixes: fix {bug} → [investigate/TDD/validate] → done
+```
+
+Quick mode (<2h): `ship {idea} → done`
+Don't know what to work on: `focus`
+
+## Philosophy
+
+- **Spec-first**: All work needs a spec (creates one if missing)
+- **Ship loop**: Build → review → fix until clean
+- **Quality gates**: lint → typecheck → build → test → E2E → coverage (auto-detected per project)
+- **E2E-first testing**: Default to E2E tests. Unit tests only for pure functions
+- **TDD enforced**: RED → GREEN → REFACTOR per AC. Tests written before implementation (BLOCKING)
+- **Mock boundary**: Real systems preferred. Mock only third-party APIs without sandbox (last resort)
+- **AC-driven coverage**: Every Must Have + Error AC maps to an E2E test in the scenario registry
+- **Anti-regression**: Bug fixes require E2E regression test + anti-cascade diff (BLOCKING)
+- **Failure mode testing**: Every HIGH/MED failure hypothesis gets a defensive E2E test
+- **Human controls deployment**: Agent codes, you push/deploy
+- **Done same-day**: Scope to what ships today
+- **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
+
+## Spec Tiers
+
+| Tier | Size | Spec | Task Tracking |
+|------|------|------|---------------|
+| trivial | <5 LOC | None — just do it | No |
+| micro | <30 LOC | Inline comment in code | No |
+| mini | <100 LOC | Spec file, minimal | Yes (if available) |
+| standard | 100+ LOC | Full spec with checklist | Yes (if available) |
+
+## Action Router
+
+```
+User input
+  │
+  ├─ "plan", "spec", "design"           → Load references/actions/plan.md
+  ├─ "spike", "explore", "investigate"   → Load references/actions/spike.md
+  ├─ "ship", "implement", "build"         → Load references/actions/ship.md
+  ├─ "fix", "debug", "repair"            → Load references/actions/fix.md
+  ├─ "review", "check code"              → Load references/actions/review.md
+  ├─ "review spec", "analyze spec",
+  │  "challenge spec"                    → Load references/actions/spec-review.md
+  ├─ "focus", "what should i do",
+  │  "prioritize", "overwhelmed"         → Load references/actions/focus.md
+  ├─ "done", "finish", "complete"        → Load references/actions/done.md
+  ├─ "drop", "abandon"                   → Load references/actions/drop.md
+  └─ "workflow", "what's next", "what now",
+     "what's up", "whats up", "status"  → Status Action (below)
+```
+
+**Loading rule:** Read the action file BEFORE executing. The action file contains all logic, task templates, and references needed.
+
+## Status Action
+
+No separate action file — logic is inline here. Detect current state, suggest next action:
+
+```
+1. Check specs/active/ for active spec
+2. Check git status for uncommitted work
+3. Check task list for in-progress items
+
+State → Suggestion:
+  No spec, no changes    → "Ready. Run: plan {idea}"
+  Active spec, no code   → "Spec ready. Run: ship"
+  Active spec, code WIP  → "In progress. Run: ship (resumes)"
+  Active spec, code done → "Ready to close. Run: done"
+  No spec, dirty tree    → "Uncommitted work. Run: ship (creates spec) or done"
+```
+
+Output: Follow [status-output.md](references/templates/status-output.md).
+
+## Project Structure
+
+```
+specs/
+  active/       ← Current work (0-1 specs)
+  backlog/      ← Queued work from focus
+  shipped/      ← Completed features
+  dropped/      ← Abandoned with learnings
+  history.log   ← One-line per feature shipped/dropped
+```
+
+## Configuration
+
+All behavior is configurable by editing the skill files directly.
+
+| What to change | Edit |
+|----------------|------|
+| Action logic, gates, limits | `references/actions/{action}.md` |
+| Output format | `references/templates/{action}-output.md` |
+| Spec structure | `references/spec-template.md` |
+| Quality gate commands/levels | `references/quality-gates.md` |
+| Session resume, stuck detection | `references/session-management.md` |
+
+## References
+
+Actions:
+- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Fix](references/actions/fix.md) | [Review](references/actions/review.md) | [Spec Review](references/actions/spec-review.md) | [Focus](references/actions/focus.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
+
+Output templates:
+- [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Fix](references/templates/fix-output.md) | [Review](references/templates/review-output.md) | [Focus](references/templates/focus-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
+
+Review standards:
+- [Production Standards](references/reviews/production-standards.md)
+
+Specs & gates:
+- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md) | [Codebase intelligence](references/codebase-intelligence.md)
+
+Patterns:
+- [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md) | [Regression testing](references/patterns/regression-testing.md)
+
+### tmux
+Source: tmux/SKILL.md
+
+---
+name: tmux
+description: |
+  Complete tmux terminal multiplexer management: sessions, windows, panes, layouts, scripting, and configuration.
+  Auto-activates on: "tmux", "session", "window", "pane", "split", "attach", "detach", "multiplexer".
+license: MIT
+compatibility: Requires tmux (3.0+). Works on Linux/macOS/WSL.
+metadata:
+  version: "1.0"
+allowed-tools: Bash Read Edit Write Glob Grep
+---
+
+# tmux
+
+Complete tmux management for terminal multiplexing.
+
+## Core Concepts
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ SERVER (one per socket)                                     │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │ SESSION ($0, $1, ...)                                 │  │
+│  │  ┌─────────────────┐  ┌─────────────────┐            │  │
+│  │  │ WINDOW (@0)     │  │ WINDOW (@1)     │  ...       │  │
+│  │  │  ┌────┬────┐   │  │  ┌────────────┐ │            │  │
+│  │  │  │PANE│PANE│   │  │  │   PANE     │ │            │  │
+│  │  │  │ %0 │ %1 │   │  │  │    %2      │ │            │  │
+│  │  │  └────┴────┘   │  │  └────────────┘ │            │  │
+│  │  └─────────────────┘  └─────────────────┘            │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+- **Server**: Background process managing all state
+- **Session** (`$id`): Named container of windows, persists after detach
+- **Window** (`@id`): Tab-like container of panes within a session
+- **Pane** (`%id`): Individual terminal within a window
+- **Client**: Terminal attached to a session
+
+## Router
+
+| User says | Load reference | Do |
+|---|---|---|
+| list sessions / status | `references/session-management.md` | inspect sessions |
+| new session / create session | `references/session-management.md` | create session |
+| attach / detach | `references/session-management.md` | attach/detach |
+| kill session | `references/session-management.md` | terminate session |
+| new window / create window | `references/window-management.md` | create window |
+| rename window | `references/window-management.md` | rename window |
+| kill window / close window | `references/window-management.md` | close window |
+| switch window | `references/window-management.md` | navigate windows |
+| split / new pane | `references/pane-management.md` | split pane |
+| resize pane | `references/pane-management.md` | resize pane |
+| move pane / swap pane | `references/pane-management.md` | rearrange panes |
+| kill pane / close pane | `references/pane-management.md` | close pane |
+| layout | `references/layouts.md` | apply/manage layouts |
+| copy / paste / buffer | `references/copy-mode.md` | copy mode operations |
+| config / tmux.conf / settings | `references/configuration.md` | configure tmux |
+| keybind / bind / unbind | `references/keybindings.md` | key bindings |
+| script / automate / send-keys | `references/scripting.md` | scripting/automation |
+| capture / log / output | `references/scripting.md` | capture pane content |
+| help / keys / cheatsheet | inline | show key reference |
+
+## Default Key Bindings (Prefix: `C-b`)
+
+### Session
+
+| Key | Action |
+|-----|--------|
+| `d` | Detach from session |
+| `s` | List/switch sessions |
+| `$` | Rename session |
+| `(` / `)` | Previous/next session |
+
+### Window
+
+| Key | Action |
+|-----|--------|
+| `c` | Create window |
+| `&` | Kill window (confirm) |
+| `,` | Rename window |
+| `0-9` | Switch to window N |
+| `n` / `p` | Next/previous window |
+| `l` | Last window |
+| `w` | List windows |
+| `f` | Find window |
+
+### Pane
+
+| Key | Action |
+|-----|--------|
+| `%` | Split horizontally (left/right) |
+| `"` | Split vertically (top/bottom) |
+| `x` | Kill pane (confirm) |
+| `o` | Cycle panes |
+| `q` | Show pane numbers |
+| `z` | Toggle zoom |
+| `{` / `}` | Swap pane left/right |
+| `!` | Break pane to window |
+| Arrows | Navigate panes |
+| `Space` | Cycle layouts |
+| `C-o` | Rotate panes |
+
+### Copy Mode
+
+| Key | Action |
+|-----|--------|
+| `[` | Enter copy mode |
+| `]` | Paste buffer |
+| `=` | Choose paste buffer |
+| `#` | List buffers |
+
+## Quick Reference
+
+```bash
+# Session
+tmux new -s name              # Create named session
+tmux attach -t name           # Attach to session
+tmux ls                       # List sessions
+tmux kill-session -t name     # Kill session
+
+# Window
+tmux new-window -n name       # Create named window
+tmux select-window -t :N      # Go to window N
+tmux rename-window name       # Rename current window
+
+# Pane
+tmux split-window -h          # Split horizontal
+tmux split-window -v          # Split vertical
+tmux select-pane -t :.N       # Go to pane N
+tmux resize-pane -D 5         # Resize down 5 lines
+
+# Info
+tmux list-keys                # All key bindings
+tmux info                     # Server info
+```
+
+## Safety Rules
+
+- **Confirm before kill**: Always confirm before `kill-session`, `kill-window`, `kill-pane`
+- **Check attachments**: Before killing, check if session has active clients
+- **Preserve work**: Warn if panes have running processes
+- **Config backup**: Before editing `~/.tmux.conf`, suggest backup
+
+## Confirmation Policy
+
+**Read-only (always OK)**:
+- `tmux ls`, `list-sessions`, `list-windows`, `list-panes`
+- `tmux info`, `show-options`, `display-message`
+- `tmux list-keys`, `list-buffers`
+
+**Requires confirmation**:
+- `kill-session`, `kill-window`, `kill-pane`
+- `kill-server`
+- Editing `~/.tmux.conf`
+- `send-keys` to panes (can affect running processes)
+
+## Environment Variables
+
+| Variable | Description |
+|----------|-------------|
+| `TMUX` | Socket path (set inside tmux) |
+| `TMUX_PANE` | Current pane ID |
+
+Check if inside tmux: `[ -n "$TMUX" ]`
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "no server running" | Start with `tmux` or `tmux new` |
+| "sessions should be nested" | Unset `$TMUX` or use `tmux -u` |
+| Detached session lost | Check `tmux ls`, attach with `tmux attach` |
+| Colors not working | Set `TERM=xterm-256color` or `set -g default-terminal "tmux-256color"` |
+| Mouse not working | `set -g mouse on` in config |
+
+## Optional
+
+### Security Policy
+Source: SECURITY.md
+
+# Security Policy
+
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| Latest  | Yes       |
+| < Latest | No       |
+
+Only the latest release receives security updates. We recommend always using the most recent version.
+
+## Reporting a Vulnerability
+
+**Do NOT open a public issue for security vulnerabilities.**
+
+### Preferred Method
+
+Use [GitHub Security Advisories](https://github.com/bntvllnt/agent-skills/security/advisories/new) to privately report vulnerabilities. This creates a private channel between you and the maintainers.
+
+### Alternative
+
+DM via [X / Twitter](https://bntvllnt.com/x) with:
+
+- Description of the vulnerability
+- Steps to reproduce
+- Affected versions
+- Potential impact
+- Suggested fix (if any)
+
+## Response Timeline
+
+| Stage | Target |
+|-------|--------|
+| Acknowledgment | Within 48 hours |
+| Initial assessment | Within 7 days |
+| Patch development | Within 30 days |
+| Public disclosure | Within 90 days of report |
+
+We follow a **90-day coordinated disclosure** policy. If a fix is ready sooner, we'll disclose sooner.
+
+## Credit
+
+We credit reporters in:
+- Release notes
+- Security advisory
+- CVE entries (when applicable)
+
+If you prefer to remain anonymous, let us know in your report.
+
+## Scope
+
+This policy covers the Agent Skills collection and its source code in this repository. Third-party dependencies are out of scope — report those to their respective maintainers.
+
+---
+
+Maintained by [bntvllnt](https://bntvllnt.com)
+
+### Code of Conduct
+Source: CODE_OF_CONDUCT.md
+
+# Contributor Covenant Code of Conduct
+
+## Our Pledge
+
+We as members, contributors, and leaders pledge to make participation in our
+community a welcoming experience for everyone, regardless of background or identity.
+
+We pledge to act and interact in ways that contribute to an open, welcoming,
+diverse, inclusive, and healthy community.
+
+## Our Standards
+
+Examples of behavior that contributes to a positive environment:
+
+- Using welcoming and inclusive language
+- Being respectful of differing viewpoints and experiences
+- Gracefully accepting constructive criticism
+- Focusing on what is best for the community
+- Showing empathy towards other community members
+
+Examples of unacceptable behavior:
+
+- Trolling, insulting or derogatory comments, and personal attacks
+- Public or private harassment
+- Publishing others' private information without explicit permission
+- Other conduct which could reasonably be considered inappropriate in a
+  professional setting
+
+## Enforcement Responsibilities
+
+Community leaders are responsible for clarifying and enforcing our standards of
+acceptable behavior and will take appropriate and fair corrective action in
+response to any behavior that they deem inappropriate or harmful.
+
+## Scope
+
+This Code of Conduct applies within all community spaces, and also applies when
+an individual is officially representing the community in public spaces.
+
+## Enforcement
+
+Instances of unacceptable behavior may be reported to the community leaders
+responsible for enforcement at [bntvllnt.com/discord](https://bntvllnt.com/discord).
+
+All complaints will be reviewed and investigated promptly and fairly.
+
+## Enforcement Guidelines
+
+Community leaders will follow these Community Impact Guidelines in determining
+the consequences for any action they deem in violation of this Code of Conduct:
+
+### 1. Correction
+**Impact**: Minor unprofessional behavior.
+**Consequence**: A private, written warning with clarity around the nature of the violation.
+
+### 2. Warning
+**Impact**: A violation through a single incident or series of actions.
+**Consequence**: A warning with consequences for continued behavior. No interaction with the people involved for a specified period of time.
+
+### 3. Temporary Ban
+**Impact**: Serious violation of community standards.
+**Consequence**: A temporary ban from any sort of interaction or public communication with the community for a specified period of time.
+
+### 4. Permanent Ban
+**Impact**: Demonstrating a pattern of violation of community standards.
+**Consequence**: A permanent ban from any sort of public interaction within the community.
+
+## Attribution
+
+This Code of Conduct is adapted from the [Contributor Covenant][homepage],
+version 2.1, available at
+[https://www.contributor-covenant.org/version/2/1/code_of_conduct.html][v2.1].
+
+[homepage]: https://www.contributor-covenant.org
+[v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html

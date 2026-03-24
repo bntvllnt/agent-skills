@@ -1,0 +1,30 @@
+# Agent Skills
+
+> Collection of reusable AI agent skills — capabilities for any domain via skills.sh.
+
+Agent Skills is a Markdown-based skill collection for AI coding agents. Each skill provides structured instructions that agents load on-demand to handle specific domains: code analysis, git workflows, GitHub operations, backend development, and more. Skills are agent-agnostic and work with Claude Code, OpenCode, Windsurf, Cursor, and any agent supporting SKILL.md.
+
+Install: `npx skills add bntvllnt/agent-skills`
+
+## Docs
+
+- [README](README.md): Project overview, installation, and usage guide
+- [Skills Overview](docs/skills-overview.md): All skills with descriptions and how they work
+- [Contributing](CONTRIBUTING.md): Contribution guidelines and skill structure conventions
+- [Changelog](CHANGELOG.md): Version history and release notes
+
+## Skills
+
+- [Analyze](analyze/SKILL.md): Universal multi-perspective analyzer — quick, standard, deep modes
+- [Skill Builder](skill-builder/SKILL.md): Create/update/delete skills with validated templates
+- [Git](git/SKILL.md): Git workflow — branch-first commits, worktree management, PR creation
+- [GitHub](github/SKILL.md): GitHub CLI operations — repos, issues, PRs, Actions, releases
+- [Convex](convex/SKILL.md): Convex backend — functions, schemas, auth, scheduling, workflows
+- [Workflow](workflow/SKILL.md): High-velocity solo development — plan, ship, fix, review, done
+- [tmux](tmux/SKILL.md): Terminal multiplexer — sessions, windows, panes, layouts, scripting
+
+## Optional
+
+- [Security Policy](SECURITY.md): Vulnerability reporting and disclosure policy
+- [Code of Conduct](CODE_OF_CONDUCT.md): Community guidelines
+- [License](LICENSE): MIT license
