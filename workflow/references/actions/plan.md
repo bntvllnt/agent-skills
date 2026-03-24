@@ -47,6 +47,18 @@ Deep test discovery (feeds spec Test Strategy):
   - If no E2E infra but unit tests exist: flag "partial — E2E setup needed at ship"
 ```
 
+### TypeScript Structural Analysis (Optional)
+
+If TypeScript detected (`tsconfig.json` exists):
+
+```
+Load references/codebase-intelligence.md for detection gate and command reference.
+Run: npx codebase-intelligence overview --json <project-root>
+  → Captures: file count, module count, dependency graph shape, top-level metrics
+  → Store as "CI Snapshot" for Codebase Impact section
+If CI unavailable: skip — grep/glob/read discovery continues as normal
+```
+
 ## Step 1: Parse Idea
 
 Extract from user input:
@@ -73,6 +85,20 @@ Extract from user input:
 - Validation rules
 
 Key principle: **Read the codebase BEFORE writing the spec.** Codebase impact analysis is MANDATORY and informs every section that follows.
+
+**TypeScript projects with CI available** (augments grep/glob/read, does not replace):
+
+```
+For each file identified in Codebase Impact table:
+  npx codebase-intelligence file --json <file>
+    → Adds: imports, exports, coupling score, complexity
+  npx codebase-intelligence dependents --json <file>
+    → Adds: files affected by changes → populates AFFECTED rows
+For key symbols being changed:
+  npx codebase-intelligence impact --json <symbol>
+    → Adds: blast radius data for Breaking Changes assessment
+If CI unavailable: use grep for imports/exports, manual trace for dependents
+```
 
 Create spec file at `specs/active/{YYYY-MM-DD}-{slug}.md`.
 

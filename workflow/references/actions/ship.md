@@ -39,6 +39,11 @@ Update tasks as you work: mark in-progress when starting, complete when done. On
 ## Phase 0: Setup
 
 1. **Detect project stack** (monorepo, framework, test runner, linter, E2E framework)
+1b. **TypeScript structural analysis** (if `tsconfig.json` detected):
+    Load `references/codebase-intelligence.md`, run detection gate.
+    Run: `npx codebase-intelligence overview --json <project-root>`
+    → Augments stack detection with module structure, dependency graph, file metrics.
+    If CI unavailable: proceed with standard stack detection only.
 2. **Validate test environment:**
    - Load spec's Test Strategy (from plan phase, if exists)
    - If no Test Strategy: run test setup discovery now (load references/testing-automation.md)
@@ -72,6 +77,10 @@ For quick fixes and small features without an active spec:
 
 ```
 1. Analyze scope (files affected, estimated LOC)
+1b. **TypeScript scope analysis** (if CI available):
+    `npx codebase-intelligence dependents --json <file>` for each affected file → reveals non-obvious consumers.
+    For refactoring: `npx codebase-intelligence rename --json <path> <symbol>` → discovers all references before changes.
+    If CI unavailable: use grep for scope analysis.
 2. Run test setup discovery (load references/testing-automation.md)
 3. Create plan (brief, inline)
 4. Write E2E test for key behavior (RED — MUST FAIL)
