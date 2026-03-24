@@ -26,6 +26,7 @@ High-velocity solo development. Idea to production same-day.
 | File read/write | Specs, config, history | Yes | — |
 | Code search (grep/glob) | Discovery, context | Yes | — |
 | Shell/command execution | Quality gates (lint, build, test) | Yes | List commands for user to run |
+| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX projects (graph, metrics, blast radius) | No | grep/glob/read (manual exploration) |
 | Task/todo tracking | Phase management | Recommended | Track in spec Progress section |
 | User interaction | Stuck escalation, risk flags | Recommended | Log decisions in spec Notes |
 | Web/doc search | Pattern lookup | No | Use embedded patterns |
@@ -164,7 +165,7 @@ Review standards:
 - [Production Standards](references/reviews/production-standards.md)
 
 Specs & gates:
-- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md)
+- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md) | [Codebase intelligence](references/codebase-intelligence.md)
 
 Patterns:
 - [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md) | [Regression testing](references/patterns/regression-testing.md)

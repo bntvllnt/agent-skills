@@ -45,6 +45,18 @@ Also estimate codebase size:
 
 Count source files only (exclude `node_modules`, `dist`, `.git`, lockfiles, generated).
 
+### TypeScript Structural Snapshot (Optional)
+
+If TypeScript detected (`tsconfig.json` exists):
+
+```
+Load references/codebase-intelligence.md for detection gate.
+Run: npx codebase-intelligence overview --json <project-root>
+  → Accurate file/module count (replaces manual estimation)
+  → Dependency graph shape informs agent count decision
+If CI unavailable: use file count estimation above
+```
+
 ---
 
 ## Step 1: Scan Existing Specs
@@ -148,6 +160,14 @@ Instructions:
 4. For each finding, propose a CONCRETE TASK (not an observation):
    - BAD: "Missing error handling detected"
    - GOOD: "Add error handling to database queries in src/db/users.ts"
+{if TypeScript project with CI available, add to each agent prompt:}
+5b. Use these pre-computed structural insights (from codebase-intelligence --json):
+   - HOTSPOTS: {output of `npx codebase-intelligence hotspots --json --metric complexity --limit 20`}
+   - DEAD EXPORTS: {output of `npx codebase-intelligence dead-exports --json --limit 20`}
+   - FORCES: {output of `npx codebase-intelligence forces --json`}
+   - MODULES: {output of `npx codebase-intelligence modules --json`}
+   Cross-reference these with your Glob/Grep/Read findings.
+   Hotspots data replaces sampling strategy for TypeScript files.
 5. Score each task:
    - Impact: H (affects users/security/data) / M (affects DX/maintainability) / L (cosmetic/minor)
    - Effort: L (<1h) / M (1-4h) / H (4h+)
@@ -172,6 +192,8 @@ For 500+ source files, agents should focus on:
 3. Critical paths (auth, payments, data mutations)
 4. Files with TODOs/FIXMEs/HACKs
 5. Files without test coverage (look for missing `*.test.*` counterparts)
+
+**TypeScript projects with CI:** `hotspots` data from codebase-intelligence replaces sampling heuristics for TS/TSX files. Non-TS files in the same project still use the sampling strategy above.
 
 ---
 

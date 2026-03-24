@@ -81,11 +81,34 @@ Each hypothesis must:
   - State what evidence would CONFIRM vs ELIMINATE it
 ```
 
+**TypeScript projects with CI available** (augments code reading):
+
+```
+For suspect function/symbol:
+  npx codebase-intelligence symbol --json <path> <name>
+    → Callers, callees, type info — narrows hypothesis scope
+  npx codebase-intelligence dependents --json <file>
+    → Blast radius — what else could be affected by this bug?
+If CI unavailable: use grep for callers/callees
+See references/codebase-intelligence.md for full command reference.
+```
+
 ### Step 3: TEST HYPOTHESES
 
 For **complex** bugs: test each hypothesis sequentially, highest probability first.
 
 For **highly complex** bugs: if the agent supports parallel execution (sub-agents, concurrent tool calls, or background tasks), investigate multiple hypotheses simultaneously. If not, investigate sequentially but assign a time box per hypothesis to avoid rabbit holes.
+
+**TypeScript structural investigation** (if CI available):
+
+```
+npx codebase-intelligence processes --json <path>
+  → Entry-point execution tracing — identifies code paths through suspect area
+npx codebase-intelligence impact --json <path> <symbol>
+  → Symbol-level blast radius — what breaks if this symbol behaves differently?
+Feed these to investigation agents alongside hypothesis prompts.
+If CI unavailable: agents use grep + manual code path tracing.
+```
 
 #### Highly Complex: Parallel Investigation
 

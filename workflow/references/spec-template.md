@@ -81,6 +81,11 @@ Each section below shows: the template (what goes in the spec) then the generati
 **Generation rules:**
 - **MANDATORY: Read the codebase before writing anything else.**
 - Search for related code: grep keywords, read affected files, check existing patterns
+- **TypeScript projects (if CI available):** Augment manual discovery with structural data:
+  - `npx codebase-intelligence dependents --json <file>` for each MODIFY file → populates AFFECTED rows
+  - `npx codebase-intelligence impact --json <symbol>` for changed exports → validates blast radius
+  - `npx codebase-intelligence file --json <file>` for detailed file context → informs Reuse field
+  - See `references/codebase-intelligence.md` for full command reference and fallback protocol
 - Map every file that will be created, modified, or indirectly affected
 - Identify code to reuse — never reinvent what exists
 - Flag breaking changes to exports, APIs, schemas, config

@@ -16,6 +16,16 @@ Use when:
 
 Triggers: "analyze", "key points", "what's important", "improve this", "review", "examine", "assess", "analysis", "deep analysis", "run deep analysis", "brief", "challenge assumptions", "first principles"
 
+## Agent Capabilities
+
+| Capability | Used For | Required | Fallback |
+|------------|----------|----------|----------|
+| File read | Load target files/folders | Yes | — |
+| Sub-agent dispatch | Parallel perspective analysis | Recommended | Sequential in main thread |
+| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX software domain | No | Pure reasoning from file contents |
+
+This skill remains fully functional without CLI tools. Codebase intelligence is an optional enhancement for the software domain only.
+
 ---
 
 ## Table of Contents
@@ -66,9 +76,18 @@ analyze thorough "migration to microservices"
 1. **Mode**: Detect from keywords (quick/standard/deep)
 2. **Domain**: Auto-detect from content/keywords
 3. **Target**: Load file/folder content if path provided
+4. **TypeScript detection**: If target is a code path and `tsconfig.json` exists:
+   - Run CI detection gate (see `../../workflow/references/codebase-intelligence.md`)
+   - If available: gather structural data in Phase 1
+   - If unavailable: proceed with pure file-reading context gathering
 
 ### Phase 1: Context Gathering
 - **File/folder path** → Read files
+- **Software domain + TypeScript + CI available** → Augment file reading with:
+  - `npx codebase-intelligence overview --json <path>` → project structure snapshot
+  - `npx codebase-intelligence modules --json <path>` → module boundaries and cross-deps
+  - `npx codebase-intelligence groups --json <path>` → directory-level aggregates
+  Include as structured context alongside file contents. If CI unavailable: read files only.
 - **Topic/idea** → Use provided context
 - **Unfamiliar domain** → Optional web search
 
@@ -86,6 +105,16 @@ Direct analysis by primary agent, no sub-agents
 1. Select 6-10 perspectives based on domain
 2. Launch all perspectives in parallel (single message block)
 3. Each agent answers 12 questions (7 core + 5 deep)
+
+#### Software Domain Enhancement (TypeScript + CI available)
+
+Include pre-computed structural data in software domain agent prompts:
+- `npx codebase-intelligence hotspots --json --metric complexity --limit 20` → complexity/churn hotspots
+- `npx codebase-intelligence forces --json` → cohesion/coupling tensions per module
+- `npx codebase-intelligence dead-exports --json --limit 20` → unused export analysis
+- `npx codebase-intelligence clusters --json` → dependency community clusters
+
+Agents receive this as structured context alongside the target content. Supplements their analysis — does not replace independent reasoning. If CI unavailable: agents analyze from file contents only.
 
 ### Phase 3: Synthesis
 After ALL agents complete:
@@ -593,6 +622,8 @@ This skill is **standalone** and includes all necessary frameworks:
 - Output formats (embedded)
 
 No external dependencies required.
+
+**Optional enhancement:** For software domain analysis of TypeScript codebases, `codebase-intelligence` CLI (`npx codebase-intelligence`) provides structural data — hotspots, coupling, dead exports, module boundaries, blast radius. See `../../workflow/references/codebase-intelligence.md` for command reference. The skill works identically without it — data is supplementary context for perspective agents.
 
 ---
 

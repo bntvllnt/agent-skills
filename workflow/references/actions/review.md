@@ -18,6 +18,11 @@ Before any review, build a change map:
    - Risk: HIGH | MEDIUM | LOW
 3. Detect primary language + framework from changed files
 4. Detect context signals (see Step 2)
+5. **TypeScript structural risk** (if CI available, see `references/codebase-intelligence.md`):
+   Run: `npx codebase-intelligence changes --json`
+   → Augments git diff with coupling score, blast radius, and complexity delta per file
+   → Use to refine Risk Classification below (more precise than filename-based heuristics)
+   If CI unavailable: use filename-based risk classification only
 ```
 
 ### Risk Classification
@@ -91,6 +96,21 @@ Example: `Review mode: Deep — HIGH risk file detected (src/api/auth.ts: auth/s
 | Observability | Production service, background job, API endpoint, webhook handler |
 | Testability | Complex branching (>=3 paths), critical business logic, stateful flows |
 | Accessibility | UI components, forms, navigation, interactive elements |
+
+### Structural Context (TypeScript projects with CI)
+
+Before dispatching perspective agents in Standard/Deep/Production modes, gather structural data:
+
+```
+For each changed TS/TSX file:
+  npx codebase-intelligence dependents --json <file>
+    → Consumer awareness: who imports this? What could break?
+  npx codebase-intelligence forces --json
+    → Cohesion/coupling metrics for architectural review
+
+Include in perspective agent context alongside file contents and diff.
+If CI unavailable: perspectives rely on file contents + grep-based import tracing.
+```
 
 ### Deep Mode
 
