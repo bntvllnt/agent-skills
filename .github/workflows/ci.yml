@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  changelog:
+    name: Changelog Required
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check CHANGELOG.md updated
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -q '^CHANGELOG.md$'; then
+            echo "CHANGELOG.md updated"
+          else
+            echo "::error::CHANGELOG.md must be updated in every PR. Add an entry under the next version heading."
+            exit 1
+          fi
