@@ -155,5 +155,25 @@ ESLint conflict: if using `unicorn/no-null`, add file-level disable:
 
 ## Notes
 
-- Prefer `.withIndex()` over `.filter()`.
+- Prefer `.withIndex()` over `.filter()`. The `convex-rules/no-filter-on-query` ESLint rule bans `.filter()` chained on query expressions. Array `.filter()` after `await` + `.collect()` is fine.
 - Keep reads bounded with `.take(n)` or pagination.
+- Never use `ctx.db.get()` or `ctx.db.query()` inside a loop body (`convex-rules/no-query-in-loop`). Use `Promise.all()` with `.map()` for batch fetching instead.
+- All factory functions require a `returns` validator (`convex-rules/require-returns-validator`).
+- Queries go in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts` (enforced by `convex-rules/namespace-separation`). See `references/style.md`.
+
+### Batch Fetch Pattern (Avoid N+1)
+
+```ts
+// Bad: N+1 query inside loop
+for (const id of args.ids) {
+  const user = await ctx.db.get(id);
+  users.push(user);
+}
+```
+
+```ts
+// Good: batch with Promise.all
+const users = await Promise.all(
+  args.ids.map((id) => ctx.db.get(id))
+);
+```

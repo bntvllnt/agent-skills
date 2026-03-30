@@ -7,13 +7,14 @@ Docs:
 
 ## Dual Validators (Recommended)
 
-IMPORTANT: Maintain BOTH data validator and document validator.
+IMPORTANT: Maintain BOTH data validator and document validator. Place validators in `validators.ts` within each scope folder (enforced by `convex-rules/no-bare-v-any`).
 
 ```ts
+// <scope>/validators.ts
 import { defineTable } from "convex/server";
 import { v, Infer } from "convex/values";
 
- 
+
 export const itemValidator = v.object({
   name: v.string(),
   userId: v.id("users"),
@@ -81,23 +82,28 @@ export const trackGenresTable = defineTable({
 
 ---
 
-## Project Structure (Suggested)
+## Project Structure (Enforced by @vllnt/eslint-config)
 
 ```text
 convex/
   lib/
+    validators.ts           shared v.any() aliases
   <scope>/
-    queries.ts
-    mutations.ts
-    actions.ts
+    queries.ts              query(), internalQuery()
+    mutations.ts            mutation(), internalMutation()
+    internal_mutations.ts   internalMutation() (optional split)
+    actions.ts              action(), internalAction()
+    validators.ts           v.* validators + types
+    schema.ts               table definitions
     workflows.ts
-    schemas.ts
     tests/
-  migrations/
+  migrations/               relaxed namespace rules
   schema.ts
   convex.config.ts
   auth.config.ts
   crons.ts
   http.ts
-  _generated/
+  _generated/               excluded from linting
 ```
+
+snake_case filenames required (e.g. `user_helper.ts`, not `user-helper.ts`). Config files exempt.

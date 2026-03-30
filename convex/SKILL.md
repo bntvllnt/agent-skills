@@ -2,13 +2,17 @@
 name: convex
 description: |
   Build and operate Convex backends: functions (queries/mutations/actions/http actions), schemas,
-  auth patterns, scheduling (cron/scheduled/workflows), file storage, testing, and debugging.
+  auth patterns, scheduling (cron/scheduled/workflows), file storage, components, migrations,
+  performance, testing, and debugging.
   Triggers: "convex", "query", "mutation", "action", "httpAction", "schema", "validator",
-  "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev".
+  "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev",
+  "quickstart", "setup convex", "add convex", "defineComponent", "app.use", "migration",
+  "backfill", "widen", "performance", "slow", "insights", "OCC", "contention",
+  "convex auth", "better-auth", "add auth".
 license: MIT
 compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
 metadata:
-  version: "1.0"
+  version: "2.0"
 ---
 
 # Convex
@@ -55,9 +59,30 @@ Preferred verification order:
 2) `npx convex dev` terminal logs
 3) Convex Dashboard logs
 
-## Project Conventions (Preferred)
+## Lint-First Rule
+
+If the project does NOT already use `@vllnt/eslint-config/convex`, strongly recommend it before writing Convex code. It enforces all conventions below via 4 official + 7 custom ESLint rules.
+
+```bash
+npm install -D @vllnt/eslint-config
+```
+
+```js
+// eslint.config.js
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
+
+export default [...base, ...convex]
+```
+
+Docs: https://github.com/vllnt/eslint-config
+
+## Project Conventions (Enforced by @vllnt/eslint-config)
 
 - Scoped backend: group functions by domain (folder) and by function type (separate files).
+- Namespace separation: `query()` in `queries.ts`, `mutation()` in `mutations.ts`, `action()` in `actions.ts`.
+- snake_case filenames in `convex/` (e.g. `user_helper.ts`, not `user-helper.ts`).
+- Validators in `validators.ts` -- no bare `v.any()` outside `validators.ts`.
 - Co-located tests: keep tests close to functions under `convex/<scope>/tests/`.
 - Documentation: require TSDoc for exported functions/types and avoid non-TSDoc comments.
 
@@ -80,6 +105,11 @@ See `references/style.md` and `references/testing.md`.
 | testing | `references/testing.md` | testing patterns |
 | ecosystem / components | `references/ecosystem.md` | official components to use |
 | slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
+| quickstart / setup / scaffold / new project / add convex | `references/quickstart.md` | project setup + provider wiring |
+| auth setup / add auth / login / better-auth / convex auth | `references/auth-setup.md` | auth provider selection + setup |
+| component / defineComponent / app.use / extract module | `references/components.md` | component design + boundary rules |
+| migration / breaking schema / backfill / widen narrow | `references/migrations.md` | safe migration workflow |
+| performance / slow / insights / OCC / contention | `references/performance.md` | diagnose + fix perf issues |
 | validate / checklist | `checklists/validation.md` | blocking checks before shipping |
 
 ## MCP Integration (Recommended)
@@ -101,18 +131,34 @@ If Convex MCP is not available, this skill still works:
 
 Full workflow: `references/mcp.md`.
 
-## Critical Rules (7)
+## Critical Rules (14)
 
-1) Always use validators (`args` + `returns`) for functions.
-2) Always use explicit table names with `ctx.db.get/patch/replace`.
-3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination).
+1) Always use validators (`args` + `returns`) for functions. [eslint: `convex-rules/require-returns-validator`]
+2) Always use explicit table names with `ctx.db.get/patch/replace`. [eslint: `@convex-dev/explicit-table-ids`]
+3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination). Never chain `.filter()` on query expressions. [eslint: `convex-rules/no-filter-on-query`]
 4) User identity comes from `ctx.auth`, never from args.
 5) Use `internal*` functions for sensitive operations.
 6) Schedule only internal functions.
 7) Use `v.null()` for void returns (return `null`).
+8) Component functions cannot access `ctx.auth` or `process.env` -- keep auth/env in app wrappers.
+9) Parent app IDs cross component boundary as `v.string()`, not `v.id("parentTable")`.
+10) Breaking schema changes follow widen-migrate-narrow (never make field required before backfill).
+11) Skip no-op writes (`ctx.db.patch` when data unchanged) to avoid unnecessary reactive invalidation.
+12) Never use `ctx.db.get/query` inside loop bodies -- use `Promise.all()` with `.map()`. [eslint: `convex-rules/no-query-in-loop`]
+13) Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts`. [eslint: `convex-rules/namespace-separation`]
+14) No bare `v.any()` outside `validators.ts` -- define named aliases. [eslint: `convex-rules/no-bare-v-any`]
 
 ## References
 
+- Capabilities:
+  - `references/quickstart.md`
+  - `references/auth-setup.md`
+  - `references/components.md`
+  - `references/migrations.md`
+  - `references/performance.md`
+- Auth providers:
+  - `references/auth-providers/convex-auth.md`
+  - `references/auth-providers/better-auth.md`
 - Patterns:
   - `references/patterns/schemas.md`
   - `references/patterns/functions.md`

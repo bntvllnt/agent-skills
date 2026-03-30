@@ -1,5 +1,7 @@
 # Authentication Patterns
 
+For provider-specific setup (Convex Auth, Clerk, WorkOS, Auth0), see `references/auth-setup.md`.
+
 Docs:
 
 - Authentication overview: https://docs.convex.dev/auth

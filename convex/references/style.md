@@ -28,18 +28,47 @@ Goals:
  */
 ```
 
-## File organization (recommended)
+## File Organization (Enforced by @vllnt/eslint-config)
 
-Within a scope folder:
+Namespace separation: each function type MUST live in its designated file. This is enforced by `convex-rules/standard-filenames` and `convex-rules/namespace-separation`.
 
 ```text
 convex/<scope>/
-  queries.ts
-  mutations.ts
-  actions.ts
+  queries.ts              query(), internalQuery()
+  mutations.ts            mutation(), internalMutation()
+  internal_mutations.ts   internalMutation() (optional split)
+  actions.ts              action(), internalAction()
+  validators.ts           v.* validators + types
+  schema.ts               table definitions
   workflows.ts
   crons.ts
-  schemas.ts
-  helpers.ts
   tests/
+```
+
+### Naming Rules
+
+- **snake_case filenames** in `convex/` (enforced by `convex-rules/snake-case-filenames`). Example: `user_helper.ts`, not `user-helper.ts`.
+- Config files exempt: `auth.ts`, `auth.config.ts`, `convex.config.ts`.
+- Migration files exempt from namespace separation.
+
+### Namespace Rules
+
+- `query()` / `internalQuery()` ONLY in `queries.ts`
+- `mutation()` / `internalMutation()` ONLY in `mutations.ts` or `internal_mutations.ts`
+- `action()` / `internalAction()` ONLY in `actions.ts`
+
+### Validator Rules
+
+- No bare `v.any()` outside `validators.ts` (enforced by `convex-rules/no-bare-v-any`). Define named aliases instead:
+
+```ts
+// validators.ts
+export const IdInput = v.any();
+
+// queries.ts -- use the alias
+import { IdInput } from "./validators";
+export const myQuery = query({
+  args: { id: IdInput },
+  handler: async (ctx, args) => { /* ... */ },
+});
 ```

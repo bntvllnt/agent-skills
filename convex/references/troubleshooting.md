@@ -1,5 +1,7 @@
 # Troubleshooting & Self-Correction
 
+For deep performance diagnosis, see `references/performance.md`.
+
 ## If query performance is slow
 
 1. Check: `.filter()` used instead of `.withIndex()`?

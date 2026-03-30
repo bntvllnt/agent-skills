@@ -1,10 +1,15 @@
 # Convex
 
-Convex skill for building and operating Convex backends: functions (queries/mutations/actions), schemas, auth, scheduling, components, testing, and debugging.
+Convex skill for building and operating Convex backends: functions, schemas, auth, scheduling, components, migrations, performance, testing, and debugging.
 
 ## Entry Points
 
 - Home/router: `convex/SKILL.md`
+- Quickstart: `convex/references/quickstart.md`
+- Auth setup: `convex/references/auth-setup.md`
+- Components: `convex/references/components.md`
+- Migrations: `convex/references/migrations.md`
+- Performance: `convex/references/performance.md`
 - MCP usage (recommended): `convex/references/mcp.md`
 - CLI usage/help: `convex/references/cli-help.md`
 - Validation checklist: `convex/checklists/validation.md`
