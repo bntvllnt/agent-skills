@@ -59,7 +59,7 @@ In Convex, every write can fan out into reactive invalidation and downstream syn
 
 ### 1. Push filters to storage
 
-Both JavaScript `.filter()` and Convex query `.filter()` mean you already paid for the read. Only `.withIndex()` and `.withSearchIndex()` reduce documents scanned.
+Both JavaScript `.filter()` and Convex query `.filter()` mean you already paid for the read. Only `.withIndex()` and `.withSearchIndex()` reduce documents scanned. [eslint: `convex-rules/no-filter-on-query` bans `.filter()` chained on query expressions]
 
 ```ts
 // Bad: scans then filters

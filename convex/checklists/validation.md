@@ -19,6 +19,10 @@
 - [ ] Migrations: schema widened before data migration runs [blocking]
 - [ ] Migrations: migration tested with `dryRun: true` before production [blocking]
 - [ ] Performance: no JS `.filter()` or Convex `.filter()` on hot paths without index [blocking]
+- [ ] No `ctx.db.get/query` inside loop bodies -- use `Promise.all` + `.map()` [blocking]
+- [ ] Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts` [blocking]
+- [ ] No bare `v.any()` outside `validators.ts` [blocking]
+- [ ] snake_case filenames in `convex/` (except config files) [blocking]
 
 **[advisory]** - Should pass, warn if not:
 

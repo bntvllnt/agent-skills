@@ -59,9 +59,12 @@ Preferred verification order:
 2) `npx convex dev` terminal logs
 3) Convex Dashboard logs
 
-## Project Conventions (Preferred)
+## Project Conventions (Enforced by @vllnt/eslint-config)
 
 - Scoped backend: group functions by domain (folder) and by function type (separate files).
+- Namespace separation: `query()` in `queries.ts`, `mutation()` in `mutations.ts`, `action()` in `actions.ts`.
+- snake_case filenames in `convex/` (e.g. `user_helper.ts`, not `user-helper.ts`).
+- Validators in `validators.ts` -- no bare `v.any()` outside `validators.ts`.
 - Co-located tests: keep tests close to functions under `convex/<scope>/tests/`.
 - Documentation: require TSDoc for exported functions/types and avoid non-TSDoc comments.
 
@@ -110,11 +113,11 @@ If Convex MCP is not available, this skill still works:
 
 Full workflow: `references/mcp.md`.
 
-## Critical Rules (11)
+## Critical Rules (14)
 
-1) Always use validators (`args` + `returns`) for functions.
-2) Always use explicit table names with `ctx.db.get/patch/replace`.
-3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination).
+1) Always use validators (`args` + `returns`) for functions. [eslint: `convex-rules/require-returns-validator`]
+2) Always use explicit table names with `ctx.db.get/patch/replace`. [eslint: `@convex-dev/explicit-table-ids`]
+3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination). Never chain `.filter()` on query expressions. [eslint: `convex-rules/no-filter-on-query`]
 4) User identity comes from `ctx.auth`, never from args.
 5) Use `internal*` functions for sensitive operations.
 6) Schedule only internal functions.
@@ -123,6 +126,9 @@ Full workflow: `references/mcp.md`.
 9) Parent app IDs cross component boundary as `v.string()`, not `v.id("parentTable")`.
 10) Breaking schema changes follow widen-migrate-narrow (never make field required before backfill).
 11) Skip no-op writes (`ctx.db.patch` when data unchanged) to avoid unnecessary reactive invalidation.
+12) Never use `ctx.db.get/query` inside loop bodies -- use `Promise.all()` with `.map()`. [eslint: `convex-rules/no-query-in-loop`]
+13) Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts`. [eslint: `convex-rules/namespace-separation`]
+14) No bare `v.any()` outside `validators.ts` -- define named aliases. [eslint: `convex-rules/no-bare-v-any`]
 
 ## References
 
