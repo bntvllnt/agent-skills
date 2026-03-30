@@ -1,0 +1,151 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type"
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+concurrency:
+  group: publish-${{ github.event_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  canary:
+    name: Canary Tag
+    if: github.event_name == 'push' && !startsWith(github.event.head_commit.message, 'chore(release):')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest
+        run: |
+          tag=$(git tag --list 'v*' --sort=-version:refname | head -1)
+          echo "tag=${tag:-v0.0.0}" >> "$GITHUB_OUTPUT"
+
+      - name: Create canary tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BASE="${{ steps.latest.outputs.tag }}"
+          BASE="${BASE#v}"
+          SHORT_SHA=$(echo "$GITHUB_SHA" | cut -c1-7)
+          CANARY_TAG="v${BASE}-canary.${SHORT_SHA}"
+
+          git tag "$CANARY_TAG"
+          git push origin "$CANARY_TAG"
+
+          gh release create "$CANARY_TAG" \
+            --title "$CANARY_TAG" \
+            --notes "Canary release from \`${GITHUB_SHA::7}\` on main" \
+            --prerelease
+
+  release:
+    name: Release
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest stable tag
+        id: latest
+        run: |
+          tag=$(git tag --list 'v*' --sort=-version:refname | grep -v canary | head -1)
+          echo "tag=${tag:-v0.0.0}" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: next
+        run: |
+          current="${{ steps.latest.outputs.tag }}"
+          current="${current#v}"
+          IFS='.' read -r major minor patch <<< "$current"
+
+          case "${{ inputs.bump }}" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+
+          echo "version=v${major}.${minor}.${patch}" >> "$GITHUB_OUTPUT"
+
+      - name: Generate changelog
+        id: changelog
+        run: |
+          latest="${{ steps.latest.outputs.tag }}"
+          if git rev-parse "$latest" >/dev/null 2>&1; then
+            RANGE="${latest}..HEAD"
+          else
+            RANGE="HEAD"
+          fi
+
+          {
+            echo "body<<CHANGELOG_EOF"
+
+            FEATS=$(git log "$RANGE" --pretty=format:"%s" --grep="^feat" --no-merges 2>/dev/null || true)
+            if [ -n "$FEATS" ]; then
+              echo "### Features"
+              echo "$FEATS" | sed 's/^/- /'
+              echo ""
+            fi
+
+            FIXES=$(git log "$RANGE" --pretty=format:"%s" --grep="^fix" --no-merges 2>/dev/null || true)
+            if [ -n "$FIXES" ]; then
+              echo "### Bug Fixes"
+              echo "$FIXES" | sed 's/^/- /'
+              echo ""
+            fi
+
+            OTHERS=$(git log "$RANGE" --pretty=format:"%s" --invert-grep --grep="^feat" --grep="^fix" --no-merges 2>/dev/null || true)
+            if [ -n "$OTHERS" ]; then
+              echo "### Other Changes"
+              echo "$OTHERS" | sed 's/^/- /'
+              echo ""
+            fi
+
+            echo "CHANGELOG_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Tag and release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ steps.next.outputs.version }}"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$version" -m "$version"
+          git push origin "$version"
+
+          cat <<'NOTES_EOF' > /tmp/release-notes.md
+          ${{ steps.changelog.outputs.body }}
+          NOTES_EOF
+
+          gh release create "$version" \
+            --title "$version" \
+            --notes-file /tmp/release-notes.md \
+            --latest
+
+      - name: Clean up canary tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Delete canary releases and tags that are now behind the stable release
+          for tag in $(git tag --list 'v*-canary.*'); do
+            gh release delete "$tag" --yes --cleanup-tag 2>/dev/null || git push origin ":refs/tags/$tag" 2>/dev/null || true
+          done
