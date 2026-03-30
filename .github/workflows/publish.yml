@@ -84,40 +84,23 @@ jobs:
 
           echo "version=v${major}.${minor}.${patch}" >> "$GITHUB_OUTPUT"
 
-      - name: Generate changelog
+      - name: Extract changelog from CHANGELOG.md
         id: changelog
         run: |
-          latest="${{ steps.latest.outputs.tag }}"
-          if git rev-parse "$latest" >/dev/null 2>&1; then
-            RANGE="${latest}..HEAD"
-          else
-            RANGE="HEAD"
+          version="${{ steps.next.outputs.version }}"
+          version="${version#v}"
+
+          # Extract the section for this version (between ## [x.y.z] and next ## [)
+          notes=$(awk "/^## \\[${version}\\]/{found=1; next} /^## \\[/{if(found) exit} found{print}" CHANGELOG.md)
+
+          if [ -z "$notes" ]; then
+            # Fallback: use the first (latest) section if exact version not found
+            notes=$(awk '/^## \[/{if(found) exit; found=1; next} found{print}' CHANGELOG.md)
           fi
 
           {
             echo "body<<CHANGELOG_EOF"
-
-            FEATS=$(git log "$RANGE" --pretty=format:"%s" --grep="^feat" --no-merges 2>/dev/null || true)
-            if [ -n "$FEATS" ]; then
-              echo "### Features"
-              echo "$FEATS" | sed 's/^/- /'
-              echo ""
-            fi
-
-            FIXES=$(git log "$RANGE" --pretty=format:"%s" --grep="^fix" --no-merges 2>/dev/null || true)
-            if [ -n "$FIXES" ]; then
-              echo "### Bug Fixes"
-              echo "$FIXES" | sed 's/^/- /'
-              echo ""
-            fi
-
-            OTHERS=$(git log "$RANGE" --pretty=format:"%s" --invert-grep --grep="^feat" --grep="^fix" --no-merges 2>/dev/null || true)
-            if [ -n "$OTHERS" ]; then
-              echo "### Other Changes"
-              echo "$OTHERS" | sed 's/^/- /'
-              echo ""
-            fi
-
+            echo "$notes"
             echo "CHANGELOG_EOF"
           } >> "$GITHUB_OUTPUT"
 
