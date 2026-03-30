@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.11.0] - 2026-03-30
+## [1.12.0] - 2026-03-30
 
 - feat(convex): expand skill to v2.0 with quickstart, components, migrations, performance, auth (#16)
 - feat(convex): add Better Auth provider with full Convex integration guide
