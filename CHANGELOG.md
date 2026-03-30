@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.11.0] - 2026-03-30
+
+- feat(convex): expand skill to v2.0 with quickstart, components, migrations, performance, auth (#16)
+- feat(convex): add Better Auth provider with full Convex integration guide
+- feat(convex): align skill with @vllnt/eslint-config/convex conventions (14 critical rules)
+- feat(convex): add lint-first rule recommending @vllnt/eslint-config/convex
+
 ## [1.10.1] - 2026-03-24
 
 - feat(workflow,analyze): integrate codebase-intelligence CLI for TypeScript repos (#12)

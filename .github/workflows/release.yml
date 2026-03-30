@@ -1,0 +1,87 @@
+name: Auto Bump & Tag
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  bump-and-tag:
+    runs-on: ubuntu-latest
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get latest tag
+        id: latest
+        run: |
+          tag=$(git tag --list 'v*' --sort=-version:refname | head -1)
+          echo "tag=${tag:-v0.0.0}" >> "$GITHUB_OUTPUT"
+
+      - name: Determine bump type from commits
+        id: bump
+        run: |
+          latest="${{ steps.latest.outputs.tag }}"
+          # Get commits since last tag
+          if git rev-parse "$latest" >/dev/null 2>&1; then
+            commits=$(git log "$latest"..HEAD --pretty=format:"%s")
+          else
+            commits=$(git log --pretty=format:"%s")
+          fi
+
+          # Determine bump: feat = minor, fix/chore = patch
+          # BREAKING CHANGE or ! after type = major
+          bump="none"
+          if echo "$commits" | grep -qE '^[a-z]+(\(.+\))?!:|BREAKING CHANGE'; then
+            bump="major"
+          elif echo "$commits" | grep -qE '^feat(\(.+\))?:'; then
+            bump="minor"
+          elif echo "$commits" | grep -qE '^(fix|chore|docs|refactor|perf|style|test)(\(.+\))?:'; then
+            bump="patch"
+          fi
+
+          echo "type=$bump" >> "$GITHUB_OUTPUT"
+
+      - name: Compute next version
+        id: next
+        if: steps.bump.outputs.type != 'none'
+        run: |
+          current="${{ steps.latest.outputs.tag }}"
+          current="${current#v}"
+          IFS='.' read -r major minor patch <<< "$current"
+
+          case "${{ steps.bump.outputs.type }}" in
+            major) major=$((major + 1)); minor=0; patch=0 ;;
+            minor) minor=$((minor + 1)); patch=0 ;;
+            patch) patch=$((patch + 1)) ;;
+          esac
+
+          version="v${major}.${minor}.${patch}"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Create tag and GitHub release
+        if: steps.bump.outputs.type != 'none'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${{ steps.next.outputs.version }}"
+          latest="${{ steps.latest.outputs.tag }}"
+
+          # Generate release notes from commits
+          if git rev-parse "$latest" >/dev/null 2>&1; then
+            notes=$(git log "$latest"..HEAD --pretty=format:"- %s" --no-merges)
+          else
+            notes=$(git log --pretty=format:"- %s" --no-merges)
+          fi
+
+          git tag "$version"
+          git push origin "$version"
+
+          gh release create "$version" \
+            --title "$version" \
+            --notes "$notes" \
+            --latest
