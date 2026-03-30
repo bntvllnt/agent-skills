@@ -8,7 +8,7 @@ description: |
   "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev",
   "quickstart", "setup convex", "add convex", "defineComponent", "app.use", "migration",
   "backfill", "widen", "performance", "slow", "insights", "OCC", "contention",
-  "clerk", "auth0", "workos", "convex auth", "add auth".
+  "convex auth", "better-auth", "add auth".
 license: MIT
 compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
 metadata:
@@ -85,7 +85,7 @@ See `references/style.md` and `references/testing.md`.
 | ecosystem / components | `references/ecosystem.md` | official components to use |
 | slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
 | quickstart / setup / scaffold / new project / add convex | `references/quickstart.md` | project setup + provider wiring |
-| auth setup / add auth / login / clerk / auth0 / workos | `references/auth-setup.md` | auth provider selection + setup |
+| auth setup / add auth / login / better-auth / convex auth | `references/auth-setup.md` | auth provider selection + setup |
 | component / defineComponent / app.use / extract module | `references/components.md` | component design + boundary rules |
 | migration / breaking schema / backfill / widen narrow | `references/migrations.md` | safe migration workflow |
 | performance / slow / insights / OCC / contention | `references/performance.md` | diagnose + fix perf issues |
@@ -134,9 +134,7 @@ Full workflow: `references/mcp.md`.
   - `references/performance.md`
 - Auth providers:
   - `references/auth-providers/convex-auth.md`
-  - `references/auth-providers/clerk.md`
-  - `references/auth-providers/workos-authkit.md`
-  - `references/auth-providers/auth0.md`
+  - `references/auth-providers/better-auth.md`
 - Patterns:
   - `references/patterns/schemas.md`
   - `references/patterns/functions.md`

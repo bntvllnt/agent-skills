@@ -13,9 +13,9 @@ Skip when: auth for a non-Convex backend, pure OAuth/OIDC docs, or auth provider
 Do not assume a provider. Before writing setup code:
 
 1. Check the repo for signals:
-   - Dependencies: `@clerk/*`, `@workos-inc/*`, `@auth0/*`, `@convex-dev/auth`
-   - Files: `convex/auth.config.ts`, auth middleware, provider wrappers, login components
-   - Env vars pointing at a provider
+   - Dependencies: `@convex-dev/auth`, `better-auth`, `@convex-dev/better-auth`
+   - Files: `convex/auth.config.ts`, `convex/betterAuth/`, auth middleware, provider wrappers
+   - Env vars pointing at a provider (e.g. `BETTER_AUTH_SECRET`)
 2. If obvious from repo, continue with that provider
 3. If not obvious, ask the user
 
@@ -23,11 +23,9 @@ Do not assume a provider. Before writing setup code:
 
 | Provider | When to Use | Reference |
 |----------|-------------|-----------|
-| Convex Auth | Default for new Convex apps, auth handled in Convex | `auth-providers/convex-auth.md` |
-| Clerk | App already uses Clerk, or user wants hosted auth | `auth-providers/clerk.md` |
-| WorkOS AuthKit | App uses WorkOS, or user wants AuthKit | `auth-providers/workos-authkit.md` |
-| Auth0 | App already uses Auth0 | `auth-providers/auth0.md` |
-| Custom JWT | Integrating existing auth system not covered above | Official docs |
+| Convex Auth | Built-in Convex auth: magic links, OTPs, OAuth, passwords | `auth-providers/convex-auth.md` |
+| Better Auth | Framework-agnostic auth with plugin ecosystem, runs on Convex infra | `auth-providers/better-auth.md` |
+| Custom JWT | Integrating existing auth system not covered above | [Official docs](https://docs.convex.dev/auth) |
 
 ## Step 2: Read Provider Reference
 
