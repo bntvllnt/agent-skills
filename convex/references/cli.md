@@ -89,6 +89,19 @@ Deploy target selection follows the Convex CLI rules. In build pipelines, `CONVE
 
 See: https://docs.convex.dev/cli/deploy-key-types
 
+## Performance insights
+
+```bash
+npx convex insights --details
+npx convex insights --details --prod
+npx convex insights --details --preview-name <name>
+npx convex insights --details --deployment-name <name>
+```
+
+If the local CLI is too old: `npx -y convex@latest insights --details`
+
+See `references/performance.md` for diagnosis workflow.
+
 ## Agent mode (background agents)
 
 Convex docs recommend agent mode for remote/background coding agents:
