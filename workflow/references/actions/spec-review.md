@@ -1,6 +1,6 @@
 # Spec Review Action
 
-> **Agent:** Load this file when `spec-review` triggers. Also load the active spec from `specs/active/`.
+> **Agent:** Load this file when `spec-review` triggers. Also load the active spec from `specs/active/` and `references/rules-discovery.md` — spec must not propose patterns that violate project/user rules.
 
 Deep adversarial analysis of an active spec. Standalone — no dependency on analyze skill.
 

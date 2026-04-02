@@ -41,6 +41,7 @@ Rules:
 - Always include file path and line number
 - Always include a concrete fix (not just "consider improving")
 - FAIL = must fix. WARN = should fix. BLOCKS_PRODUCTION = violates production bar (Production mode only).
+- `[Rules]` findings cite source file + rule text: `[Rules] {violation} — rule: "{rule text}" ({source file})`
 - Skip PASS items — only show what needs action
 - Group by file, not by perspective
 
@@ -75,6 +76,7 @@ After all per-file findings:
 - **Concrete fixes** — "Add `await` before `db.save()`" not "Consider handling async properly".
 - **Short** — one line per issue. Description ≤ 80 chars. Fix ≤ 80 chars.
 - **Verdict at the end** — CLEAN (0 FAIL, 0 WARN), WARNINGS_ONLY (0 FAIL, N WARN), HAS_BLOCKERS (N FAIL).
+- **`[Rules]` severity** — FAIL for mandatory-language rules (MUST/ALWAYS/NEVER), WARN otherwise. Production mode: ambiguous → FAIL.
 
 ---
 
@@ -133,9 +135,14 @@ src/routes/users.ts:31 — WARN [Performance] N+1 query in user list (medium)
 src/utils/format.ts:7 — WARN [DX] Function name `fn` is not descriptive (low)
   Fix: Rename to `formatUserDisplayName`
 
-**FAIL (2)** — must fix before shipping:
+src/routes/users.ts:5 — FAIL [Rules] Missing explicit return type on exported function
+  Fix: Add return type annotation to `getUsers()`
+  Rule: AGENTS.md § TypeScript — "Explicit return types on public APIs"
+
+**FAIL (3)** — must fix before shipping:
 1. `src/middleware/auth.ts:42` — [Security] JWT secret without fallback
 2. `src/routes/users.ts:18` — [Correctness] Missing await on db.save()
+3. `src/routes/users.ts:5` — [Rules] Missing explicit return type on export
 
 **WARN (2)** — should fix:
 1. `src/routes/users.ts:31` — [Performance] N+1 query (medium)

@@ -1,6 +1,6 @@
 # Focus Action
 
-> **Agent:** Load this file when `focus` triggers. Also load `references/reviews/production-standards.md` — it provides extended checklists for scanning.
+> **Agent:** Load this file when `focus` triggers. Also load `references/reviews/production-standards.md` — it provides extended checklists for scanning. Also load `references/rules-discovery.md` — scan checks existing code against project/user rules.
 
 Scan codebase against review perspectives, surface prioritized tasks toward production readiness. Output: ranked task proposals, user selects, specs created in `specs/backlog/`.
 

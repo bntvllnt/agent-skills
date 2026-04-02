@@ -1,6 +1,6 @@
 # Plan Action
 
-> **Agent:** Load this file when `plan` triggers. Also load `references/spec-template.md` — it defines spec structure and validation rules.
+> **Agent:** Load this file when `plan` triggers. Also load `references/spec-template.md` — it defines spec structure and validation rules. Also load `references/rules-discovery.md` — plans must respect project/user conventions.
 
 **BLOCKING: Never delegate planning to the host agent's built-in plan mode.**
 This skill manages its own planning by writing spec files to `specs/active/`.

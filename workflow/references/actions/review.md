@@ -1,6 +1,6 @@
 # Review Action
 
-> **Agent:** Load this file when `review` triggers or during ship loop review cycles.
+> **Agent:** Load this file when `review` triggers or during ship loop review cycles. Also load `references/rules-discovery.md` — discovered rules become the Rules perspective checklist.
 
 Auto-selecting multi-perspective code review. Runs during ship loop or standalone.
 
@@ -77,15 +77,21 @@ Example: `Review mode: Deep — HIGH risk file detected (src/api/auth.ts: auth/s
 
 ## Step 3: Execute Review
 
+### Rules Discovery (MANDATORY — Before Perspective Dispatch)
+
+Load `references/rules-discovery.md` and execute Steps 1-4. This discovers project/user agent config files, extracts rules, filters for relevance against the change map, and classifies severity. The discovered rules become the checklist for the Rules perspective (#10).
+
+No config files found or no relevant rules → skip Rules perspective entirely.
+
 ### Quick Mode
 
-- **Perspectives:** Core 5 (Correctness, Security, Reliability, Performance, DX)
+- **Perspectives:** Core 5 + Rules (if rules files exist)
 - **Checklist depth:** 6 items per perspective (key questions below)
 - **Context loaded:** This file only
 
 ### Standard Mode
 
-- **Perspectives:** Core 5 + auto-triggered conditionals
+- **Perspectives:** Core 5 + Rules (if rules files exist) + auto-triggered conditionals
 - **Checklist depth:** 6 items per perspective
 - **Context loaded:** This file only
 - **Conditional triggers:**
@@ -114,13 +120,13 @@ If CI unavailable: perspectives rely on file contents + grep-based import tracin
 
 ### Deep Mode
 
-- **Perspectives:** All 9 active (no conditional skipping)
+- **Perspectives:** All 9 + Rules (if rules files exist)
 - **Checklist depth:** 6 items per perspective
 - **Context loaded:** This file only
 
 ### Production Mode
 
-- **Perspectives:** All 9 active
+- **Perspectives:** All 9 + Rules (if rules files exist; ambiguous rule signals → FAIL)
 - **Checklist depth:** 15-20 items per perspective (extended checklists)
 - **Context loaded:** This file + `references/reviews/production-standards.md`
 - **Additional:** Expert personas, company bar evaluation, language-specific overlay
@@ -158,6 +164,14 @@ If CI unavailable: perspectives rely on file contents + grep-based import tracin
 | 3 | Reliability | Error paths handled? Graceful degradation? Timeouts? Cleanup? |
 | 4 | Performance | N+1 queries? Unnecessary computation? Bundle impact? Hot path? |
 | 5 | DX | Readable? Good names? Actionable errors? Types guide usage? |
+
+### Rules (Active When Rules Files Exist)
+
+| # | Perspective | Trigger | Key Questions |
+|---|------------|---------|---------------|
+| 10 | Rules | Any agent config found (AGENTS.md, CLAUDE.md, .cursorrules, codex.md, .opencode/config, etc.) | Violates project conventions? Contradicts user rules? Ignores documented anti-patterns? |
+
+The Rules perspective uses discovered rules as its checklist (not a built-in checklist). Each finding cites the source file and violated rule text.
 
 ### Conditional (Add When Triggered)
 
