@@ -8,6 +8,7 @@ Agent Skills is a collection of reusable AI agent capabilities, distributed via 
 |-------|-------------|
 | [analyze](../analyze/SKILL.md) | Universal multi-perspective analyzer (quick/standard/deep modes) |
 | [skill-builder](../skill-builder/SKILL.md) | Create/update/delete skills with validated templates |
+| [oss-readiness](../oss-readiness/SKILL.md) | OSS/public release audit, scaffolding, llms docs, CI checks |
 | [git](../git/SKILL.md) | Git workflow: branch-first commits, worktrees, PRs |
 | [github](../github/SKILL.md) | GitHub CLI operations: repos, issues, PRs, Actions, releases |
 | [convex](../convex/SKILL.md) | Convex backend: functions, schemas, auth, scheduling |
@@ -30,6 +31,7 @@ npx skills add bntvllnt/agent-skills
 
 # Install a specific skill
 npx skills add bntvllnt/agent-skills --skill workflow
+npx skills add bntvllnt/agent-skills --skill oss-readiness
 
 # Install globally
 npx skills add bntvllnt/agent-skills --skill workflow -g

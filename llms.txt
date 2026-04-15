@@ -17,6 +17,7 @@ Install: `npx skills add bntvllnt/agent-skills`
 
 - [Analyze](analyze/SKILL.md): Universal multi-perspective analyzer — quick, standard, deep modes
 - [Skill Builder](skill-builder/SKILL.md): Create/update/delete skills with validated templates
+- [OSS Readiness](oss-readiness/SKILL.md): OSS/public release audit, scaffolding, llms docs, CI validation
 - [Git](git/SKILL.md): Git workflow — branch-first commits, worktree management, PR creation
 - [GitHub](github/SKILL.md): GitHub CLI operations — repos, issues, PRs, Actions, releases
 - [Convex](convex/SKILL.md): Convex backend — functions, schemas, auth, scheduling, workflows
