@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-7-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-8-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -37,6 +37,14 @@ Multi-perspective analysis for any topic, file, idea, or decision. Three modes: 
 Create/update/delete skills with validated templates, safe defaults, and cross-skill consistency checks.
 
 [View skill documentation →](./skill-builder/SKILL.md)
+
+---
+
+### [OSS Readiness](./oss-readiness/) - Public Release Gate
+
+Audit repos for OSS release readiness, scaffold missing public docs/templates, generate `llms.txt`/`llms-full.txt`, validate CI, and sync version references.
+
+[View skill documentation →](./oss-readiness/SKILL.md)
 
 ---
 
@@ -89,6 +97,8 @@ npx skills add bntvllnt/agent-skills --skill analyze
 
 npx skills add bntvllnt/agent-skills --skill skill-builder
 
+npx skills add bntvllnt/agent-skills --skill oss-readiness
+
 npx skills add bntvllnt/agent-skills --skill git
 
 npx skills add bntvllnt/agent-skills --skill github
@@ -106,6 +116,8 @@ npx skills add bntvllnt/agent-skills --skill analyze -g
 
 npx skills add bntvllnt/agent-skills --skill skill-builder -g
 
+npx skills add bntvllnt/agent-skills --skill oss-readiness -g
+
 npx skills add bntvllnt/agent-skills --skill git -g
 
 npx skills add bntvllnt/agent-skills --skill github -g
@@ -122,6 +134,8 @@ Specific agent:
 npx skills add bntvllnt/agent-skills --skill analyze --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill skill-builder --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill oss-readiness --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill git --agent claude-code
 
