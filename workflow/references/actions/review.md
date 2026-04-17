@@ -1,28 +1,70 @@
 # Review Action
 
-> **Agent:** Load this file when `review` triggers or during ship loop review cycles.
+> **Agent:** Load this file when `review` triggers or during ship loop review cycles. Also load `references/rules-discovery.md` — discovered rules become the Rules perspective checklist.
 
 Auto-selecting multi-perspective code review. Runs during ship loop or standalone.
+
+**Portability rule:** this file defines the review contract, not a specific runtime implementation. Use `references/reviews/core-portable-review-spec.md` as the normative portable standard. Runtime-specific orchestration is optional and belongs in executor guidance, not in the core contract.
+
+**Implementation note:** command snippets and tool names in this file are illustrative examples, not mandatory dependencies. Any executor may substitute equivalent mechanisms as long as it preserves the same coverage, rule-checking, and artifact requirements.
 
 ---
 
 ## Step 1: Change Overview (ALWAYS FIRST)
 
-Before any review, build a change map:
+Before any review, build a change map **and a line-coverage ledger**:
 
 ```
 1. git diff --name-status (vs base branch or last review)
-2. Per file, classify:
+2. git diff --unified=0 --no-color ...
+   → enumerate every changed hunk with exact line ranges
+   → build a ledger per file: added lines, modified lines, deleted lines
+3. Per file, classify:
    - Category: auth/security | API/public | DB/schema | UI/component |
                config/infra | test | docs | internal logic
    - Risk: HIGH | MEDIUM | LOW
-3. Detect primary language + framework from changed files
-4. Detect context signals (see Step 2)
-5. **TypeScript structural risk** (if CI available, see `references/codebase-intelligence.md`):
+4. Detect primary language + framework from changed files
+5. Detect context signals (see Step 2)
+6. **TypeScript structural risk** (if CI available, see `references/codebase-intelligence.md`):
    Run: `npx codebase-intelligence changes --json`
    → Augments git diff with coupling score, blast radius, and complexity delta per file
    → Use to refine Risk Classification below (more precise than filename-based heuristics)
    If CI unavailable: use filename-based risk classification only
+```
+
+### Core Portable Review Contract (MANDATORY)
+
+See `references/reviews/core-portable-review-spec.md` for the normative portable contract and `references/reviews/executor-patterns.md` for optional implementation examples.
+
+This action file describes the workflow-level review policy. It must remain valid whether review is executed by one agent, many agents, a CI system, or a human operator.
+
+### Coverage Contract (MANDATORY)
+
+No sampling. No “looks fine overall.” No skipping low-risk hunks.
+
+For `review`, the agent must prove two kinds of coverage before returning a clean verdict:
+
+1. **Line coverage** — every changed line range in the diff ledger is checked at least once.
+2. **Rule coverage** — every relevant discovered rule is checked one by one against the changed scope.
+
+Minimum enforcement:
+
+```
+For each changed file:
+  For each changed hunk / line range:
+    assign ≥1 perspective owner
+    inspect the exact changed lines, not just surrounding file context
+
+For each relevant discovered rule:
+  check it explicitly against each changed file/hunk it applies to
+  record: PASS | WARN | FAIL | NOT_APPLICABLE
+```
+
+If any changed line range has no explicit review coverage, or any relevant rule is left unchecked, the review must emit a blocking process finding:
+
+```
+{file}:{line or range} — FAIL [Process] Changed lines not explicitly reviewed
+  Fix: Review the uncovered lines and record perspective coverage
 ```
 
 ### Risk Classification
@@ -36,8 +78,8 @@ Before any review, build a change map:
 ### Output: Change Map
 
 ```
-| File | Category | Risk | Language |
-|------|----------|------|----------|
+| File | Changed lines | Category | Risk | Language |
+|------|---------------|----------|------|----------|
 ```
 
 This table appears in the review output (see `references/templates/review-output.md`).
@@ -77,15 +119,23 @@ Example: `Review mode: Deep — HIGH risk file detected (src/api/auth.ts: auth/s
 
 ## Step 3: Execute Review
 
+### Rules Discovery (MANDATORY — Before Perspective Dispatch)
+
+Load `references/rules-discovery.md` and execute Steps 1-4. This discovers project/user agent config files, extracts rules, filters for relevance against the change map, and classifies severity. The discovered rules become the checklist for the Rules perspective (#10).
+
+No config files found or no relevant rules → skip Rules perspective entirely.
+
+**Important:** rules are not satisfied by a global statement like “follow project rules.” The review must check each relevant rule individually and mark it PASS/WARN/FAIL/NOT_APPLICABLE against the changed scope.
+
 ### Quick Mode
 
-- **Perspectives:** Core 5 (Correctness, Security, Reliability, Performance, DX)
+- **Perspectives:** Core 5 + Rules (if rules files exist)
 - **Checklist depth:** 6 items per perspective (key questions below)
 - **Context loaded:** This file only
 
 ### Standard Mode
 
-- **Perspectives:** Core 5 + auto-triggered conditionals
+- **Perspectives:** Core 5 + Rules (if rules files exist) + auto-triggered conditionals
 - **Checklist depth:** 6 items per perspective
 - **Context loaded:** This file only
 - **Conditional triggers:**
@@ -97,10 +147,11 @@ Example: `Review mode: Deep — HIGH risk file detected (src/api/auth.ts: auth/s
 | Testability | Complex branching (>=3 paths), critical business logic, stateful flows |
 | Accessibility | UI components, forms, navigation, interactive elements |
 
-### Structural Context (TypeScript projects with CI)
+### Structural Context (TypeScript projects with CI or equivalent tooling)
 
-Before dispatching perspective agents in Standard/Deep/Production modes, gather structural data:
+Before dispatching perspectives in Standard/Deep/Production modes, gather structural data when compatible tooling exists.
 
+**Example implementation:**
 ```
 For each changed TS/TSX file:
   npx codebase-intelligence dependents --json <file>
@@ -114,18 +165,18 @@ If CI unavailable: perspectives rely on file contents + grep-based import tracin
 
 ### Deep Mode
 
-- **Perspectives:** All 9 active (no conditional skipping)
+- **Perspectives:** All 9 + Rules (if rules files exist)
 - **Checklist depth:** 6 items per perspective
 - **Context loaded:** This file only
 
 ### Production Mode
 
-- **Perspectives:** All 9 active
+- **Perspectives:** All 9 + Rules (if rules files exist; ambiguous rule signals → FAIL)
 - **Checklist depth:** 15-20 items per perspective (extended checklists)
 - **Context loaded:** This file + `references/reviews/production-standards.md`
 - **Additional:** Expert personas, company bar evaluation, language-specific overlay
 
-**Production execution:**
+**Production execution (example implementation):**
 
 ```
 1. Load references/reviews/production-standards.md
@@ -159,6 +210,14 @@ If CI unavailable: perspectives rely on file contents + grep-based import tracin
 | 4 | Performance | N+1 queries? Unnecessary computation? Bundle impact? Hot path? |
 | 5 | DX | Readable? Good names? Actionable errors? Types guide usage? |
 
+### Rules (Active When Rules Files Exist)
+
+| # | Perspective | Trigger | Key Questions |
+|---|------------|---------|---------------|
+| 10 | Rules | Any agent config found (AGENTS.md, CLAUDE.md, .cursorrules, codex.md, .opencode/config, etc.) | Violates project conventions? Contradicts user rules? Ignores documented anti-patterns? |
+
+The Rules perspective uses discovered rules as its checklist (not a built-in checklist). Each finding cites the source file and violated rule text.
+
 ### Conditional (Add When Triggered)
 
 | # | Perspective | Trigger | Key Questions |
@@ -176,24 +235,40 @@ For each active perspective:
 
 ```
 1. Read all changed files
-2. Evaluate against perspective checklist (depth matches mode)
-3. Classify findings:
+2. Use the diff ledger to inspect every changed line range owned by that perspective
+3. Evaluate against perspective checklist (depth matches mode)
+4. Classify findings:
    - PASS: Meets criteria (not shown in output)
    - WARN: Concern, not blocking (severity: low/medium/high)
    - FAIL: Must fix before shipping (BLOCKING)
    - BLOCKS_PRODUCTION: Violates production bar (Production mode only)
-4. Output structured findings per review-output.md template
+5. Update coverage ledger for the reviewed line ranges
 ```
 
 Run perspectives in parallel when possible.
+
+Parallelism is optional. Executors may review sequentially or in parallel as long as they preserve the same coverage and artifact requirements.
+
+After all perspectives complete:
+
+```
+1. Verify every changed line range is covered
+2. Verify every relevant rule has an explicit verdict
+3. Emit FAIL [Process] for each uncovered line range or unchecked rule
+4. Only return CLEAN / WARNINGS_ONLY when both coverage checks are complete and the output includes the rule coverage ledger
+```
 
 ---
 
 ## Output
 
-Follow `references/templates/review-output.md`.
+Follow `references/templates/review-output.md` for the human-readable summary.
+
+In addition, emit a machine-readable artifact equivalent to the schema in `references/reviews/core-portable-review-spec.md`.
 
 Key format: `{file}:{line} — {severity} [{perspective}] {description}` + `Fix: {action}`.
+
+Process coverage gaps use the same format with `[Process]` as the perspective.
 
 Production mode adds: `Standard: {Company} — {rule violated}` line under BLOCKS_PRODUCTION findings.
 
