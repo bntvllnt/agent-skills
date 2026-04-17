@@ -41,7 +41,7 @@ High-velocity solo development. Idea to production same-day.
 | `spike {question}` | Time-boxed exploration | [spike.md](references/actions/spike.md) |
 | `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
 | `fix` / `fix {bug}` | Scientific debug + regression fix | [fix.md](references/actions/fix.md) |
-| `review` | Multi-perspective code review | [review.md](references/actions/review.md) |
+| `review` | Multi-perspective code review with line-by-line + rule-by-rule coverage | [review.md](references/actions/review.md) |
 | `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
 | `focus` | Priority analysis + task proposals | [focus.md](references/actions/focus.md) |
 | `done` | Validate + retro + archive | [done.md](references/actions/done.md) |

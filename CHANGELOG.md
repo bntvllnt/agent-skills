@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.1] - 2026-04-17
+
+- feat(workflow): require line-by-line change coverage and rule-by-rule rules enforcement in review mode
+- docs(workflow): add review coverage summary format and rules discovery protocol
+
 ## [1.13.0] - 2026-04-15
 
 - feat(oss-readiness): add harness-agnostic OSS/public release skill with audit, CI, llms, and scaffolding flows
