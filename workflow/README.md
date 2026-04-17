@@ -33,7 +33,7 @@ No flags needed — the agent auto-detects intent from your natural language (e.
 The `review` command is defined as a **core portable review spec**:
 - the core contract defines what review must cover and what evidence it must emit
 - executors are optional implementation patterns that can be single-agent, multi-agent, CI, or human/manual
-- the workflow skill should stay model-agnostic and harness-agnostic in open source
+- the workflow skill should stay runtime-neutral in open source
 
 See:
 - `references/reviews/core-portable-review-spec.md`

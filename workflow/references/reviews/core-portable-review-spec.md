@@ -2,7 +2,7 @@
 
 Tool-agnostic review contract for `workflow`'s `review` action.
 
-Use this file to keep the review standard portable across Hermes, Claude Code, Codex, Cursor, Aider, CI, and human/manual execution.
+Use this file to keep the review standard portable across agent runtimes, CI systems, and human/manual execution.
 
 ## Purpose
 
@@ -18,11 +18,9 @@ The core spec is the OSS asset. Executors are optional implementations.
 This spec does **not** require:
 - a specific model
 - a specific coding agent
-- Hermes tools
-- Claude Code
-- Codex
-- tmux
-- harness or any local shell wrapper
+- a specific CLI or orchestration tool
+- a specific terminal/session manager
+- a specific local shell wrapper or harness
 
 If a runtime can produce the required evidence, it can implement this spec.
 

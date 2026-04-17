@@ -55,10 +55,9 @@ Use when:
 ## Runtime-specific examples
 
 Possible adapters include:
-- Hermes subagents
-- Claude Code specialist sessions
-- Codex review sessions
-- Cursor / Aider / OpenCode workflows
+- generic subagent orchestration
+- external specialist review sessions
+- editor-integrated review workflows
 - bespoke CI or scripting layers
 
 These are examples only. The core workflow skill should never require one of them by name.
@@ -67,8 +66,8 @@ These are examples only. The core workflow skill should never require one of the
 
 For open-source repositories:
 - keep the core review contract runtime-neutral
-- document adapters as optional examples
-- avoid making the review standard depend on one vendor, one model, or one local harness
+- document adapters as optional examples only when they add real value
+- avoid making the review standard depend on one vendor, one model, or one local wrapper
 - treat adapter docs as replaceable implementation details
 
 ## Selection Guidance
@@ -84,6 +83,6 @@ Avoid these in the core review contract:
 - “must call tool X”
 - “must use model Y”
 - “must spawn subagents”
-- “must use harness/Hermes/Claude/Codex”
+- “must use runtime Z”
 
 Those statements make the OSS skill less portable and harder to maintain.

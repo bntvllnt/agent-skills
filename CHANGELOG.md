@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.13.1] - 2026-04-17
 
 - feat(workflow): require line-by-line change coverage and rule-by-rule rules enforcement in review mode
-- docs(workflow): define a core portable review spec plus optional executor patterns for OSS-safe review portability
+- docs(workflow): define a runtime-neutral portable review spec plus optional executor patterns for OSS-safe review portability
 
 ## [1.13.0] - 2026-04-15
 

@@ -10,7 +10,7 @@ description: |
   "done", "finish", "complete", "drop", "abandon",
   "workflow", "what's next", "whats next", "next step", "what now".
 license: MIT
-compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
+compatibility: "Agent-agnostic. Works with any agent that can read SKILL.md files and project rule conventions."
 metadata:
   version: "1.2"
 ---
