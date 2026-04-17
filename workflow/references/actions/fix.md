@@ -1,6 +1,6 @@
 # Fix Action
 
-> **Agent:** Load this file when `fix` triggers. Also load `references/quality-gates.md` for gate commands, `references/testing-automation.md` for E2E-first test generation + mock avoidance, and `references/session-management.md` for resume/stuck detection.
+> **Agent:** Load this file when `fix` triggers. Also load `references/quality-gates.md` for gate commands, `references/testing-automation.md` for E2E-first test generation + mock avoidance, `references/session-management.md` for resume/stuck detection, and `references/rules-discovery.md` — fixes must follow project/user rules.
 
 Fix bugs with scientific debugging and anti-cascade TDD. Prevents cascading failures.
 

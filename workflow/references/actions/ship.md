@@ -1,6 +1,6 @@
 # Ship Action
 
-> **Agent:** Load this file when `ship` triggers. Also load `references/quality-gates.md` for gate commands and `references/session-management.md` for resume/stuck detection.
+> **Agent:** Load this file when `ship` triggers. Also load `references/quality-gates.md` for gate commands, `references/session-management.md` for resume/stuck detection, and `references/rules-discovery.md` — code must follow project/user rules.
 
 Implement features with a build/review/fix loop. Handles both quick one-shot and iterative spec-driven work.
 

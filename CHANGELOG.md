@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.2] - 2026-04-17
+
+- feat(workflow): load rules-discovery across plan, ship, fix, focus, and spec-review
+
 ## [1.13.1] - 2026-04-17
 
 - feat(workflow): require line-by-line change coverage and rule-by-rule rules enforcement in review mode
