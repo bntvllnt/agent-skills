@@ -4,7 +4,8 @@ description: |
   Open-source/public release readiness gate. Audit repos for OSS basics, scaffold missing public-release files,
   generate llms.txt + llms-full.txt, validate CI, and sync version references.
   Triggers: "oss", "/oss", "open source readiness", "release readiness", "public release",
-  "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files".
+  "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files",
+  "release title", "release messaging", "release notes", "announcement quality".
 compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown. Optional CLI helpers: git, gh, grep, find, jq, node or python.
 metadata:
   version: "0.2"
@@ -48,6 +49,7 @@ Use either natural language or shorthand. Route both to the same workflow.
 | Generate LLM docs | `generate llms.txt`, `/oss llms` | `references/llms-generation.md` |
 | Sync version refs | `bump stale version refs in docs`, `/oss bump` | `references/version-sync.md` |
 | Validate CI | `check OSS CI readiness`, `/oss ci` | `references/ci-validation.md` |
+| Review release title / notes / announcement framing | `audit release messaging`, `is this a good OSS release title?` | `references/release-messaging.md` |
 
 ## Template Variables
 
@@ -211,6 +213,7 @@ Any blocking failure caps grade at C maximum.
 - [LLMs Generation](references/llms-generation.md) — `llms.txt` + `llms-full.txt` algorithm
 - [Version Sync](references/version-sync.md) — version detection + doc bumping
 - [CI Validation](references/ci-validation.md) — CI pipeline rules + starter workflows
+- [Release Messaging](references/release-messaging.md) — title, opening-summary, and announcement-quality rubric for public OSS releases
 
 ## Templates
 

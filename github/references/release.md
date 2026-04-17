@@ -2,11 +2,11 @@
 
 Use this section as the entry point for release operations.
 
-**MANDATORY: Read `release-strategy.md` before creating or editing any release.** It defines versioning rules, title format, description format, and the generation protocol.
+**MANDATORY: Read `release-strategy.md` before creating or editing any release.** It defines versioning rules, title format, dominant-change selection, description format, preview/OG-card guidance, and the generation protocol.
 
 | Intent | Reference |
 |---|---|
-| **strategy / format / versioning** | **`release-strategy.md`** |
+| **strategy / format / versioning / title quality / previews** | **`release-strategy.md`** |
 | create / publish release | `release-create.md` |
 | list / view / edit / delete release | `release-manage.md` |
 | upload / download assets, verify attestations | `release-assets.md` |
