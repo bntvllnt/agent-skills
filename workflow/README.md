@@ -20,13 +20,24 @@ npx skills add bntvllnt/agent-skills --skill workflow -g
 | `plan {idea}` | Create spec with user journey, ACs, scope |
 | `spike {question}` | Time-boxed exploration, produces go/no-go |
 | `ship` or `ship {idea}` | Implement with build/review/fix loop |
-| `review` | Multi-perspective code review with line-by-line + rule-by-rule coverage |
+| `review` | Portable multi-perspective review spec with line-by-line + rule-by-rule coverage |
 | `focus` | Scan codebase, prioritize tasks toward production readiness |
 | `done` | Validate, retro, archive, propose memory update |
 | `drop` | Abandon with learnings preserved |
 | `workflow` | Show current state, suggest next action |
 
 No flags needed — the agent auto-detects intent from your natural language (e.g., "review the spec", "skip tests", "emergency fix", "production ready").
+
+## Portable review standard
+
+The `review` command is defined as a **core portable review spec**:
+- the core contract defines what review must cover and what evidence it must emit
+- executors are optional implementation patterns that can be single-agent, multi-agent, CI, or human/manual
+- the workflow skill should stay model-agnostic and harness-agnostic in open source
+
+See:
+- `references/reviews/core-portable-review-spec.md`
+- `references/reviews/executor-patterns.md`
 
 ## Quickstart
 

@@ -110,10 +110,13 @@ After all per-file findings:
 1. `{file}:{line}` — [{perspective}] {description} (severity)
 2. `{file}:{line}` — [{perspective}] {description} (severity)
 
-**Verdict:** {CLEAN / HAS_BLOCKERS / WARNINGS_ONLY}
+**Verdict:** {CLEAN / HAS_BLOCKERS / WARNINGS_ONLY / REQUIRES_HUMAN_REVIEW}
 ```
 
 ---
+
+### Machine-readable artifact
+The executor must emit a structured artifact equivalent to the schema in `references/reviews/core-portable-review-spec.md`.
 
 ## Output Rules
 
@@ -127,7 +130,7 @@ After all per-file findings:
 - **Rule ledger required** — include explicit per-rule verdict rows for every relevant loaded rule.
 - **No gap claims without proof** — CLEAN/WARNINGS_ONLY requires full line coverage + rule coverage.
 - **Loaded sources only** — never claim user-level rules were checked unless their source files were loaded.
-- **Verdict at the end** — CLEAN (0 FAIL, 0 WARN), WARNINGS_ONLY (0 FAIL, N WARN), HAS_BLOCKERS (N FAIL).
+- **Verdict at the end** — CLEAN (0 FAIL, 0 WARN), WARNINGS_ONLY (0 FAIL, N WARN), HAS_BLOCKERS (N FAIL), REQUIRES_HUMAN_REVIEW (coverage complete but high-risk conflict unresolved).
 
 ---
 
@@ -149,15 +152,22 @@ The `Standard:` line cites which company bar and specific rule was violated (e.g
 
 ### Production Verdict
 
-Replace standard verdict with production-specific:
+Replace standard verdict with production-specific human-readable wording:
 
 ```markdown
-**Production Verdict:** {PRODUCTION_READY / NOT_PRODUCTION_READY / WARNINGS_ONLY}
+**Production Verdict:** {PRODUCTION_READY / NOT_PRODUCTION_READY / WARNINGS_ONLY / REQUIRES_HUMAN_REVIEW}
 ```
+
+Portable artifact mapping:
+- `PRODUCTION_READY` → `CLEAN`
+- `NOT_PRODUCTION_READY` → `HAS_BLOCKERS`
+- `WARNINGS_ONLY` → `WARNINGS_ONLY`
+- `REQUIRES_HUMAN_REVIEW` → `REQUIRES_HUMAN_REVIEW`
 
 - `PRODUCTION_READY` — 0 BLOCKS_PRODUCTION, 0 FAIL, 0 WARN
 - `NOT_PRODUCTION_READY` — any BLOCKS_PRODUCTION or FAIL exists
 - `WARNINGS_ONLY` — 0 BLOCKS_PRODUCTION, 0 FAIL, N WARN
+- `REQUIRES_HUMAN_REVIEW` — coverage complete but high-risk production conflict remains unresolved
 
 ### Severity Order
 

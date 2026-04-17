@@ -38,7 +38,8 @@ No files found at either level → skip rules enforcement for this action.
 
 Review reproducibility rule:
 - Project-level rule files are the stable, repo-owned baseline.
-- User-level rule files are environment-specific and must be reported explicitly when loaded.
+- User-level rule files are environment-specific overlays and must be reported explicitly when loaded.
+- Shared / CI review should default to project-level rules only.
 - If a user-level rule source is unavailable in the current reviewer environment, do not pretend it was checked. Report it as unavailable and only claim coverage for the rule sources actually loaded.
 
 (Canonical file list shared with `references/memory-update.md` Step 1.)

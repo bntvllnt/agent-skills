@@ -41,7 +41,7 @@ High-velocity solo development. Idea to production same-day.
 | `spike {question}` | Time-boxed exploration | [spike.md](references/actions/spike.md) |
 | `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
 | `fix` / `fix {bug}` | Scientific debug + regression fix | [fix.md](references/actions/fix.md) |
-| `review` | Multi-perspective code review with line-by-line + rule-by-rule coverage | [review.md](references/actions/review.md) |
+| `review` | Portable multi-perspective review spec with line-by-line + rule-by-rule coverage | [review.md](references/actions/review.md) |
 | `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
 | `focus` | Priority analysis + task proposals | [focus.md](references/actions/focus.md) |
 | `done` | Validate + retro + archive | [done.md](references/actions/done.md) |
@@ -162,7 +162,9 @@ Output templates:
 - [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Fix](references/templates/fix-output.md) | [Review](references/templates/review-output.md) | [Focus](references/templates/focus-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
 
 Review standards:
-- [Production Standards](references/reviews/production-standards.md)
+- [Core portable review spec](references/reviews/core-portable-review-spec.md) | [Executor patterns](references/reviews/executor-patterns.md) | [Production Standards](references/reviews/production-standards.md)
+
+The portable review spec is normative. Executor patterns are optional implementation guidance.
 
 Specs & gates:
 - [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md) | [Codebase intelligence](references/codebase-intelligence.md)

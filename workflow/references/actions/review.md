@@ -4,6 +4,10 @@
 
 Auto-selecting multi-perspective code review. Runs during ship loop or standalone.
 
+**Portability rule:** this file defines the review contract, not a specific runtime implementation. Use `references/reviews/core-portable-review-spec.md` as the normative portable standard. Runtime-specific orchestration is optional and belongs in executor guidance, not in the core contract.
+
+**Implementation note:** command snippets and tool names in this file are illustrative examples, not mandatory dependencies. Any executor may substitute equivalent mechanisms as long as it preserves the same coverage, rule-checking, and artifact requirements.
+
 ---
 
 ## Step 1: Change Overview (ALWAYS FIRST)
@@ -27,6 +31,12 @@ Before any review, build a change map **and a line-coverage ledger**:
    → Use to refine Risk Classification below (more precise than filename-based heuristics)
    If CI unavailable: use filename-based risk classification only
 ```
+
+### Core Portable Review Contract (MANDATORY)
+
+See `references/reviews/core-portable-review-spec.md` for the normative portable contract and `references/reviews/executor-patterns.md` for optional implementation examples.
+
+This action file describes the workflow-level review policy. It must remain valid whether review is executed by one agent, many agents, a CI system, or a human operator.
 
 ### Coverage Contract (MANDATORY)
 
@@ -137,10 +147,11 @@ No config files found or no relevant rules → skip Rules perspective entirely.
 | Testability | Complex branching (>=3 paths), critical business logic, stateful flows |
 | Accessibility | UI components, forms, navigation, interactive elements |
 
-### Structural Context (TypeScript projects with CI)
+### Structural Context (TypeScript projects with CI or equivalent tooling)
 
-Before dispatching perspective agents in Standard/Deep/Production modes, gather structural data:
+Before dispatching perspectives in Standard/Deep/Production modes, gather structural data when compatible tooling exists.
 
+**Example implementation:**
 ```
 For each changed TS/TSX file:
   npx codebase-intelligence dependents --json <file>
@@ -165,7 +176,7 @@ If CI unavailable: perspectives rely on file contents + grep-based import tracin
 - **Context loaded:** This file + `references/reviews/production-standards.md`
 - **Additional:** Expert personas, company bar evaluation, language-specific overlay
 
-**Production execution:**
+**Production execution (example implementation):**
 
 ```
 1. Load references/reviews/production-standards.md
@@ -236,6 +247,8 @@ For each active perspective:
 
 Run perspectives in parallel when possible.
 
+Parallelism is optional. Executors may review sequentially or in parallel as long as they preserve the same coverage and artifact requirements.
+
 After all perspectives complete:
 
 ```
@@ -249,7 +262,9 @@ After all perspectives complete:
 
 ## Output
 
-Follow `references/templates/review-output.md`.
+Follow `references/templates/review-output.md` for the human-readable summary.
+
+In addition, emit a machine-readable artifact equivalent to the schema in `references/reviews/core-portable-review-spec.md`.
 
 Key format: `{file}:{line} — {severity} [{perspective}] {description}` + `Fix: {action}`.
 
