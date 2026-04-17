@@ -23,6 +23,7 @@
 - [ ] Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts` [blocking]
 - [ ] No bare `v.any()` outside `validators.ts` [blocking]
 - [ ] snake_case filenames in `convex/` (except config files) [blocking]
+- [ ] No utility-only `helpers.ts` / `validators.ts` / `types.ts` / `schemas.ts` / `constants.ts` added under `convex/` when they could live in `src/` [blocking]
 
 **[advisory]** - Should pass, warn if not:
 
@@ -33,3 +34,4 @@
 - [ ] Components: parent IDs cross boundary as `v.string()` [advisory]
 - [ ] Migrations: dual-write during migration window [advisory]
 - [ ] Performance: `npx convex insights --details` checked for signal [advisory]
+- [ ] Module count from `convex/_generated/api.d.ts` checked when adding files/components; warn above ~330, block above ~350 [advisory]

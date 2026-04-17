@@ -28,6 +28,49 @@ For deep performance diagnosis, see `references/performance.md`.
 1. Check: missing runtime directive?
 2. Fix: follow the official "runtimes" doc and ensure your action is in the correct runtime.
 
+## If TypeScript fails with TS2589 / FilterApi depth errors
+
+Symptom:
+
+- `TS2589: Type instantiation is excessively deep and possibly infinite`
+- usually triggered from `api`, `internal`, `_generated/api`, or `_generated/server`
+
+Root cause chain:
+
+```text
+convex/ has N .ts/.js files
+  -> codegen includes all N in fullApi
+  -> FilterApi<fullApi, "public" | "internal"> recurses across every module
+  -> importing api/internal forces deep type resolution
+  -> around 350+ modules, TypeScript can exceed its recursion budget
+```
+
+Check first:
+
+```bash
+grep -c '  "' convex/_generated/api.d.ts
+```
+
+Interpretation:
+
+- `> 330`: approaching the danger zone
+- `> 350`: likely FilterApi depth failure territory
+
+Preferred fixes, in order:
+
+1. Reduce `convex/` module count. Move utility-only `helpers.ts`, `validators.ts`, `types.ts`, `schemas.ts`, and `constants.ts` into `src/` or merge them into real function files.
+2. Stop splitting one logical scope into many tiny files inside `convex/`.
+3. Replace deep generated builders with `queryGeneric`, `mutationGeneric`, `actionGeneric`, `internalQueryGeneric`, `internalMutationGeneric`, or `internalActionGeneric` from `convex/server` when the generated `DataModel` chain is the problem.
+4. For config-only or bridge files that do not need TypeScript checking, consider `.js` as an intentional escape hatch if the repo accepts it.
+5. For thin bridge layers that only proxy `internal.*` calls, use a clearly documented type cut point (`any` / targeted lint disable) if needed to break the recursive chain.
+
+Anti-patterns to flag immediately:
+
+- utility-only files living inside `convex/`
+- adding new files under `convex/` that export zero Convex functions
+- large `v.union()` literals or deeply nested validators in files that also import `internal` or `api`
+- registering another component with `app.use(...)` when the module count is already near the threshold
+
 Docs:
 
 - Functions: https://docs.convex.dev/functions

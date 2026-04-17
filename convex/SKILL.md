@@ -8,7 +8,7 @@ description: |
   "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev",
   "quickstart", "setup convex", "add convex", "defineComponent", "app.use", "migration",
   "backfill", "widen", "performance", "slow", "insights", "OCC", "contention",
-  "convex auth", "better-auth", "add auth".
+  "convex auth", "better-auth", "add auth", "TS2589", "FilterApi", "fullApi".
 license: MIT
 compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
 metadata:
@@ -88,6 +88,30 @@ Docs: https://github.com/vllnt/eslint-config
 
 See `references/style.md` and `references/testing.md`.
 
+## FilterApi / TS2589 Guardrail (Blocking)
+
+Convex codegen adds every `.ts` and `.js` file under `convex/` to `fullApi`, including utility-only files that export zero Convex functions. TypeScript then applies `FilterApi<fullApi, "public">` and `FilterApi<fullApi, "internal">` recursively. At roughly 350+ modules, that recursion can trip TS2589 (`Type instantiation is excessively deep and possibly infinite`).
+
+Treat this as a structural scaling limit, not a random TypeScript glitch.
+
+Rules:
+
+- Do not create utility-only files in `convex/` for helpers, validators, schemas, types, or constants if they can live in `src/`.
+- Do not split one logical Convex scope into many tiny files just for organization; each extra file adds `fullApi` depth.
+- When TS2589 appears, check generated module count before doing anything else.
+- Prefer `actionGeneric`, `queryGeneric`, `mutationGeneric`, `internalActionGeneric`, `internalQueryGeneric`, and `internalMutationGeneric` from `convex/server` when deep generated types are part of the problem.
+- Config-only or bridge files that do not need TypeScript checking can be `.js` only when that is an intentional escape hatch and the repo accepts it.
+- Thin bridge layers that proxy `internal.*` calls may need explicit type cut points (`any`/lint disable with comment) to break recursive type chains.
+
+Module-count guardrail:
+
+```bash
+grep -c '  "' convex/_generated/api.d.ts
+```
+
+- `> 330`: warn that the repo is approaching the FilterApi TS2589 limit
+- `> 350`: treat as likely to fail and block further file-splitting inside `convex/`
+
 ## Router
 
 | User says | Load reference | Do |
@@ -104,7 +128,7 @@ See `references/style.md` and `references/testing.md`.
 | http / webhook | `references/patterns/http.md` | httpRouter/httpAction patterns |
 | testing | `references/testing.md` | testing patterns |
 | ecosystem / components | `references/ecosystem.md` | official components to use |
-| slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
+| slow query / error / debug / TS2589 / FilterApi | `references/troubleshooting.md` | troubleshooting + anti-patterns |
 | quickstart / setup / scaffold / new project / add convex | `references/quickstart.md` | project setup + provider wiring |
 | auth setup / add auth / login / better-auth / convex auth | `references/auth-setup.md` | auth provider selection + setup |
 | component / defineComponent / app.use / extract module | `references/components.md` | component design + boundary rules |
@@ -131,7 +155,7 @@ If Convex MCP is not available, this skill still works:
 
 Full workflow: `references/mcp.md`.
 
-## Critical Rules (14)
+## Critical Rules (16)
 
 1) Always use validators (`args` + `returns`) for functions. [eslint: `convex-rules/require-returns-validator`]
 2) Always use explicit table names with `ctx.db.get/patch/replace`. [eslint: `@convex-dev/explicit-table-ids`]
@@ -147,6 +171,8 @@ Full workflow: `references/mcp.md`.
 12) Never use `ctx.db.get/query` inside loop bodies -- use `Promise.all()` with `.map()`. [eslint: `convex-rules/no-query-in-loop`]
 13) Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts`. [eslint: `convex-rules/namespace-separation`]
 14) No bare `v.any()` outside `validators.ts` -- define named aliases. [eslint: `convex-rules/no-bare-v-any`]
+15) Watch `convex/_generated/api.d.ts` module count; warn above ~330 and treat ~350+ as a FilterApi TS2589 risk threshold.
+16) Keep utility-only files out of `convex/`; move helpers/types/schemas/constants to `src/` unless they must define Convex functions.
 
 ## References
 

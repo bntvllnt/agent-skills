@@ -10,6 +10,7 @@ Convex skill for building and operating Convex backends: functions, schemas, aut
 - Components: `convex/references/components.md`
 - Migrations: `convex/references/migrations.md`
 - Performance: `convex/references/performance.md`
+- Troubleshooting / TS2589: `convex/references/troubleshooting.md`
 - MCP usage (recommended): `convex/references/mcp.md`
 - CLI usage/help: `convex/references/cli-help.md`
 - Validation checklist: `convex/checklists/validation.md`
