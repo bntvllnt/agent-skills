@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.4] - 2026-04-17
+
+- fix(oss-readiness): make SKILL.md frontmatter valid YAML so strict indexers can parse the skill
+
 ## [1.13.3] - 2026-04-17
 
 - feat(github): add release-title prerequisites and preview-aware release strategy guidance
