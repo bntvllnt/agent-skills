@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.5] - 2026-04-17
+
+- feat(convex): add FilterApi TS2589 guardrails, recovery guidance, and module-count checks
+
 ## [1.13.4] - 2026-04-17
 
 - fix(oss-readiness): make SKILL.md frontmatter valid YAML so strict indexers can parse the skill
