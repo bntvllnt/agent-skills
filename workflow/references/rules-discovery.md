@@ -1,6 +1,6 @@
 # Rules Discovery Protocol
 
-> **Agent:** Load this file at the start of any action that produces or evaluates code: `plan`, `ship`, `fix`, `review`, `spec-review`, `focus`. Read project/user agent config files, extract rules, and enforce throughout the action.
+> **Agent:** Load this file during `review` before dispatching perspectives. Read project/user agent config files, extract rules, and enforce them one by one against the changed scope.
 
 Agent-agnostic. Works with any coding agent ecosystem.
 
@@ -36,13 +36,22 @@ User-level (check all):
 
 No files found at either level → skip rules enforcement for this action.
 
+Review reproducibility rule:
+- Project-level rule files are the stable, repo-owned baseline.
+- User-level rule files are environment-specific overlays and must be reported explicitly when loaded.
+- Shared / CI review should default to project-level rules only.
+- If a user-level rule source is unavailable in the current reviewer environment, do not pretend it was checked. Report it as unavailable and only claim coverage for the rule sources actually loaded.
+
 (Canonical file list shared with `references/memory-update.md` Step 1.)
 
 ## Step 2: Extract & Prioritize Rules
 
 1. Extract actionable rules: coding standards, conventions, anti-patterns, quality requirements, forbidden patterns
-2. **Precedence: project-level rules override user-level rules.** On conflict, project wins.
-3. Merge non-conflicting rules from both levels into a single rules set
+2. Normalize them into a numbered checklist with source attribution:
+   - `RULE-1 | source | scope | strength | rule text`
+   - Example: `RULE-3 | ~/.claude/CLAUDE.md | git | MUST | Use worktrees for parallel feature work`
+3. **Precedence: project-level rules override user-level rules.** On conflict, project wins.
+4. Merge non-conflicting rules from both levels into a single rules set
 
 ## Step 3: Filter for Relevance
 
@@ -53,7 +62,13 @@ Match rules against the action's scope:
 | Language | Skip Python rules if only TypeScript files involved |
 | Category | Skip UI rules if no UI files in scope |
 | Path | Skip rules targeting specific paths not in scope |
+| Changed hunk | Skip rules that do not apply to the changed line ranges being reviewed |
 | Always-applicable | Naming, style, security, git rules apply to everything |
+
+For `review`, filtering must stay explicit:
+- Keep a `relevant_rules[]` list
+- For each rule, note which changed files/hunks it applies to
+- If applicability is unclear in Production mode, treat as relevant and fail closed
 
 No relevant rules after filtering → skip rules enforcement.
 
@@ -66,24 +81,22 @@ No relevant rules after filtering → skip rules enforcement.
 | No explicit strength signal | WARN (medium) |
 | Production mode (review/focus only) | Ambiguous rules → FAIL |
 
-## How Actions Use This
+For `review`, every relevant rule must end with an explicit verdict for the changed scope:
+- `PASS` — checked and respected
+- `WARN` — checked and partially respected / non-blocking deviation
+- `FAIL` — checked and violated
+- `NOT_APPLICABLE` — rule exists but does not apply to the specific changed files/hunks
 
-| Action | When to Run | How Rules Apply |
-|--------|-------------|-----------------|
-| **plan** | After loading spec-template | Plans must respect project conventions. Flag rule conflicts in spec. |
-| **ship** | Before first implementation task | Code written must follow rules. Violations caught in quick pass. |
-| **fix** | Before investigating bug | Fix must follow rules. Regression test must follow testing rules. |
-| **review** | Before perspective dispatch (MANDATORY) | Rules become the 10th perspective checklist. Findings use `[Rules]` tag. |
-| **spec-review** | Before evaluating spec | Spec must not propose patterns that violate rules. |
-| **focus** | Before codebase scan | Scan checks existing code against rules. |
+Missing verdicts are process failures, not silent skips.
 
-### Actions That Skip
+## How Review Uses This
 
-| Action | Why |
-|--------|-----|
-| **spike** | Exploratory — velocity over compliance |
-| **done** | Retro/validation — no code written |
-| **drop** | Cleanup — no code written |
+| Phase | How Rules Apply |
+|------|------------------|
+| **Before perspective dispatch** | Discover project-level + user-level config files and extract rules. |
+| **Before Rules perspective runs** | Filter rules to the changed files/hunks and assign explicit applicability. |
+| **During review** | Check each relevant rule one by one against changed files/hunks. Missing rule verdicts are FAIL [Process]. |
+| **In findings** | Rules violations use the `[Rules]` tag plus source-file attribution. |
 
 ## Output Format (When Reporting Violations)
 

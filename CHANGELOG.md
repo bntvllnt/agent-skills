@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.1] - 2026-04-17
+
+- feat(workflow): require line-by-line change coverage and rule-by-rule rules enforcement in review mode
+- docs(workflow): define a runtime-neutral portable review spec plus optional executor patterns for OSS-safe review portability
+
+## [1.13.0] - 2026-04-15
+
+- feat(oss-readiness): add harness-agnostic OSS/public release skill with audit, CI, llms, and scaffolding flows
+- docs: list OSS Readiness in the README, skills overview, llms.txt, and llms-full.txt
+
 ## [1.12.0] - 2026-03-30
 
 - feat(convex): expand skill to v2.0 with quickstart, components, migrations, performance, auth (#16)
