@@ -6,7 +6,9 @@ description: |
   Triggers: "oss", "/oss", "open source readiness", "release readiness", "public release",
   "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files",
   "release title", "release messaging", "release notes", "announcement quality".
-compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown. Optional CLI helpers: git, gh, grep, find, jq, node or python.
+compatibility: |
+  Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown.
+  Optional CLI helpers: git, gh, grep, find, jq, node or python.
 metadata:
   version: "0.2"
 ---
