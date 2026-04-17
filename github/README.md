@@ -11,6 +11,7 @@ GitHub skill using GitHub CLI (`gh`): repos, issues, pull requests, Actions, rel
 - PRs: `github/references/pr.md`
 - Actions: `github/references/actions.md`
 - Releases: `github/references/release.md`
+- Release strategy + naming + preview guidance: `github/references/release-strategy.md`
 - Advanced API: `github/references/api.md`
 
 Release deep dives:
@@ -18,6 +19,8 @@ Release deep dives:
 - Create: `github/references/release-create.md`
 - Manage: `github/references/release-manage.md`
 - Assets: `github/references/release-assets.md`
+
+Use `github/references/release-strategy.md` for title quality, dominant-change selection, release-note opening lines, and GitHub preview / OG-image considerations.
 
 ## Requirements
 

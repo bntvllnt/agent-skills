@@ -23,6 +23,7 @@ Use natural language or slash-command shorthand:
 - `generate llms.txt`
 - `bump stale version refs in docs`
 - `check OSS CI readiness`
+- `audit release messaging`
 - `/oss`
 - `/oss fix`
 - `/oss llms`
@@ -36,6 +37,7 @@ Use natural language or slash-command shorthand:
 - Repo hygiene: `.gitignore`, changelog, issue/PR templates, topics, description
 - CI checks: test/lint coverage, optional publish workflow for libraries
 - Agent instructions: canonical `AGENTS.md` plus optional harness-specific aliases
+- Release messaging: title quality, dominant-change selection, and opening-summary quality for public release notes or announcements
 
 ## Portability
 
@@ -53,6 +55,7 @@ This skill is designed to work across agent harnesses:
 - LLM docs generation: `oss-readiness/references/llms-generation.md`
 - Version sync: `oss-readiness/references/version-sync.md`
 - CI validation: `oss-readiness/references/ci-validation.md`
+- Release messaging: `oss-readiness/references/release-messaging.md`
 - Scaffold templates: `oss-readiness/templates/`
 
 ## Requirements

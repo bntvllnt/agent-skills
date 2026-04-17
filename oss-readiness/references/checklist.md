@@ -10,6 +10,40 @@ Scaffolded files must stay portable:
 - Do not hardcode maintainer links, social handles, org names, or inboxes from this skill repository.
 - Prefer an explicitly provided private security channel. If none exists, leave a placeholder and flag it for maintainer input.
 
+## Optional Release Messaging Checks
+
+Run these when there is a concrete release draft, release tag, or announcement draft to evaluate.
+
+These checks are advisory and **not** part of the 23-item OSS basics score unless the user explicitly asks for release-messaging review.
+
+### 24. Release Title Matches the Dominant Change
+- Detection: inspect the latest draft release / release notes / announcement headline
+- Pass:
+  - title is specific
+  - title is outcome-first
+  - title is brief
+  - title reflects the dominant user-facing change
+  - title is truthful, not inflated
+- Fail examples:
+  - `Updates`
+  - `Workflow improvements`
+  - `Internal fixes`
+- Fix: rewrite the title around the main external outcome, not the most recent internal task
+
+### 25. Opening Summary Reinforces the Title
+- Detection: inspect the first 1-3 sentences or first bullets of the release notes / announcement
+- Pass:
+  - opening lines reinforce the same story as the title
+  - the dominant change appears immediately
+  - vague filler does not lead the announcement
+  - opening lines are legible out of context in link previews or screenshots
+- Fail examples:
+  - title says `Faster local inference` but opening lines lead with dependency upgrades
+  - title says `Code review, supercharged` but opening lines lead with generic workflow cleanup
+- Fix: reorder and rewrite the opening summary so the dominant change is visible first
+
+Use `references/release-messaging.md` for the cross-platform rubric.
+
 ## BLOCKING Items (12)
 
 For each item, provide: detection command, pass/fail criteria, and fix action.

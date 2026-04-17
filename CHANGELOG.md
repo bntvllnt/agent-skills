@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.3] - 2026-04-17
+
+- feat(github): add release-title prerequisites and preview-aware release strategy guidance
+- feat(oss-readiness): add OSS release messaging rubric for titles and opening summaries
+
 ## [1.13.2] - 2026-04-17
 
 - feat(workflow): load rules-discovery across plan, ship, fix, focus, and spec-review

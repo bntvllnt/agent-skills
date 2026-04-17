@@ -18,6 +18,17 @@ Rules:
 - Use `--verify-tag` on every `gh release create`
 - Never skip versions
 
+## Release Title Prerequisites (ENFORCED)
+
+Before writing a release title, confirm all of these:
+
+- **Stable scope**: the merged diff is settled; do not title from an outdated PR description
+- **Dominant change identified**: pick the main user-facing change, not the most recent internal task
+- **Audience identified**: know whether the release is mainly for users, contributors, or operators
+- **Title/body alignment**: the first lines of the release notes reinforce the same story as the title
+- **Truthfulness**: the title is strong but not inflated beyond what the release actually changed
+- **Social-card awareness**: assume the title and opening lines may appear alone on GitHub release cards or preview images
+
 ## Release Title Format (ENFORCED)
 
 ```
@@ -25,14 +36,39 @@ vX.Y.Z — {Short Description}
 ```
 
 Examples:
-- `v1.0.0 — Analyze Skill`
-- `v1.2.0 — GitHub Skill + Git Docs Expansion`
+- `v1.0.0 — Analyze skill`
+- `v1.13.1 — Code review, supercharged`
+- `v1.14.0 — Portable review specs`
+
+Weak examples:
 - `v1.3.1 — GitHub PR Workflow Improvements`
+- `v1.3.1 — Updates`
+- `v1.3.1 — Misc fixes`
 
 Rules:
 - Use em dash `—` (not `-` or `–`)
 - Title ≤ 70 characters
-- Describe WHAT was added/changed, not HOW
+- Lead with the dominant outcome, not the implementation detail
+- Be specific enough that the reader can infer what changed in one glance
+- Prefer user-facing capability over internal process wording
+- Avoid filler like `updates`, `improvements`, `misc`, `cleanup`, `refactors`
+- If two candidates exist, choose the one that better survives being seen without context on a release card
+
+Practical title heuristic:
+
+```text
+vX.Y.Z — {specific outcome}
+```
+
+Good:
+- `v1.13.1 — Code review, supercharged`
+- `v0.8.0 — Faster local inference`
+- `v2.4.0 — Rules discovery everywhere`
+
+Bad:
+- `v1.13.1 — Workflow changes`
+- `v0.8.0 — Performance updates`
+- `v2.4.0 — Internal improvements`
 
 ## Release Description Format (ENFORCED)
 
@@ -78,6 +114,22 @@ Every release description MUST follow this exact structure:
 - Every file listed must have a specific, meaningful description
 - Group related changes when describing (e.g., "Updated routing table, references section, and output template links")
 
+### Opening Lines / Preview Rules
+
+Assume the release title plus the opening summary / first bullets may be the only text visible in:
+
+- GitHub release cards
+- Open Graph preview images
+- link unfurls in chat tools
+- social post screenshots
+
+Therefore:
+
+- The opening summary must reinforce the title immediately
+- The first bullet should restate the dominant change in concrete terms
+- Do not lead with internal maintenance work if the release is mainly about a user-facing capability
+- Do not bury the dominant change below less important items
+
 ### Changed Files Detail Level by Bump
 
 | Bump | Detail Level |
@@ -119,7 +171,10 @@ Follow the enforced format above. No shortcuts.
 Before publishing, check:
 
 - [ ] Title follows `vX.Y.Z — {Description}` format
+- [ ] Title is specific, outcome-first, and brief
+- [ ] Title matches the dominant user-facing change in the merged diff
 - [ ] Summary paragraph is present and specific
+- [ ] Opening lines reinforce the same story as the title
 - [ ] Every new file is listed with description
 - [ ] Every changed file is listed with specific change details
 - [ ] No vague descriptions ("minor updates", "various fixes")
