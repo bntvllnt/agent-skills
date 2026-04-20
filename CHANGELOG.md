@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.5] - 2026-04-18
+
+- docs(skill-builder): make authoring guidance more portable across agent products with spec-aligned description, validation, and confirmation rules
+
 ## [1.13.4] - 2026-04-17
 
 - fix(oss-readiness): make SKILL.md frontmatter valid YAML so strict indexers can parse the skill
