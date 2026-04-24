@@ -1,8 +1,3 @@
-# Pull Request Template
-
-Place this file at `.github/pull_request_template.md` in the target repo.
-
-```markdown
 ## Summary
 
 <!-- What does this PR do and why? Link related issues with "Closes #123" -->
@@ -36,4 +31,3 @@ Place this file at `.github/pull_request_template.md` in the target repo.
 - [ ] Self-reviewed the diff
 - [ ] Updated docs (if behavior changed)
 - [ ] No debug artifacts left behind
-```

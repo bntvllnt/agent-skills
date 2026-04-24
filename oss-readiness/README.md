@@ -36,6 +36,7 @@ Use natural language or slash-command shorthand:
 - Repo hygiene: `.gitignore`, changelog, issue/PR templates, topics, description
 - CI checks: test/lint coverage, optional publish workflow for libraries
 - Agent instructions: canonical `AGENTS.md` plus optional harness-specific aliases
+- Private-repo staging: GitHub description/topics checks stay manual until maintainers are ready to go public
 
 ## Portability
 
@@ -44,6 +45,7 @@ This skill is designed to work across agent harnesses:
 - `AGENTS.md` is the canonical instructions file when scaffolded
 - `CLAUDE.md`, `.cursorrules`, `codex.md`, `.opencode/config`, etc. are optional aliases
 - Generated templates use placeholders instead of maintainer-specific links or handles
+- Issue/PR templates are stored as direct target-file payloads so they can be copied into `.github/` without manual cleanup
 - Shell tooling (`git`, `gh`, `node`, `python`) is optional — helpful, not required
 
 ## Reading Order

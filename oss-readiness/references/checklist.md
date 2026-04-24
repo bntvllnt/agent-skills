@@ -10,6 +10,16 @@ Scaffolded files must stay portable:
 - Do not hardcode maintainer links, social handles, org names, or inboxes from this skill repository.
 - Prefer an explicitly provided private security channel. If none exists, leave a placeholder and flag it for maintainer input.
 
+## Visibility-Aware GitHub Metadata Checks
+
+When a repo is intentionally private or `gh` is unavailable/auth missing, GitHub-hosted metadata checks should become `MANUAL` instead of `FAIL`:
+
+- item 9: GitHub description
+- item 13: GitHub topics/tags
+- optional branch-protection checks in CI validation
+
+`MANUAL` and `N/A` items are excluded from score denominators. Use them for staged private repos that are not ready to expose public metadata yet.
+
 ## BLOCKING Items (12)
 
 For each item, provide: detection command, pass/fail criteria, and fix action.
@@ -76,9 +86,10 @@ Sub-checks (parse README.md content):
 - Fix: add lint step to existing CI workflow or generate a new one.
 
 ### 9. GitHub Description Set
-- Detection: `gh repo view --json description -q '.description'`
-- Pass: non-empty string returned
-- Fix: suggest description from package metadata or README first paragraph, then apply with `gh repo edit --description "..."`.
+- Detection: `gh repo view --json isPrivate,description`
+- Pass: non-empty description when the repo is public or explicitly being prepared to go public
+- Manual: repo is intentionally private for now, or `gh` is unavailable/auth missing
+- Fix: suggest description from package metadata or README first paragraph, then apply with `gh repo edit --description "..."` when the maintainer wants to stage the public repo metadata.
 
 ### 10. CHANGELOG.md
 - Detection: `test -f CHANGELOG.md && grep -qE '## \[?[0-9]+\.[0-9]+' CHANGELOG.md`
@@ -98,9 +109,10 @@ Sub-checks (parse README.md content):
 ## WARN Items (11)
 
 ### 13. GitHub Topics/Tags
-- Detection: `gh repo view --json repositoryTopics -q '.repositoryTopics[].name'`
-- Pass: at least 3 topics set
-- Fix: suggest topics from package keywords, language, framework, and repo purpose.
+- Detection: `gh repo view --json isPrivate,repositoryTopics`
+- Pass: at least 3 topics set when the repo is public or explicitly being prepared to go public
+- Manual: repo is intentionally private for now, or `gh` is unavailable/auth missing
+- Fix: suggest topics from package keywords, language, framework, and repo purpose, then apply them when the repo is ready for public discovery.
 
 ### 14. AGENTS.md
 - Detection: `test -f AGENTS.md`
@@ -136,7 +148,7 @@ Sub-checks (parse README.md content):
 ### 18. Issue Templates
 - Detection: `test -d .github/ISSUE_TEMPLATE && ls .github/ISSUE_TEMPLATE/*.yml 2>/dev/null | wc -l`
 - Pass: directory exists with at least 1 YAML form
-- Fix: scaffold bug + feature templates + `config.yml` from `templates/`.
+- Fix: scaffold `bug_report.yml`, `feature_request.yml`, and `config.yml` from `templates/issue-template-bug.md`, `templates/issue-template-feature.md`, and `templates/issue-template-config.yml`.
 
 ### 19. PR Template
 - Detection: `test -f .github/pull_request_template.md`
@@ -156,10 +168,14 @@ Sub-checks (parse README.md content):
 - Pass: directory exists with at least one Markdown file
 - Fix: `mkdir -p docs` and suggest an initial docs structure.
 
-### 22. Version in Docs Matches Package
+### 22. Version and Release Metadata in Docs Match Package
 - Detection: compare manifest/tag version against `README.md`, `docs/**`, `llms.txt`, `llms-full.txt`, `AGENTS.md`, and known alias files.
-- Pass: no stale version references found
-- Fix: route to version-sync flow.
+- Also compare public install/publish statements against the actual package metadata and release workflow. Check for mismatches such as:
+  - README says GitHub Packages while `publishConfig.registry` or publish CI targets npm
+  - docs point at an old public docs domain while the deployed homepage/workflow uses a new one
+  - package install instructions disagree with the real published package name or registry URLs
+- Pass: no stale version references or public release/install metadata mismatches found
+- Fix: route to version-sync flow and update stale version strings plus package-name, registry, homepage/docs-domain, and release-url guidance so docs match the real package metadata and CI workflows.
 
 ### 23. No TODO/FIXME in Public src/
 - Detection:
@@ -183,7 +199,7 @@ When the fix flow is invoked, scaffold in this order:
 7. AGENTS.md (canonical instructions file)
 8. Optional harness aliases for AGENTS.md
 9. CHANGELOG.md
-10. .github/ISSUE_TEMPLATE/ (bug + feature + config)
+10. .github/ISSUE_TEMPLATE/ (`bug_report.yml`, `feature_request.yml`, `config.yml`)
 11. .github/pull_request_template.md
 12. .github/workflows/ci.yml (if no CI exists)
 13. llms.txt + llms-full.txt (last — after docs exist)
@@ -192,9 +208,11 @@ When the fix flow is invoked, scaffold in this order:
 ## Scoring Algorithm
 
 ```python
-blocking_total = 12
+blocking_items_scored = blocking items with status not in {MANUAL, N/A}
+blocking_total = count(blocking_items_scored)
 blocking_pass = count(blocking items with status == PASS)
-warn_total = 11
+warn_items_scored = warn items with status not in {MANUAL, N/A}
+warn_total = count(warn_items_scored)
 warn_pass = count(warn items with status == PASS)
 
 score = (blocking_pass / blocking_total) * 70 + (warn_pass / warn_total) * 30

@@ -1,8 +1,3 @@
-# Bug Report Issue Template
-
-Place this file at `.github/ISSUE_TEMPLATE/bug_report.yml` in the target repo.
-
-```yaml
 name: Bug Report
 description: Report a bug or unexpected behavior
 title: "[Bug]: "
@@ -73,20 +68,3 @@ body:
           required: true
         - label: I tested against the latest supported version when possible
           required: false
-```
-
-Also create `.github/ISSUE_TEMPLATE/config.yml`:
-
-```yaml
-blank_issues_enabled: false
-contact_links:
-  - name: Security Vulnerability
-    url: {SECURITY_REPORTING_URL}
-    about: Report security vulnerabilities privately
-  - name: Support / Discussion
-    url: {COMMUNITY_SUPPORT_URL}
-    about: Ask questions or discuss usage
-  - name: Project Homepage / Docs
-    url: {PROJECT_HOMEPAGE}
-    about: Learn more about the project
-```

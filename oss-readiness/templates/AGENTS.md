@@ -72,6 +72,12 @@ Fill this section from the repo's actual conventions. Do not assume TypeScript, 
 - Rewrite shared history without approval
 - Disable quality gates without documenting why
 
+## Documentation Sync
+
+- Keep `README.md`, `llms.txt`, and `llms-full.txt` aligned with the current shipped behavior
+- When `AGENTS.md` changes, update any enabled harness-specific aliases from the same source text
+- If the repo is still private, do not invent public support, security, or release URLs; keep placeholders until maintainers provide real values
+
 ## Support / Community
 
 - **Repository:** {PROJECT_REPO_URL}

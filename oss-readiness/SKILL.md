@@ -5,9 +5,11 @@ description: |
   generate llms.txt + llms-full.txt, validate CI, and sync version references.
   Triggers: "oss", "/oss", "open source readiness", "release readiness", "public release",
   "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files".
-compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown. Optional CLI helpers: git, gh, grep, find, jq, node or python.
+compatibility: |
+  Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown.
+  Optional CLI helpers: git, gh, grep, find, jq, node or python.
 metadata:
-  version: "0.2"
+  version: "0.3"
 ---
 
 # OSS Readiness — Public Release Gate
@@ -103,7 +105,7 @@ IS_GO=$(test -f go.mod && echo true || echo false)
 | 6 | No secrets in repo | BLOCKING |
 | 7 | CI: tests run | BLOCKING |
 | 8 | CI: lint runs | BLOCKING |
-| 9 | GitHub description set | BLOCKING |
+| 9 | GitHub description set when ready to go public | BLOCKING |
 | 10 | CHANGELOG.md with version entry | BLOCKING |
 | 11 | llms.txt exists | BLOCKING |
 | 12 | llms-full.txt exists | BLOCKING |
@@ -112,7 +114,7 @@ IS_GO=$(test -f go.mod && echo true || echo false)
 
 | # | Item | Severity |
 |---|---|---|
-| 13 | GitHub topics/tags | WARN |
+| 13 | GitHub topics/tags when ready to go public | WARN |
 | 14 | AGENTS.md | WARN |
 | 15 | Harness-specific agent-instruction aliases | WARN |
 | 16 | SECURITY.md | WARN |
@@ -126,10 +128,21 @@ IS_GO=$(test -f go.mod && echo true || echo false)
 
 Full detection logic + fix actions → [references/checklist.md](references/checklist.md)
 
+## Visibility-Aware GitHub Checks
+
+When a repo is intentionally private or `gh` is unavailable/auth missing:
+
+- mark GitHub-hosted metadata checks such as description/topics as `MANUAL` instead of `FAIL`
+- exclude `MANUAL` and `N/A` items from score denominators
+- keep the audit focused on readiness work that can be completed before the repo goes public
+
 ## Scoring
 
 ```text
-SCORE = (blocking_pass / blocking_total) * 70 + (warn_pass / warn_total) * 30
+blocking_total_effective = blocking items excluding MANUAL/N/A
+warn_total_effective = warn items excluding MANUAL/N/A
+
+SCORE = (blocking_pass / blocking_total_effective) * 70 + (warn_pass / warn_total_effective) * 30
 
 A = score >= 90 AND 0 blocking failures
 B = score >= 75 AND 0 blocking failures
@@ -166,6 +179,7 @@ Any blocking failure caps grade at C maximum.
 
  BLOCKING failures: 2 — must fix before public release
  Warnings: 1 — recommended
+ Manual / deferred: 1 — private-repo or GitHub-hosted metadata still pending
 
  Run `scaffold missing OSS files` or `/oss fix` to scaffold missing files.
  Run `generate llms.txt` or `/oss llms` to create llms docs.
@@ -189,7 +203,7 @@ Any blocking failure caps grade at C maximum.
    h. llms.txt + llms-full.txt → route to llms generation flow
    i. Issue templates → create .github/ISSUE_TEMPLATE/
    j. PR template → create .github/pull_request_template.md
-   k. GitHub description/topics → update via `gh` when available
+   k. GitHub description/topics → update via `gh` when available and the repo is ready to go public
    l. CI workflows → generate starter workflow(s) based on stack
 5. Report scaffolded files
 6. Suggest re-running the audit before commit/push
@@ -200,9 +214,9 @@ Any blocking failure caps grade at C maximum.
 | Error | Response |
 |---|---|
 | Not a git repo | "Not a git repository. OSS audit requires a repo." |
-| Private repo | Works but warns: "Repo is private. Audit shows readiness for going public." |
+| Private repo | Works in staging mode: GitHub description/topics stay manual and non-scoring until the repo is ready to go public |
 | No package manager | Skip version-specific checks, note in output |
-| `gh` unavailable/auth missing | Continue filesystem checks; mark GitHub metadata as manual |
+| `gh` unavailable/auth missing | Continue filesystem checks; mark GitHub metadata as manual and non-scoring |
 | Maintainer contact unknown | Keep placeholder or omit optional contact block |
 
 ## References

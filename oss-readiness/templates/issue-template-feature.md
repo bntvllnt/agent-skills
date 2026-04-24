@@ -1,8 +1,3 @@
-# Feature Request Issue Template
-
-Place this file at `.github/ISSUE_TEMPLATE/feature_request.yml` in the target repo.
-
-```yaml
 name: Feature Request
 description: Suggest a new feature or improvement
 title: "[Feature]: "
@@ -40,4 +35,3 @@ body:
       options:
         - label: I'd be willing to help implement this
           required: false
-```
