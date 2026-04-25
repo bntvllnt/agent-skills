@@ -41,6 +41,34 @@ If the branch already exists:
 git worktree add <worktrees-dir>/<topic> <type>/<topic>
 ```
 
+## Env file carry-over
+
+When creating a new worktree for active development, copy the repo's existing local env files from the source checkout into the new worktree before starting app work.
+
+Default rule:
+- source checkout = the main repo working directory you launched the worktree from
+- copy project-local `.env*` files that represent active local runtime config
+- preserve relative paths inside the repo
+- do not invent new env values in the worktree
+
+Typical monorepo examples:
+- `apps/mobile/.env.local`
+- `apps/web/.env.local`
+- `packages/backend/.env.local`
+
+Recommended flow after `git worktree add`:
+
+```bash
+# example pattern — copy existing local env files into the new worktree
+rsync -a --relative \
+  apps/mobile/.env.local \
+  apps/web/.env.local \
+  packages/backend/.env.local \
+  <worktree-path>/
+```
+
+If a repo has many env files, discover them first from the source checkout and copy the relevant local env files into the worktree before running app commands.
+
 ## List worktrees
 
 ```bash
