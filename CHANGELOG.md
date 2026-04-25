@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.6] - 2026-04-25
+
+- docs(git): clarify env file carry-over for new worktrees so local runtime config is copied intentionally
+
 ## [1.13.5] - 2026-04-18
 
 - docs(skill-builder): make authoring guidance more portable across agent products with spec-aligned description, validation, and confirmation rules
