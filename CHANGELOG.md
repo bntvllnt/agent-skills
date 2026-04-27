@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.13.7] - 2026-04-27
+
+- feat(convex): delegate canonical Convex content (quickstart, auth, components, migrations, performance) to upstream `get-convex/agent-skills` while keeping local references as fallback for project conventions; bump skill metadata 2.0 -> 2.1
+
 ## [1.13.6] - 2026-04-25
 
 - docs(git): clarify env file carry-over for new worktrees so local runtime config is copied intentionally
