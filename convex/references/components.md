@@ -1,5 +1,7 @@
 # Components
 
+Upstream canonical: if the `convex-create-component` skill from `get-convex/agent-skills` is installed, prefer it. This file is the local fallback and supplements upstream with project conventions.
+
 Docs: https://docs.convex.dev/components/authoring
 
 Skip when: one-off business logic, thin utilities without tables, app-level orchestration, or a plain TypeScript library would suffice.

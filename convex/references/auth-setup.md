@@ -1,5 +1,7 @@
 # Auth Setup
 
+Upstream canonical: if the `convex-setup-auth` skill from `get-convex/agent-skills` is installed, prefer it. This file is the local fallback and supplements upstream with project conventions.
+
 Docs:
 
 - Authentication overview: https://docs.convex.dev/auth

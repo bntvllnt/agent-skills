@@ -1,5 +1,7 @@
 # Performance Audit
 
+Upstream canonical: if the `convex-performance-audit` skill from `get-convex/agent-skills` is installed, prefer it. This file is the local fallback and supplements upstream with project conventions.
+
 Docs: https://docs.convex.dev/understanding/best-practices/
 
 Skip when: initial setup, auth setup, component extraction, pure schema migration, or micro-optimization without a user-visible problem.

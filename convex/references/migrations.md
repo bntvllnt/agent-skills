@@ -1,5 +1,7 @@
 # Migrations
 
+Upstream canonical: if the `convex-migration-helper` skill from `get-convex/agent-skills` is installed, prefer it. This file is the local fallback and supplements upstream with project conventions.
+
 Docs: https://docs.convex.dev/database/schemas
 
 Skip when: greenfield schema with no existing data, adding optional fields, adding new tables, or adding/removing indexes with no correctness concern.

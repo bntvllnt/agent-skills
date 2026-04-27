@@ -12,12 +12,40 @@ description: |
 license: MIT
 compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
 metadata:
-  version: "2.0"
+  version: "2.1"
 ---
 
 # Convex
 
 Convex backend skill with a bias toward safety, observability, and index-backed queries.
+
+## Upstream Skills (Delegate When Available)
+
+For canonical Convex content, this skill delegates to the official `get-convex/agent-skills` collection. When those skills are installed, route to them first; fall back to local references otherwise.
+
+Install upstream:
+
+```bash
+npx skills add get-convex/agent-skills
+```
+
+Or refresh the official Convex AI files in the project itself:
+
+```bash
+npx convex ai-files install
+```
+
+Routing precedence (when both are available, prefer upstream):
+
+| Task | Upstream skill | Local fallback |
+|---|---|---|
+| New project / scaffold / add Convex | `convex-quickstart` | `references/quickstart.md` |
+| Authentication setup | `convex-setup-auth` | `references/auth-setup.md` |
+| Building a reusable component | `convex-create-component` | `references/components.md` |
+| Plan or run a migration | `convex-migration-helper` | `references/migrations.md` |
+| Investigate performance issues | `convex-performance-audit` | `references/performance.md` |
+
+Local content remains the source of truth for project conventions: folder org, snake_case files, queries/mutations/actions split, `@vllnt/eslint-config/convex` rules, validation checklist.
 
 ## Docs-First Rule (Blocking)
 
@@ -105,11 +133,11 @@ See `references/style.md` and `references/testing.md`.
 | testing | `references/testing.md` | testing patterns |
 | ecosystem / components | `references/ecosystem.md` | official components to use |
 | slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
-| quickstart / setup / scaffold / new project / add convex | `references/quickstart.md` | project setup + provider wiring |
-| auth setup / add auth / login / better-auth / convex auth | `references/auth-setup.md` | auth provider selection + setup |
-| component / defineComponent / app.use / extract module | `references/components.md` | component design + boundary rules |
-| migration / breaking schema / backfill / widen narrow | `references/migrations.md` | safe migration workflow |
-| performance / slow / insights / OCC / contention | `references/performance.md` | diagnose + fix perf issues |
+| quickstart / setup / scaffold / new project / add convex | upstream `convex-quickstart` if installed, else `references/quickstart.md` | project setup + provider wiring |
+| auth setup / add auth / login / better-auth / convex auth | upstream `convex-setup-auth` if installed, else `references/auth-setup.md` | auth provider selection + setup |
+| component / defineComponent / app.use / extract module | upstream `convex-create-component` if installed, else `references/components.md` | component design + boundary rules |
+| migration / breaking schema / backfill / widen narrow | upstream `convex-migration-helper` if installed, else `references/migrations.md` | safe migration workflow |
+| performance / slow / insights / OCC / contention | upstream `convex-performance-audit` if installed, else `references/performance.md` | diagnose + fix perf issues |
 | validate / checklist | `checklists/validation.md` | blocking checks before shipping |
 
 ## MCP Integration (Recommended)
