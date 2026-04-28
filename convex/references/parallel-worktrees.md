@@ -247,53 +247,159 @@ Treat anonymous-mode data as **ephemeral**. It evaporates when the local backend
 
 **Root cause.** Convex authentication is **global** (`~/.convex/config.json`) and is shared across every worktree on the machine. But `.env.local` — which holds `CONVEX_DEPLOYMENT` and the deployment URLs — is **gitignored** and therefore is **not** carried into a new worktree by `git worktree add`. When `npx convex dev` cannot find `CONVEX_DEPLOYMENT`, it falls back to first-run setup, which involves an OAuth-style flow that *looks* like a re-login prompt.
 
-**Prevention (mandatory).** Run the ensure-flow as the **first** Convex command in every new worktree, before `npx convex dev` or anything else:
+### Prevention (Mandatory)
+
+Run the ensure-flow as the **first** Convex command in every new worktree, before `npx convex dev` or anything else. Crucially, the flow must **prompt the user before silently creating a new cloud deployment** when the worktree has no `.env*` files yet — auto-creation can leak unwanted dev deployments into the project, and an agent should never assume that's the user's intent.
+
+**Decision tree:**
 
 ```
-# In the worktree, in the directory that contains convex.json
-npx convex deployment select dev/<slug> 2>/dev/null \
-  || npx convex deployment create dev/<slug> --type dev --select --expiration "in 14 days"
+Is there any .env* file in the backend dir?
+│
+├─ YES, and CONVEX_DEPLOYMENT is set
+│    -> Run `npx convex deployment select <ref-from-env>`; you're done.
+│
+├─ YES, but no CONVEX_DEPLOYMENT
+│    -> Run the slug-based ensure-flow:
+│         try `deployment select dev/<slug>`,
+│         on miss `deployment create dev/<slug> --type dev --select --expiration "in 14 days"`.
+│
+└─ NO .env* at all (fresh worktree, nothing carried)
+     -> STOP. Ask the user how they want to populate it. Don't auto-create.
+        Options to offer:
+          1. Create a new per-worktree dev deployment (`dev/<slug>`)
+          2. Paste an existing Convex deployment URL (e.g. shared dev or staging)
+          3. Copy `.env.local` from the primary worktree
+        Only proceed with option 1 (auto-create) after explicit confirmation.
 ```
 
-`--select` writes `CONVEX_URL`, `CONVEX_SITE_URL`, framework-specific public mirrors, and `CONVEX_DEPLOYMENT` into `.env.local`. After it succeeds, `npx convex dev` will use that deployment without prompting.
+Why prompt instead of auto-creating? Three reasons:
 
-**Make this automatic.** Wire the ensure-flow into a worktree post-create hook (or into your stack's `pnpm dev:stack` / `npm run dev` entrypoint) so agents never have to remember it. A minimal shell wrapper:
+- **Cost / sprawl.** Auto-creating per worktree without consent fills the project with stale `dev/*` deployments. Cleanup is manual unless `--expiration` is set, and even then it leaks until expiry.
+- **Wrong target.** The user may actually want this worktree to hit shared dev, staging, or a sibling worktree's deployment — not a brand new one.
+- **Auth surprise.** If the user is logged into the wrong Convex account, auto-create silently provisions in the wrong project.
+
+### Agent Rule (BLOCKING)
+
+When operating autonomously in a fresh worktree:
+
+1. Check for `.env*` files in the backend dir before any `npx convex` command.
+2. If none exist, **ask the user** with the three options above. Quote what would happen for each. Wait for explicit choice.
+3. If `.env.local` exists but lacks `CONVEX_DEPLOYMENT`, prefer the slug-based ensure-flow (option 1) but still mention it in chat so the user can override.
+4. Never run `deployment create` without user confirmation in fresh-worktree contexts.
+
+### Interactive Bootstrap Script
+
+A minimal wrapper that implements the decision tree, suitable for a worktree post-create hook or `pnpm dev:stack` preflight:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 
 # Run from within the worktree, after `git worktree add`.
-# Picks up the right backend dir, computes the slug, ensures the deployment.
+# Detects env state, prompts the user when ambiguous, never auto-creates silently.
 
 backend_dir="$(git rev-parse --show-toplevel)/packages/backend"   # adjust to your layout
 cd "$backend_dir"
 
+env_files=( .env.local .env.development.local .env )
+existing=()
+for f in "${env_files[@]}"; do
+  [[ -f "$f" ]] && existing+=("$f")
+done
+
+has_deployment=0
+if [[ ${#existing[@]} -gt 0 ]]; then
+  if grep -qE '^[[:space:]]*CONVEX_DEPLOYMENT=' "${existing[@]}"; then
+    has_deployment=1
+  fi
+fi
+
+# Compute the per-worktree slug (used by branches that auto-create or auto-select)
 worktree_root="$(git rev-parse --show-toplevel)"
 worktree_name="$(basename "$worktree_root")"
-
-# Sanitize: lowercase, [a-z0-9-], collapse dashes, max 39 chars (leaves room for -<sha8>)
 sanitized="$(printf '%s' "$worktree_name" \
   | tr '[:upper:]' '[:lower:]' \
   | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g; s/-{2,}/-/g')"
 sanitized="${sanitized:-dev}"
 sanitized="${sanitized:0:39}"
-
 suffix="$(printf '%s:%s' "$(hostname)" "$(realpath "$worktree_root")" \
   | sha1sum | awk '{ print substr($1, 1, 8) }')"
-
 slug="${sanitized}-${suffix}"
 ref="dev/${slug}"
 
-if ! npx convex deployment select "$ref" >/dev/null 2>&1; then
-  npx convex deployment create "$ref" \
-    --type dev --select --expiration "in 14 days"
+# Branch 1: env exists with CONVEX_DEPLOYMENT — just select that
+if [[ ${#existing[@]} -gt 0 && $has_deployment -eq 1 ]]; then
+  current_ref="$(grep -E '^[[:space:]]*CONVEX_DEPLOYMENT=' "${existing[@]}" \
+    | head -n1 | sed -E 's/^[[:space:]]*CONVEX_DEPLOYMENT=//; s/^"//; s/"$//')"
+  echo "Existing deployment ref in env: $current_ref"
+  npx convex deployment select "$current_ref"
+  exit 0
 fi
 
-echo "Convex worktree deployment ready: $ref"
+# Branch 2: env exists but no CONVEX_DEPLOYMENT — slug-based ensure-flow
+if [[ ${#existing[@]} -gt 0 && $has_deployment -eq 0 ]]; then
+  echo "Env file present but no CONVEX_DEPLOYMENT. Resolving via per-worktree slug: $ref"
+  if ! npx convex deployment select "$ref" >/dev/null 2>&1; then
+    npx convex deployment create "$ref" \
+      --type dev --select --expiration "in 14 days"
+  fi
+  exit 0
+fi
+
+# Branch 3: no env at all — prompt
+cat <<EOF
+No .env* file found in $backend_dir.
+
+Choose how to populate Convex env for this worktree:
+  1) Create a new per-worktree dev deployment ($ref) and write .env.local
+  2) Paste an existing Convex deployment URL or ref
+  3) Copy .env.local from the primary worktree
+  q) Quit and let me decide manually
+EOF
+
+# In CI / non-interactive shells, fail closed instead of guessing.
+if [[ ! -t 0 ]]; then
+  echo "Non-interactive shell. Refusing to auto-create. Re-run interactively or pre-populate .env.local." >&2
+  exit 2
+fi
+
+read -rp "Choice [1/2/3/q]: " choice
+case "$choice" in
+  1)
+    npx convex deployment create "$ref" \
+      --type dev --select --expiration "in 14 days"
+    ;;
+  2)
+    read -rp "Paste deployment ref or URL: " ref_or_url
+    npx convex deployment select "$ref_or_url"
+    ;;
+  3)
+    primary="$(git worktree list --porcelain | awk '/^worktree /{print $2; exit}')"
+    primary_env="$primary/packages/backend/.env.local"   # adjust if your backend lives elsewhere
+    if [[ -f "$primary_env" ]]; then
+      cp "$primary_env" .env.local
+      echo "Copied $primary_env -> $backend_dir/.env.local"
+      echo "Note: this worktree now shares the primary's deployment. Stop here if you wanted isolation."
+    else
+      echo "Primary .env.local not found at $primary_env" >&2
+      exit 1
+    fi
+    ;;
+  q|Q)
+    echo "Aborted. Nothing changed."
+    exit 0
+    ;;
+  *)
+    echo "Invalid choice." >&2
+    exit 1
+    ;;
+esac
 ```
 
-Save as `scripts/setup-convex-worktree.sh` (or similar) and run it once per new worktree. The slug is deterministic, so subsequent runs pick the same deployment and become no-ops.
+Save as `scripts/setup-convex-worktree.sh`. Run once per new worktree. Subsequent runs are idempotent: branch 1 just re-selects.
+
+**Non-interactive contexts** (CI, headless agents): the script fails closed (exit 2) when stdin is not a TTY and no env exists. The agent should detect that exit code and surface the choice to its operator rather than retrying.
 
 ### Error: "auth token expired" or genuine re-login required
 
