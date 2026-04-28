@@ -235,6 +235,84 @@ Treat anonymous-mode data as **ephemeral**. It evaporates when the local backend
 
 ---
 
+## Common Errors and How to Prevent Them
+
+### Error: "did not find convex.json / settings" or "please log in" inside a fresh worktree
+
+**Symptom.** Right after `git worktree add`, you run `npx convex dev` (or any `npx convex` command) and the CLI:
+
+- Complains it can't find Convex project linkage / "settings" / "convex.json"
+- Prompts you to run `npx convex login` even though you're already logged in on this machine
+- Drops into an interactive first-run setup flow
+
+**Root cause.** Convex authentication is **global** (`~/.convex/config.json`) and is shared across every worktree on the machine. But `.env.local` — which holds `CONVEX_DEPLOYMENT` and the deployment URLs — is **gitignored** and therefore is **not** carried into a new worktree by `git worktree add`. When `npx convex dev` cannot find `CONVEX_DEPLOYMENT`, it falls back to first-run setup, which involves an OAuth-style flow that *looks* like a re-login prompt.
+
+**Prevention (mandatory).** Run the ensure-flow as the **first** Convex command in every new worktree, before `npx convex dev` or anything else:
+
+```
+# In the worktree, in the directory that contains convex.json
+npx convex deployment select dev/<slug> 2>/dev/null \
+  || npx convex deployment create dev/<slug> --type dev --select --expiration "in 14 days"
+```
+
+`--select` writes `CONVEX_URL`, `CONVEX_SITE_URL`, framework-specific public mirrors, and `CONVEX_DEPLOYMENT` into `.env.local`. After it succeeds, `npx convex dev` will use that deployment without prompting.
+
+**Make this automatic.** Wire the ensure-flow into a worktree post-create hook (or into your stack's `pnpm dev:stack` / `npm run dev` entrypoint) so agents never have to remember it. A minimal shell wrapper:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run from within the worktree, after `git worktree add`.
+# Picks up the right backend dir, computes the slug, ensures the deployment.
+
+backend_dir="$(git rev-parse --show-toplevel)/packages/backend"   # adjust to your layout
+cd "$backend_dir"
+
+worktree_root="$(git rev-parse --show-toplevel)"
+worktree_name="$(basename "$worktree_root")"
+
+# Sanitize: lowercase, [a-z0-9-], collapse dashes, max 39 chars (leaves room for -<sha8>)
+sanitized="$(printf '%s' "$worktree_name" \
+  | tr '[:upper:]' '[:lower:]' \
+  | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g; s/-{2,}/-/g')"
+sanitized="${sanitized:-dev}"
+sanitized="${sanitized:0:39}"
+
+suffix="$(printf '%s:%s' "$(hostname)" "$(realpath "$worktree_root")" \
+  | sha1sum | awk '{ print substr($1, 1, 8) }')"
+
+slug="${sanitized}-${suffix}"
+ref="dev/${slug}"
+
+if ! npx convex deployment select "$ref" >/dev/null 2>&1; then
+  npx convex deployment create "$ref" \
+    --type dev --select --expiration "in 14 days"
+fi
+
+echo "Convex worktree deployment ready: $ref"
+```
+
+Save as `scripts/setup-convex-worktree.sh` (or similar) and run it once per new worktree. The slug is deterministic, so subsequent runs pick the same deployment and become no-ops.
+
+### Error: "auth token expired" or genuine re-login required
+
+**Cause.** `~/.convex/config.json` access token is missing or revoked, so it actually does need a fresh login.
+
+**Fix.** From any worktree on the machine: `npx convex login`. This updates the global config and benefits every worktree at once.
+
+**How to tell apart from the previous error.** In the previous case, `~/.convex/config.json` exists with a valid token; the issue is local to the worktree. In this case, the global config file is missing or its token rejected. The CLI's wording is similar in both, but only the global-config issue actually requires re-login — the worktree-local issue is fixed by running the ensure-flow.
+
+### Error: codegen race / "convex/_generated/ is out of date"
+
+**Cause.** Two `npx convex dev` processes targeting the same deployment from different worktrees are pushing conflicting code.
+
+**Fix.** Confirm each worktree resolves to its own `dev/<slug>` ref (run the ensure-flow), and that `.env.local` `CONVEX_URL` differs between worktrees. If two worktrees show the same URL, the slug derivation is non-deterministic or the suffix hash collided — re-derive using the recipe above.
+
+### Error: `npx convex deploy` shipped to staging instead of production (multi-prod setups)
+
+See `references/environments.md` for the full multi-environment guide. Short answer: only one prod deployment can be `--default`; ensure that the production one (not staging) was created with `--default`, and that CI uses an explicit `CONVEX_DEPLOY_KEY` scoped to the right deployment.
+
 ## Anti-Patterns
 
 - **Sharing `CONVEX_DEPLOYMENT` across worktrees** — codegen race, stale `_generated/`, cross-branch reactive invalidation

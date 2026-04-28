@@ -63,15 +63,17 @@ Primary sources:
 
 If Convex MCP is available, use it to introspect the deployed function/table surface area and confirm assumptions.
 
-## Environments (Dev / Preview / Prod)
+## Environments (Dev / Preview / Staging / Prod)
 
-Convex projects typically have:
+A Convex project can host multiple deployments of each type:
 
-- Dev deployments (your local `npx convex dev` sync target)
-- Preview deployments (branch/PR deployments, beta feature)
-- Production deployment
+- `dev` (default) and any number of `dev/<slug>` deployments (per-worktree, per-developer, isolated dev sandboxes)
+- `preview/<branch>` deployments (auto-created per PR branch with a preview deploy key)
+- One default `prod` deployment plus any number of named prod deployments (e.g. `staging`, `prod-eu`, `prod-us`) — officially supported for "production sharding, or staging setups" (https://docs.convex.dev/production/hosting/preview-deployments)
 
-Use MCP `status` (if available) or the CLI to confirm which deployment you are connected to before making changes.
+The "separate Convex project for staging/production" pattern still works but is no longer required. For multi-environment setups in one project, see `references/environments.md`.
+
+Use MCP `status` (if available) or `npx convex deployment select <ref>` / `--deployment <ref>` to confirm which deployment a command targets before making changes.
 
 ## Parallel Worktree Development (Isolated Dev Backends)
 
@@ -151,6 +153,7 @@ For rows that name an upstream skill, the full 3-tier precedence is: **installed
 | ecosystem / components | `references/ecosystem.md` | official components to use |
 | slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
 | worktree / parallel dev / isolated backend / multiple agents | `references/parallel-worktrees.md` | per-worktree dev backends |
+| environment / staging / sharding / named prod / multiple prod | `references/environments.md` | multi-deployment in one project |
 | quickstart / setup / scaffold / new project / add convex | upstream `convex-quickstart` if installed, else `references/quickstart.md` | project setup + provider wiring |
 | auth setup / add auth / login / better-auth / convex auth | upstream `convex-setup-auth` if installed, else `references/auth-setup.md` | auth provider selection + setup |
 | component / defineComponent / app.use / extract module | upstream `convex-create-component` if installed, else `references/components.md` | component design + boundary rules |
@@ -203,6 +206,7 @@ Full workflow: `references/mcp.md`.
   - `references/migrations.md`
   - `references/performance.md`
   - `references/parallel-worktrees.md`
+  - `references/environments.md`
 - Auth providers:
   - `references/auth-providers/convex-auth.md`
   - `references/auth-providers/better-auth.md`
