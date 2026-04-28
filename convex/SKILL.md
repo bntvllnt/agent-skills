@@ -29,8 +29,10 @@ For canonical Convex content, this skill delegates to the official `get-convex/a
 Routing precedence (use first available, in order):
 
 1. Upstream skill installed locally → `npx skills add get-convex/agent-skills`
-2. WebFetch the upstream `SKILL.md` from the raw URL below (then follow its internal `references/` paths the same way: `https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/<skill>/references/<file>`)
+2. WebFetch the upstream `SKILL.md` from the raw URL below. Some upstream skills have a `references/` subdirectory (e.g. `convex-setup-auth`, `convex-create-component`, `convex-migration-helper`, `convex-performance-audit`); follow internal paths the same way: `https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/<skill>/references/<file>`. `convex-quickstart` is single-file (SKILL.md only).
 3. Fall back to the matching local reference
+
+URLs track `main`. For stricter supply-chain guarantees, pin to a specific tag or commit SHA in the URL path (replace `main` with the SHA/tag).
 
 Or refresh the official Convex AI files in the project itself:
 
@@ -42,11 +44,11 @@ Delegation map:
 
 | Task | Upstream skill | Fetch URL (raw `SKILL.md`) | Local fallback |
 |---|---|---|---|
-| New project / scaffold / add Convex | `convex-quickstart` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md | `references/quickstart.md` |
-| Authentication setup | `convex-setup-auth` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-setup-auth/SKILL.md | `references/auth-setup.md` |
-| Building a reusable component | `convex-create-component` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-create-component/SKILL.md | `references/components.md` |
-| Plan or run a migration | `convex-migration-helper` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-migration-helper/SKILL.md | `references/migrations.md` |
-| Investigate performance issues | `convex-performance-audit` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-performance-audit/SKILL.md | `references/performance.md` |
+| New project / scaffold / add Convex | `convex-quickstart` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md> | `references/quickstart.md` |
+| Authentication setup | `convex-setup-auth` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-setup-auth/SKILL.md> | `references/auth-setup.md` |
+| Building a reusable component | `convex-create-component` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-create-component/SKILL.md> | `references/components.md` |
+| Plan or run a migration | `convex-migration-helper` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-migration-helper/SKILL.md> | `references/migrations.md` |
+| Investigate performance issues | `convex-performance-audit` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-performance-audit/SKILL.md> | `references/performance.md` |
 
 Local content remains the source of truth for project conventions: folder org, snake_case files, queries/mutations/actions split, `@vllnt/eslint-config/convex` rules, validation checklist.
 
@@ -70,6 +72,16 @@ Convex projects typically have:
 - Production deployment
 
 Use MCP `status` (if available) or the CLI to confirm which deployment you are connected to before making changes.
+
+## Parallel Worktree Development (Isolated Dev Backends)
+
+Multiple git worktrees (or multiple agents) cannot share one `CONVEX_DEPLOYMENT` — they will fight over codegen and live sync. To run worktrees in parallel, give each its own backend.
+
+- Primary pattern: `CONVEX_AGENT_MODE=anonymous` per worktree (local, isolated, no auth)
+- Cloud workarounds (one project per worktree, hybrid)
+- Step-by-step setup, validation checklist, anti-patterns
+
+See `references/parallel-worktrees.md`.
 
 ## Components-First Rule
 
@@ -121,6 +133,8 @@ See `references/style.md` and `references/testing.md`.
 
 ## Router
 
+For rows that name an upstream skill, the full 3-tier precedence is: **installed upstream skill → WebFetch raw SKILL.md → local fallback** (see "Upstream Skills" above for fetch URLs). Cells below show installed/local for brevity.
+
 | User says | Load reference | Do |
 |---|---|---|
 | help / cli help / usage | `references/cli-help.md` | show official CLI help safely |
@@ -136,6 +150,7 @@ See `references/style.md` and `references/testing.md`.
 | testing | `references/testing.md` | testing patterns |
 | ecosystem / components | `references/ecosystem.md` | official components to use |
 | slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
+| worktree / parallel dev / isolated backend / multiple agents | `references/parallel-worktrees.md` | per-worktree dev backends |
 | quickstart / setup / scaffold / new project / add convex | upstream `convex-quickstart` if installed, else `references/quickstart.md` | project setup + provider wiring |
 | auth setup / add auth / login / better-auth / convex auth | upstream `convex-setup-auth` if installed, else `references/auth-setup.md` | auth provider selection + setup |
 | component / defineComponent / app.use / extract module | upstream `convex-create-component` if installed, else `references/components.md` | component design + boundary rules |
@@ -187,6 +202,7 @@ Full workflow: `references/mcp.md`.
   - `references/components.md`
   - `references/migrations.md`
   - `references/performance.md`
+  - `references/parallel-worktrees.md`
 - Auth providers:
   - `references/auth-providers/convex-auth.md`
   - `references/auth-providers/better-auth.md`
