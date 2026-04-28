@@ -21,13 +21,16 @@ Convex backend skill with a bias toward safety, observability, and index-backed 
 
 ## Upstream Skills (Delegate When Available)
 
-For canonical Convex content, this skill delegates to the official `get-convex/agent-skills` collection. When those skills are installed, route to them first; fall back to local references otherwise.
+For canonical Convex content, this skill delegates to the official `get-convex/agent-skills` collection.
 
-Install upstream:
+- Repo: https://github.com/get-convex/agent-skills
+- Source of truth: each upstream skill's `SKILL.md` and `references/`
 
-```bash
-npx skills add get-convex/agent-skills
-```
+Routing precedence (use first available, in order):
+
+1. Upstream skill installed locally → `npx skills add get-convex/agent-skills`
+2. WebFetch the upstream `SKILL.md` from the raw URL below (then follow its internal `references/` paths the same way: `https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/<skill>/references/<file>`)
+3. Fall back to the matching local reference
 
 Or refresh the official Convex AI files in the project itself:
 
@@ -35,15 +38,15 @@ Or refresh the official Convex AI files in the project itself:
 npx convex ai-files install
 ```
 
-Routing precedence (when both are available, prefer upstream):
+Delegation map:
 
-| Task | Upstream skill | Local fallback |
-|---|---|---|
-| New project / scaffold / add Convex | `convex-quickstart` | `references/quickstart.md` |
-| Authentication setup | `convex-setup-auth` | `references/auth-setup.md` |
-| Building a reusable component | `convex-create-component` | `references/components.md` |
-| Plan or run a migration | `convex-migration-helper` | `references/migrations.md` |
-| Investigate performance issues | `convex-performance-audit` | `references/performance.md` |
+| Task | Upstream skill | Fetch URL (raw `SKILL.md`) | Local fallback |
+|---|---|---|---|
+| New project / scaffold / add Convex | `convex-quickstart` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md | `references/quickstart.md` |
+| Authentication setup | `convex-setup-auth` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-setup-auth/SKILL.md | `references/auth-setup.md` |
+| Building a reusable component | `convex-create-component` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-create-component/SKILL.md | `references/components.md` |
+| Plan or run a migration | `convex-migration-helper` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-migration-helper/SKILL.md | `references/migrations.md` |
+| Investigate performance issues | `convex-performance-audit` | https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-performance-audit/SKILL.md | `references/performance.md` |
 
 Local content remains the source of truth for project conventions: folder org, snake_case files, queries/mutations/actions split, `@vllnt/eslint-config/convex` rules, validation checklist.
 

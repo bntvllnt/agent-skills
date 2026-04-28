@@ -27,13 +27,13 @@ Manual install (download this folder only):
 
 ## Upstream Skills (Recommended Companion)
 
-This skill delegates canonical Convex content to the official `get-convex/agent-skills` collection when those skills are installed. Local references stay as fallback and host project conventions (folder org, eslint config, validation checklist).
+This skill delegates canonical Convex content to the official `get-convex/agent-skills` collection. Local references stay as fallback and host project conventions (folder org, eslint config, validation checklist).
 
-```bash
-npx skills add get-convex/agent-skills
-```
+- Repo: https://github.com/get-convex/agent-skills
+- Install (recommended): `npx skills add get-convex/agent-skills`
+- Otherwise: agents can WebFetch each upstream `SKILL.md` from the raw URLs listed in this skill's `SKILL.md` "Upstream Skills" section
 
-Routing precedence and delegation map: see `SKILL.md` "Upstream Skills".
+Routing precedence and full delegation map: see `SKILL.md` -> "Upstream Skills".
 
 ## Requirements
 

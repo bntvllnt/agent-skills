@@ -1,6 +1,6 @@
 # Quickstart
 
-Upstream canonical: if the `convex-quickstart` skill from `get-convex/agent-skills` is installed, prefer it. This file is the local fallback and supplements upstream with project conventions.
+Upstream canonical: prefer the `convex-quickstart` skill from `get-convex/agent-skills` if installed, or WebFetch it: https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md . This file is the local fallback and supplements upstream with project conventions.
 
 Docs: https://docs.convex.dev/quickstart
 
