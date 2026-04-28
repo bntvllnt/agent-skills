@@ -77,9 +77,9 @@ Use MCP `status` (if available) or the CLI to confirm which deployment you are c
 
 Multiple git worktrees (or multiple agents) cannot share one `CONVEX_DEPLOYMENT` — they will fight over codegen and live sync. To run worktrees in parallel, give each its own backend.
 
-- Primary pattern: `CONVEX_AGENT_MODE=anonymous` per worktree (local, isolated, no auth)
-- Cloud workarounds (one project per worktree, hybrid)
-- Step-by-step setup, validation checklist, anti-patterns
+- Primary pattern (authenticated): per-worktree cloud dev deployment via `dev/<slug>` and `npx convex deployment select|create --type dev --select`
+- Fallback (sandbox / CI / no-auth): `CONVEX_AGENT_MODE=anonymous` for a fully local backend
+- Slug derivation, lock-based ensure flow, cleanup (`deployment delete` or `--expiration`), per-worktree port allocation
 
 See `references/parallel-worktrees.md`.
 

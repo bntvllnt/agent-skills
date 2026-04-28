@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [1.13.7] - 2026-04-28
 
 - feat(convex): delegate canonical Convex content (quickstart, auth, components, migrations, performance) to upstream `get-convex/agent-skills` with fetchable raw GitHub URLs so agents can WebFetch upstream `SKILL.md` even when not installed locally; local references kept as fallback for project conventions; bump skill metadata 2.0 -> 2.1
-- feat(convex): add `references/parallel-worktrees.md` with step-by-step for isolated per-worktree Convex dev backends so multiple agents/worktrees can develop in parallel without codegen conflicts (anonymous-mode primary pattern + cloud workarounds)
+- feat(convex): add `references/parallel-worktrees.md` with production-grade pattern for isolated per-worktree Convex dev backends. Primary path is a named cloud dev deployment (`dev/<slug>`) via `npx convex deployment select|create --type dev --select`, with a verified slug-derivation recipe (basename + sha1(host:abspath).slice(0,8)), lock-based ensure flow, cleanup via `deployment delete` or `--expiration` TTL, auth-failure recovery, and per-worktree port allocation. Anonymous mode (`CONVEX_AGENT_MODE=anonymous`) documented as the sandbox/CI fallback for environments that cannot OAuth.
 - fix(convex): clarify that not all upstream skills have `references/`, add supply-chain note about `main`-pinned URLs, surface 3-tier precedence in router table header, wrap reference-pointer URLs in angle brackets
 
 ## [1.13.6] - 2026-04-25
