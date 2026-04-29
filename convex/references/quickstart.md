@@ -1,5 +1,7 @@
 # Quickstart
 
+Upstream canonical: prefer the `convex-quickstart` skill from `get-convex/agent-skills` if installed, or WebFetch <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md>. This file is the local fallback and supplements upstream with project conventions.
+
 Docs: https://docs.convex.dev/quickstart
 
 Skip when: project already has `convex/` directory and `CONVEX_DEPLOYMENT` configured.
