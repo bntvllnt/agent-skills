@@ -14,6 +14,7 @@ Agent Skills is a collection of reusable AI agent capabilities, distributed via 
 | [convex](../convex/SKILL.md) | Convex backend: functions, schemas, auth, scheduling |
 | [workflow](../workflow/SKILL.md) | High-velocity solo development: plan, ship, fix, review, done |
 | [tmux](../tmux/SKILL.md) | Terminal multiplexer: sessions, windows, panes, layouts |
+| [first-principles](../first-principles/SKILL.md) | First-principles thinking + 5-step engineering algorithm |
 
 ## How Skills Work
 

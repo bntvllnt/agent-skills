@@ -14,7 +14,7 @@ Use when:
 - Want quick summary OR deep analysis mode
 - Need first-principles brief that challenges assumptions
 
-Triggers: "analyze", "key points", "what's important", "improve this", "review", "examine", "assess", "analysis", "deep analysis", "run deep analysis", "brief", "challenge assumptions", "first principles"
+Triggers: "analyze", "key points", "what's important", "improve this", "review", "examine", "assess", "analysis", "deep analysis", "run deep analysis", "brief", "challenge assumptions"
 
 ## Agent Capabilities
 
