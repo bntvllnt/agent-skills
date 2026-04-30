@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -88,6 +88,14 @@ Complete tmux management: sessions, windows, panes, layouts, and scripting/autom
 
 ---
 
+### [Red Team](./red-team/) - Adversarial Code Review
+
+Find vulnerabilities in your own codebase with an attacker's mindset. STRIDE threat modeling, OWASP/CWE mapping, attack-surface enumeration, Lockheed kill-chain reasoning, severity scoring, and remediation with regression tests. **Defensive use only** — Phase 0 authorization gate.
+
+[View skill documentation →](./red-team/SKILL.md)
+
+---
+
 ## Installation Options
 
 Install specific skill:
@@ -108,6 +116,8 @@ npx skills add bntvllnt/agent-skills --skill convex
 npx skills add bntvllnt/agent-skills --skill workflow
 
 npx skills add bntvllnt/agent-skills --skill tmux
+
+npx skills add bntvllnt/agent-skills --skill red-team
 ```
 
 Global install:
@@ -127,6 +137,8 @@ npx skills add bntvllnt/agent-skills --skill convex -g
 npx skills add bntvllnt/agent-skills --skill workflow -g
 
 npx skills add bntvllnt/agent-skills --skill tmux -g
+
+npx skills add bntvllnt/agent-skills --skill red-team -g
 ```
 
 Specific agent:
@@ -146,6 +158,8 @@ npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
 npx skills add bntvllnt/agent-skills --skill workflow --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill tmux --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill red-team --agent claude-code
 ```
 
 ---
