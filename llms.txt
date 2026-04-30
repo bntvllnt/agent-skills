@@ -23,6 +23,7 @@ Install: `npx skills add bntvllnt/agent-skills`
 - [Convex](convex/SKILL.md): Convex backend — functions, schemas, auth, scheduling, workflows
 - [Workflow](workflow/SKILL.md): High-velocity solo development — plan, ship, fix, review, done
 - [tmux](tmux/SKILL.md): Terminal multiplexer — sessions, windows, panes, layouts, scripting
+- [First Principles](first-principles/SKILL.md): First-principles thinking + 5-step engineering algorithm (popularized by Musk)
 
 ## Optional
 
