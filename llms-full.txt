@@ -242,7 +242,7 @@ This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). By particip
    - `fix: resolve bug`
    - `docs: update documentation`
    - `chore: maintenance task`
-5. Push and open a Pull Request against `master`
+5. Push and open a Pull Request against `main`
 
 ## Development Setup
 
