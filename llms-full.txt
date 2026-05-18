@@ -2,11 +2,12 @@
 
 > Collection of reusable AI agent skills — capabilities for any domain via skills.sh.
 
-Agent Skills is a collection of reusable AI agent skills compatible with Claude Code, OpenCode, Windsurf, Cursor, and more via [skills.sh](https://skills.sh). Install with `npx skills add bntvllnt/agent-skills`. Available skills include Analyze (multi-perspective analyzer), Skill Builder (create/validate skills), OSS Readiness (public release audit + scaffolding), Git (workflow + worktrees + PRs), GitHub (CLI operations), Convex (backend + MCP), Workflow (high-velocity solo development), and tmux (terminal multiplexer management).
+Agent Skills is a Markdown-based skill collection for AI coding agents. Each skill provides structured instructions that agents load on-demand to handle specific domains: code analysis, git workflows, GitHub operations, backend development, and more. Skills are agent-agnostic and work with Claude Code, OpenCode, Windsurf, Cursor, and any agent supporting SKILL.md.
 
 ## Docs
 
 ### README
+Source: README.md
 
 <div align="center">
 
@@ -197,6 +198,21 @@ analyze "should I accept this job offer"
 
 This is a public collection of skills developed by [@bntvllnt](https://github.com/bntvllnt).
 
+Before opening a PR, run the repository validator:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/validate_repo.py
+```
+
+If you changed skill content or root documentation, refresh generated manifests first:
+
+```bash
+python scripts/validate_repo.py --write
+```
+
+The validator checks `SKILL.md` YAML frontmatter, required skill metadata, skill folder/name consistency, local Markdown links, and exact generated `llms.txt` / `llms-full.txt` manifest sync.
+
 Feel free to:
 - Fork and adapt for your needs
 - Submit issues for bugs or improvement suggestions
@@ -204,11 +220,23 @@ Feel free to:
 
 ---
 
+## Community
+
+- [Website](https://bntvllnt.com) — about the maintainer and projects
+- [Discord](https://bntvllnt.com/discord) — questions, discussion, support
+- [GitHub](https://bntvllnt.com/github) — issues, PRs, code
+- [X / Twitter](https://bntvllnt.com/x) — updates, DMs for security
+- [LinkedIn](https://bntvllnt.com/linkedin) — professional inquiries
+- [Book a meeting](https://bntvllnt.com/book) — consultation, collaboration, or anything
+
+---
+
 ## License
 
 MIT License - Free to use, modify, and distribute.
 
-### Contributing
+### CONTRIBUTING
+Source: CONTRIBUTING.md
 
 # Contributing to Agent Skills
 
@@ -297,11 +325,61 @@ Look for issues labeled [`good first issue`](https://github.com/bntvllnt/agent-s
 
 By contributing, you agree that your contributions will be licensed under the same license as the project (MIT).
 
-### Changelog
+### CHANGELOG
+Source: CHANGELOG.md
 
 # Changelog
 
 All notable changes to this project will be documented in this file.
+
+## [1.13.7] - 2026-04-28
+
+- ci: add repository validator for skill frontmatter, skill folder/name consistency, local Markdown links, exact generated `llms.txt` / `llms-full.txt` sync, and pinned validator dependencies
+- feat(convex): delegate canonical Convex content (quickstart, auth, components, migrations, performance) to upstream `get-convex/agent-skills` with fetchable raw GitHub URLs so agents can WebFetch upstream `SKILL.md` even when not installed locally; local references kept as fallback for project conventions; bump skill metadata 2.0 -> 2.1
+- feat(convex): add `references/parallel-worktrees.md` with production-grade pattern for isolated per-worktree Convex dev backends. Primary path is a named cloud dev deployment (`dev/<slug>`) via `npx convex deployment select|create --type dev --select`, with a verified slug-derivation recipe (basename + sha1(host:abspath).slice(0,8)), lock-based ensure flow, cleanup via `deployment delete` or `--expiration` TTL, auth-failure recovery, and per-worktree port allocation. Anonymous mode (`CONVEX_AGENT_MODE=anonymous`) documented as the sandbox/CI fallback for environments that cannot OAuth. Includes a Common Errors section explaining why fresh worktrees see "login required" prompts (gitignored `.env.local` -> first-run setup flow), a decision tree for choosing how to populate env, a BLOCKING rule for agents to prompt the user before auto-creating cloud deployments, and a copy-paste `scripts/setup-convex-worktree.sh` that detects env state, prompts interactively when no `.env*` exists (with create-new / paste-URL / copy-from-primary options), and fails closed in non-interactive contexts.
+- feat(convex): add `references/environments.md` documenting multi-deployment per project (staging-as-named-prod, production sharding) — officially supported per Convex docs ("production sharding, or staging setups"). Covers `npx convex deployment create <ref> --type prod`, `--default` semantics for `npx convex deploy`, `--deployment <ref>` for one-off targeting, promotion workflow (dev -> staging -> prod), per-deployment deploy keys, and when to use one project with named prods vs separate projects.
+- fix(convex): clarify that not all upstream skills have `references/`, add supply-chain note about `main`-pinned URLs, surface 3-tier precedence in router table header, wrap reference-pointer URLs in angle brackets
+- fix(convex): correct parallel-worktrees.md against the authoritative `npx convex deployment --help` — add the missing CONVEX_DEPLOYMENT bootstrap step that gives the Convex CLI project context (without it `deployment select|create` fails with "No CONVEX_DEPLOYMENT set"), remove the non-existent `npx convex deployment delete` claim (the CLI exposes only `select` and `create`; cloud-side delete is dashboard-only), document the strict teardown ordering (`dev:remove` before `git worktree remove` — once the worktree directory is gone the deployment ref becomes unrecoverable), and add a companion `scripts/teardown-convex-worktree.sh` that strips CONVEX_* keys while preserving unrelated env vars and prints the dashboard URL for manual cloud cleanup.
+
+## [1.13.6] - 2026-04-25
+
+- docs(git): clarify env file carry-over for new worktrees so local runtime config is copied intentionally
+
+## [1.13.5] - 2026-04-18
+
+- docs(skill-builder): make authoring guidance more portable across agent products with spec-aligned description, validation, and confirmation rules
+
+## [1.13.4] - 2026-04-17
+
+- fix(oss-readiness): make SKILL.md frontmatter valid YAML so strict indexers can parse the skill
+
+## [1.13.3] - 2026-04-17
+
+- feat(github): add release-title prerequisites and preview-aware release strategy guidance
+- feat(oss-readiness): add OSS release messaging rubric for titles and opening summaries
+
+## [1.13.2] - 2026-04-17
+
+- feat(workflow): load rules-discovery across plan, ship, fix, focus, and spec-review
+
+## [1.13.1] - 2026-04-17
+
+- feat(workflow): require line-by-line change coverage and rule-by-rule rules enforcement in review mode
+- docs(workflow): define a runtime-neutral portable review spec plus optional executor patterns for OSS-safe review portability
+
+## [1.13.0] - 2026-04-15
+
+- feat(oss-readiness): add harness-agnostic OSS/public release skill with audit, CI, llms, and scaffolding flows
+- docs: list OSS Readiness in the README, skills overview, llms.txt, and llms-full.txt
+
+## [1.12.0] - 2026-03-30
+
+- feat(convex): expand skill to v2.0 with quickstart, components, migrations, performance, auth (#16)
+- feat(convex): add Better Auth provider with full Convex integration guide
+- feat(convex): align skill with @vllnt/eslint-config/convex conventions (14 critical rules)
+- feat(convex): add lint-first rule recommending @vllnt/eslint-config/convex
+- feat: add publish.yml with canary tags + manual release workflow (#17)
+- feat: add CI workflow enforcing CHANGELOG.md update on every PR
 
 ## [1.10.1] - 2026-03-24
 
@@ -329,6 +407,51 @@ All notable changes to this project will be documented in this file.
 
 - chore(workflow): tighten activation triggers to avoid cross-skill overlap
 - chore(github): add sponsor funding config
+
+## [1.7.0] - 2026-03-20
+
+- feat(workflow): add "what's up" and variant triggers for status action
+- feat(github): add CI monitor and PR dashboard
+- docs(readme): update git skill description with worktree summary
+
+## [1.6.0] - 2026-03-19
+
+- feat(git): add worktree summary with proactive change analysis
+
+## [1.5.1] - 2026-03-18
+
+- feat(github): add strict release strategy and description format
+
+## [1.5.0] - 2026-03-18
+
+- feat(workflow): add structured adversarial analysis to planning
+
+## [1.4.0] - 2026-03-17
+
+- feat: add workflow skill (#1)
+- fix: quote YAML compatibility value to avoid parse error
+- fix: add missing frontmatter fields to workflow SKILL.md
+
+## [1.3.1] - 2026-03-16
+
+- fix(github): fix action router and reference loading
+
+## [1.3.0] - 2026-03-16
+
+- feat(github): add GitHub CLI skill
+
+## [1.2.0] - 2026-03-15
+
+- feat(git): add git workflow skill with worktree support
+
+## [1.1.0] - 2026-03-14
+
+- feat(skill-builder): add skill builder for creating/validating skills
+
+## [1.0.0] - 2026-03-13
+
+- feat: initial release with analyze skill
+- feat(analyze): universal multi-perspective analyzer (quick/standard/deep modes)
 
 ## Skills
 
@@ -975,218 +1098,238 @@ MIT License - Free to use, modify, and distribute.
 
 **v1.0.0** - 2026-01-28 - Initial public release by bntvllnt
 
-### Skill Builder
-Source: skill-builder/SKILL.md
+### Convex
+Source: convex/SKILL.md
 
 ---
-name: skill-builder
+name: convex
 description: |
-  Build correct, consistent Agent Skills (create/update/delete/add content) using validated templates,
-  safe defaults, and cross-skill consistency checks.
-  Works across common agent CLIs that load skills from Markdown folders.
-  Triggers: "new skill", "create skill", "build skill", "update skill", "delete skill",
-  "add to skill", "skill template", "skill validation", "skill builder".
+  Build and operate Convex backends: functions (queries/mutations/actions/http actions), schemas,
+  auth patterns, scheduling (cron/scheduled/workflows), file storage, components, migrations,
+  performance, testing, and debugging.
+  Triggers: "convex", "query", "mutation", "action", "httpAction", "schema", "validator",
+  "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev",
+  "quickstart", "setup convex", "add convex", "defineComponent", "app.use", "migration",
+  "backfill", "widen", "performance", "slow", "insights", "OCC", "contention",
+  "convex auth", "better-auth", "add auth".
 license: MIT
-compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown.
+compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
 metadata:
-  version: "1.0"
+  version: "2.1"
 ---
 
-# Skill Builder
+# Convex
 
-Unified, security-first skill builder.
+Convex backend skill with a bias toward safety, observability, and index-backed queries.
 
-This skill is intentionally opinionated:
-- Prefer no new skill if a simpler change works (project docs, a script, or a small snippet).
-- When you do create a skill, make it boring, testable, and hard to misuse.
-- Keep one clear router and avoid overlapping triggers across skills.
+## Upstream Skills (Delegate When Available)
 
-## Operation Router
+For canonical Convex content, this skill delegates to the official `get-convex/agent-skills` collection.
 
-| User intent | Operation | Output |
-|---|---|---|
-| create/build/make/new skill | CREATE | new skill folder + `SKILL.md` + `README.md` |
-| update/modify/improve skill | UPDATE | minimal diff, keep triggers stable |
-| delete/remove skill | DELETE | remove skill + update repo index |
-| add content/route/workflow to skill | ADD | new router row + new section file (when needed) |
-| validate skill | VALIDATE | checklist results + fixes |
-| rename skill | RENAME | safe rename + reference updates |
+- Repo: https://github.com/get-convex/agent-skills
+- Source of truth: each upstream skill's `SKILL.md` and `references/`
 
-## What "Correct" Means
+Routing precedence (use first available, in order):
 
-This skill treats "correct" as:
+1. Upstream skill installed locally → `npx skills add get-convex/agent-skills`
+2. WebFetch the upstream `SKILL.md` from the raw URL below. Some upstream skills have a `references/` subdirectory (e.g. `convex-setup-auth`, `convex-create-component`, `convex-migration-helper`, `convex-performance-audit`); follow internal paths the same way: `https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/<skill>/references/<file>`. `convex-quickstart` is single-file (SKILL.md only).
+3. Fall back to the matching local reference
 
-- Conforms to the Agent Skills spec (directory + `SKILL.md` frontmatter constraints).
-- Uses progressive disclosure: small `SKILL.md`, deeper docs in `references/`.
-- Has unambiguous activation: specific description + non-overlapping triggers.
-- Is safe: no secrets, no default-destructive commands, tool usage is scoped.
+URLs track `main`. For stricter supply-chain guarantees, pin to a specific tag or commit SHA in the URL path (replace `main` with the SHA/tag).
 
-## Phase 0: First-Principles Check (Mandatory)
-
-Run this before ANY CREATE/UPDATE:
-
-1. QUESTION: what problem, for who, measured how?
-2. DELETE: can an existing component/skill/command solve it?
-3. SIMPLIFY: smallest change that works (often a project instruction file)
-4. ACCELERATE: only after (2) and (3)
-5. AUTOMATE: create a component only if it will be reused
-
-If the answer is "no skill", propose:
-- a README section
-- a small script
-- a usage snippet users can copy
-
-## Phase 1: Detect Target + Name
-
-### Target repository layout
-
-This repo layout:
-
-- `/<skill-name>/SKILL.md` (home/router)
-- `/<skill-name>/README.md` (short overview)
-- optional: `/<skill-name>/references/*.md` (split workflows)
-
-## Spec Rules (Agent Skills)
-
-From the Agent Skills specification:
-
-- Skill folder name must match `name`.
-- `name` constraints: 1-64 chars; lowercase letters/numbers/hyphens; no leading/trailing `-`; no `--`.
-- `description` should say what + when; max 1024 chars.
-- Optional frontmatter fields you may include: `license`, `compatibility`, `metadata`, `allowed-tools`.
-
-Reference: https://agentskills.io/specification
-
-### Naming
-
-- Use kebab-case (`my-skill-name`).
-- Avoid generic names (`tools`, `helper`).
-- Prefer verbs for commands (`review-pr`, `sync-main`).
-
-## Phase 2: CREATE Flow
-
-### Inputs (minimum)
-
-- Name
-- Goal + non-goals
-- Triggers (what user says)
-- Allowed tools (tightest possible)
-
-### CREATE Steps
-
-1. Discover existing conventions (look at other skills in the repo).
-2. Draft a micro-spec (goal/non-goals, routing, tool boundaries).
-3. Create `/<skill-name>/SKILL.md` with:
-   - front matter (name/description + triggers)
-   - router table
-   - safety rules
-   - minimal workflows (or links to `references/`)
-4. Create `/<skill-name>/README.md` with install + entry points.
-5. Validate (see Validation).
-6. If the repo has an index of skills (commonly a `README.md`), add/update the entry.
-
-### Output Contract (CREATE)
-
-When creating a skill, always return:
-
-- Files created/edited (paths only)
-- Trigger phrases added
-- One minimal "smoke test" prompt (how to activate it)
-- Validation result (pass/fail + what to fix)
-
-## Phase 3: UPDATE Flow
-
-1. Read current skill.
-2. Identify actual user goal (avoid refactors).
-3. Apply minimal diff.
-4. Re-run validation checklist.
-5. Keep triggers stable unless explicitly requested.
-
-## Phase 4: DELETE Flow
-
-1. Confirm skill folder.
-2. Identify dependents (root `README.md`, other skill references).
-3. Remove skill and update references.
-4. Provide rollback note (restore from git).
-
-## Phase 5: ADD Content to a Skill
-
-Rules for skill growth:
-- Never duplicate trigger phrases across multiple skills in the same install.
-- Route by intent first, then load deeper sections.
-- Keep SKILL.md readable: prefer short tables + stable templates.
-
-Add steps:
-1. Add one new router row.
-2. Add the minimal new procedure.
-3. If it grows: split into `references/<topic>.md`.
-4. Add/adjust examples.
-5. Re-check cross-skill consistency.
-
-## Validation
-
-### Skill Validation Checklist
-
-- Front matter includes `name` and `description`.
-- Has a router (how to decide what to do).
-- Defines what is safe to run without confirmation vs requires confirmation.
-- No secrets; no links to private paths.
-- No unscoped destructive instructions.
-- Trigger hygiene: no overlapping triggers with existing skills in the repo.
-- Docs split: if SKILL.md becomes long, move workflows into `references/`.
-
-### Spec Validation (Recommended)
-
-If you have the reference validator available (optional), run:
+Or refresh the official Convex AI files in the project itself:
 
 ```bash
-skills-ref validate ./<skill-name>
+npx convex ai-files install
 ```
 
-If not available, validate manually using the rules in "Spec Rules" above.
+Delegation map:
 
-### Tool Safety
+| Task | Upstream skill | Fetch URL (raw `SKILL.md`) | Local fallback |
+|---|---|---|---|
+| New project / scaffold / add Convex | `convex-quickstart` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-quickstart/SKILL.md> | `references/quickstart.md` |
+| Authentication setup | `convex-setup-auth` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-setup-auth/SKILL.md> | `references/auth-setup.md` |
+| Building a reusable component | `convex-create-component` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-create-component/SKILL.md> | `references/components.md` |
+| Plan or run a migration | `convex-migration-helper` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-migration-helper/SKILL.md> | `references/migrations.md` |
+| Investigate performance issues | `convex-performance-audit` | <https://raw.githubusercontent.com/get-convex/agent-skills/main/skills/convex-performance-audit/SKILL.md> | `references/performance.md` |
 
-- Prefer Read/Glob/Grep before Bash.
-- If Bash is needed, scope it (git-only, or specific commands).
-- Never recommend `rm -rf`, `git reset --hard`, `push --force` as defaults.
+Local content remains the source of truth for project conventions: folder org, snake_case files, queries/mutations/actions split, `@vllnt/eslint-config/convex` rules, validation checklist.
 
-## Templates
+## Docs-First Rule (Blocking)
 
-### Skill Front Matter
+Before implementing a Convex feature or pattern, verify the latest official docs.
 
-```yaml
----
-name: my-skill
-description: Describe what the skill does and when to use it. Include trigger phrases.
-compatibility: Optional. Mention required system tools, network needs, or target environments.
-metadata:
-  version: "0.1"
-allowed-tools: Optional. Space-delimited list. Prefer the narrowest set possible.
----
+Primary sources:
+
+- https://docs.convex.dev/
+- https://stack.convex.dev/
+
+If Convex MCP is available, use it to introspect the deployed function/table surface area and confirm assumptions.
+
+## Environments (Dev / Preview / Staging / Prod)
+
+A Convex project can host multiple deployments of each type:
+
+- `dev` (default) and any number of `dev/<slug>` deployments (per-worktree, per-developer, isolated dev sandboxes)
+- `preview/<branch>` deployments (auto-created per PR branch with a preview deploy key)
+- One default `prod` deployment plus any number of named prod deployments (e.g. `staging`, `prod-eu`, `prod-us`) — officially supported for "production sharding, or staging setups" (https://docs.convex.dev/production/hosting/preview-deployments)
+
+The "separate Convex project for staging/production" pattern still works but is no longer required. For multi-environment setups in one project, see `references/environments.md`.
+
+Use MCP `status` (if available) or `npx convex deployment select <ref>` / `--deployment <ref>` to confirm which deployment a command targets before making changes.
+
+## Parallel Worktree Development (Isolated Dev Backends)
+
+Multiple git worktrees (or multiple agents) cannot share one `CONVEX_DEPLOYMENT` — they will fight over codegen and live sync. To run worktrees in parallel, give each its own backend.
+
+- Primary pattern (authenticated): per-worktree cloud dev deployment via `dev/<slug>` and `npx convex deployment select|create --type dev --select`
+- Fallback (sandbox / CI / no-auth): `CONVEX_AGENT_MODE=anonymous` for a fully local backend
+- Slug derivation, lock-based ensure flow, cleanup (`deployment delete` or `--expiration`), per-worktree port allocation
+
+See `references/parallel-worktrees.md`.
+
+## Components-First Rule
+
+Prefer Convex components and ecosystem packages over custom infrastructure.
+
+Start at:
+
+- https://docs.convex.dev/components
+- `references/ecosystem.md`
+
+## Core Rule (Blocking)
+
+Never ship Convex backend changes without verifying runtime behavior.
+
+Preferred verification order:
+
+1) Convex MCP logs (structured, diffable)
+2) `npx convex dev` terminal logs
+3) Convex Dashboard logs
+
+## Lint-First Rule
+
+If the project does NOT already use `@vllnt/eslint-config/convex`, strongly recommend it before writing Convex code. It enforces all conventions below via 4 official + 7 custom ESLint rules.
+
+```bash
+npm install -D @vllnt/eslint-config
 ```
 
-### Progressive Disclosure Pattern
+```js
+// eslint.config.js
+import { base } from '@vllnt/eslint-config'
+import { convex } from '@vllnt/eslint-config/convex'
 
-Keep `SKILL.md` as:
+export default [...base, ...convex]
+```
 
-1. Frontmatter
-2. Router table
-3. Safety rules
-4. Short workflows
-5. Links to `references/*.md` for deep details
+Docs: https://github.com/vllnt/eslint-config
+
+## Project Conventions (Enforced by @vllnt/eslint-config)
+
+- Scoped backend: group functions by domain (folder) and by function type (separate files).
+- Namespace separation: `query()` in `queries.ts`, `mutation()` in `mutations.ts`, `action()` in `actions.ts`.
+- snake_case filenames in `convex/` (e.g. `user_helper.ts`, not `user-helper.ts`).
+- Validators in `validators.ts` -- no bare `v.any()` outside `validators.ts`.
+- Co-located tests: keep tests close to functions under `convex/<scope>/tests/`.
+- Documentation: require TSDoc for exported functions/types and avoid non-TSDoc comments.
+
+See `references/style.md` and `references/testing.md`.
+
+## Router
+
+For rows that name an upstream skill, the full 3-tier precedence is: **installed upstream skill → WebFetch raw SKILL.md → local fallback** (see "Upstream Skills" above for fetch URLs). Cells below show installed/local for brevity.
+
+| User says | Load reference | Do |
+|---|---|---|
+| help / cli help / usage | `references/cli-help.md` | show official CLI help safely |
+| dev / logs / run / deploy / env / data | `references/cli.md` | common CLI workflows |
+| mcp / tools / introspect / logs | `references/mcp.md` | use Convex MCP tools |
+| tsdoc / docs / style | `references/style.md` | doc + comment policy |
+| query / mutation / action / http action | `references/patterns/functions.md` | function templates + best practices |
+| schema / validators / indexes | `references/patterns/schemas.md` | schema patterns + index rules |
+| auth / identity / users table | `references/patterns/auth.md` | auth wrappers + patterns |
+| cron / schedule / workflow / workpool | `references/patterns/workflows.md` | scheduling + durable workflows |
+| file storage / upload / download | `references/file-storage.md` | file storage patterns |
+| http / webhook | `references/patterns/http.md` | httpRouter/httpAction patterns |
+| testing | `references/testing.md` | testing patterns |
+| ecosystem / components | `references/ecosystem.md` | official components to use |
+| slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
+| worktree / parallel dev / isolated backend / multiple agents | `references/parallel-worktrees.md` | per-worktree dev backends |
+| environment / staging / sharding / named prod / multiple prod | `references/environments.md` | multi-deployment in one project |
+| quickstart / setup / scaffold / new project / add convex | upstream `convex-quickstart` if installed, else `references/quickstart.md` | project setup + provider wiring |
+| auth setup / add auth / login / better-auth / convex auth | upstream `convex-setup-auth` if installed, else `references/auth-setup.md` | auth provider selection + setup |
+| component / defineComponent / app.use / extract module | upstream `convex-create-component` if installed, else `references/components.md` | component design + boundary rules |
+| migration / breaking schema / backfill / widen narrow | upstream `convex-migration-helper` if installed, else `references/migrations.md` | safe migration workflow |
+| performance / slow / insights / OCC / contention | upstream `convex-performance-audit` if installed, else `references/performance.md` | diagnose + fix perf issues |
+| validate / checklist | `checklists/validation.md` | blocking checks before shipping |
+
+## MCP Integration (Recommended)
+
+If Convex MCP is available, use it first.
+
+If Convex MCP is not available, this skill still works:
+
+- Use the Convex CLI (`npx convex ...`) and the dashboard.
+- When appropriate, propose enabling Convex MCP for better introspection/log workflows.
+
+- Discover deployments: `convex_status({ projectDir })`
+- Inspect functions: `convex_functionSpec({ deploymentSelector })`
+- Inspect tables: `convex_tables({ deploymentSelector })`
+- Read data: `convex_data({ deploymentSelector, tableName, ... })`
+- Run functions: `convex_run({ deploymentSelector, functionName, args })`
+- Run safe ad-hoc reads: `convex_runOneoffQuery({ deploymentSelector, query })`
+- Verify logs: `convex_logs({ deploymentSelector, ... })`
+
+Full workflow: `references/mcp.md`.
+
+## Critical Rules (14)
+
+1) Always use validators (`args` + `returns`) for functions. [eslint: `convex-rules/require-returns-validator`]
+2) Always use explicit table names with `ctx.db.get/patch/replace`. [eslint: `@convex-dev/explicit-table-ids`]
+3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination). Never chain `.filter()` on query expressions. [eslint: `convex-rules/no-filter-on-query`]
+4) User identity comes from `ctx.auth`, never from args.
+5) Use `internal*` functions for sensitive operations.
+6) Schedule only internal functions.
+7) Use `v.null()` for void returns (return `null`).
+8) Component functions cannot access `ctx.auth` or `process.env` -- keep auth/env in app wrappers.
+9) Parent app IDs cross component boundary as `v.string()`, not `v.id("parentTable")`.
+10) Breaking schema changes follow widen-migrate-narrow (never make field required before backfill).
+11) Skip no-op writes (`ctx.db.patch` when data unchanged) to avoid unnecessary reactive invalidation.
+12) Never use `ctx.db.get/query` inside loop bodies -- use `Promise.all()` with `.map()`. [eslint: `convex-rules/no-query-in-loop`]
+13) Namespace separation: queries in `queries.ts`, mutations in `mutations.ts`, actions in `actions.ts`. [eslint: `convex-rules/namespace-separation`]
+14) No bare `v.any()` outside `validators.ts` -- define named aliases. [eslint: `convex-rules/no-bare-v-any`]
 
 ## References
 
-- `references/checklist.md` (authoring checklist)
-- `references/templates.md` (copy/paste templates)
-- `references/validation.md` (validation flow + trigger hygiene)
-
-## What This Skill Is For (Practical Examples)
-
-- "Create a skill that scaffolds new skills" → create a skill + templates + validation.
-- "Update my git workflow" → improve the router + split workflows into `references/`.
-- "Make skills consistent across repos" → enforce naming/triggers/tool boundaries.
+- Capabilities:
+  - `references/quickstart.md`
+  - `references/auth-setup.md`
+  - `references/components.md`
+  - `references/migrations.md`
+  - `references/performance.md`
+  - `references/parallel-worktrees.md`
+  - `references/environments.md`
+- Auth providers:
+  - `references/auth-providers/convex-auth.md`
+  - `references/auth-providers/better-auth.md`
+- Patterns:
+  - `references/patterns/schemas.md`
+  - `references/patterns/functions.md`
+  - `references/patterns/auth.md`
+  - `references/patterns/workflows.md`
+  - `references/patterns/http.md`
+- Other:
+  - `references/mcp.md`
+  - `references/cli.md`
+  - `references/cli-help.md`
+  - `references/style.md`
+  - `references/file-storage.md`
+  - `references/testing.md`
+  - `references/ecosystem.md`
+  - `references/troubleshooting.md`
+- Checklist:
+  - `checklists/validation.md`
 
 ### Git
 Source: git/SKILL.md
@@ -1359,316 +1502,530 @@ gh run view <run-id>
 gh run view <run-id> --log-failed
 ```
 
-### Convex
-Source: convex/SKILL.md
+### OSS Readiness
+Source: oss-readiness/SKILL.md
 
 ---
-name: convex
+name: oss-readiness
 description: |
-  Build and operate Convex backends: functions (queries/mutations/actions/http actions), schemas,
-  auth patterns, scheduling (cron/scheduled/workflows), file storage, testing, and debugging.
-  Triggers: "convex", "query", "mutation", "action", "httpAction", "schema", "validator",
-  "cron", "schedule", "workflow", "workpool", "ctx.db", "ctx.auth", "convex dev".
-license: MIT
-compatibility: Works best with Convex MCP (recommended) or Convex CLI (npx convex). Targets repos with a `convex/` directory.
+  Open-source/public release readiness gate. Audit repos for OSS basics, scaffold missing public-release files,
+  generate llms.txt + llms-full.txt, validate CI, and sync version references.
+  Triggers: "oss", "/oss", "open source readiness", "release readiness", "public release",
+  "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files",
+  "release title", "release messaging", "release notes", "announcement quality".
+compatibility: |
+  Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown.
+  Optional CLI helpers: git, gh, grep, find, jq, node or python.
 metadata:
-  version: "1.0"
+  version: "0.2"
 ---
 
-# Convex
+# OSS Readiness — Public Release Gate
 
-Convex backend skill with a bias toward safety, observability, and index-backed queries.
+Audit a repository for open-source release basics. Scaffold missing public docs/templates.
+Generate AI-friendly docs (`llms.txt`, `llms-full.txt`). Validate CI. Sync version references.
 
-## Docs-First Rule (Blocking)
+## Portability Rules
 
-Before implementing a Convex feature or pattern, verify the latest official docs.
+This skill must stay **harness-agnostic** and **maintainer-agnostic**:
 
-Primary sources:
+- Accept natural-language prompts and slash-command shorthand as equivalent entry points.
+- Keep `AGENTS.md` as the canonical agent-instructions file when one is scaffolded.
+- Treat harness-specific files such as `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `codex.md`, or `.opencode/config` as optional aliases/mirrors — never the only supported path.
+- Use placeholders in generated files. Never hardcode links, social handles, org names, or contact methods from this repository.
+- Never invent maintainer contact channels. If the project does not provide one, leave a clear placeholder or omit the optional section.
 
-- https://docs.convex.dev/
-- https://stack.convex.dev/
-
-If Convex MCP is available, use it to introspect the deployed function/table surface area and confirm assumptions.
-
-## Environments (Dev / Preview / Prod)
-
-Convex projects typically have:
-
-- Dev deployments (your local `npx convex dev` sync target)
-- Preview deployments (branch/PR deployments, beta feature)
-- Production deployment
-
-Use MCP `status` (if available) or the CLI to confirm which deployment you are connected to before making changes.
-
-## Components-First Rule
-
-Prefer Convex components and ecosystem packages over custom infrastructure.
-
-Start at:
-
-- https://docs.convex.dev/components
-- `references/ecosystem.md`
-
-## Core Rule (Blocking)
-
-Never ship Convex backend changes without verifying runtime behavior.
-
-Preferred verification order:
-
-1) Convex MCP logs (structured, diffable)
-2) `npx convex dev` terminal logs
-3) Convex Dashboard logs
-
-## Project Conventions (Preferred)
-
-- Scoped backend: group functions by domain (folder) and by function type (separate files).
-- Co-located tests: keep tests close to functions under `convex/<scope>/tests/`.
-- Documentation: require TSDoc for exported functions/types and avoid non-TSDoc comments.
-
-See `references/style.md` and `references/testing.md`.
-
-## Router
-
-| User says | Load reference | Do |
-|---|---|---|
-| help / cli help / usage | `references/cli-help.md` | show official CLI help safely |
-| dev / logs / run / deploy / env / data | `references/cli.md` | common CLI workflows |
-| mcp / tools / introspect / logs | `references/mcp.md` | use Convex MCP tools |
-| tsdoc / docs / style | `references/style.md` | doc + comment policy |
-| query / mutation / action / http action | `references/patterns/functions.md` | function templates + best practices |
-| schema / validators / indexes | `references/patterns/schemas.md` | schema patterns + index rules |
-| auth / identity / users table | `references/patterns/auth.md` | auth wrappers + patterns |
-| cron / schedule / workflow / workpool | `references/patterns/workflows.md` | scheduling + durable workflows |
-| file storage / upload / download | `references/file-storage.md` | file storage patterns |
-| http / webhook | `references/patterns/http.md` | httpRouter/httpAction patterns |
-| testing | `references/testing.md` | testing patterns |
-| ecosystem / components | `references/ecosystem.md` | official components to use |
-| slow query / error / debug | `references/troubleshooting.md` | troubleshooting + anti-patterns |
-| validate / checklist | `checklists/validation.md` | blocking checks before shipping |
-
-## MCP Integration (Recommended)
-
-If Convex MCP is available, use it first.
-
-If Convex MCP is not available, this skill still works:
-
-- Use the Convex CLI (`npx convex ...`) and the dashboard.
-- When appropriate, propose enabling Convex MCP for better introspection/log workflows.
-
-- Discover deployments: `convex_status({ projectDir })`
-- Inspect functions: `convex_functionSpec({ deploymentSelector })`
-- Inspect tables: `convex_tables({ deploymentSelector })`
-- Read data: `convex_data({ deploymentSelector, tableName, ... })`
-- Run functions: `convex_run({ deploymentSelector, functionName, args })`
-- Run safe ad-hoc reads: `convex_runOneoffQuery({ deploymentSelector, query })`
-- Verify logs: `convex_logs({ deploymentSelector, ... })`
-
-Full workflow: `references/mcp.md`.
-
-## Critical Rules (7)
-
-1) Always use validators (`args` + `returns`) for functions.
-2) Always use explicit table names with `ctx.db.get/patch/replace`.
-3) Prefer index-backed queries (`withIndex`) and bounded reads (`take`/pagination).
-4) User identity comes from `ctx.auth`, never from args.
-5) Use `internal*` functions for sensitive operations.
-6) Schedule only internal functions.
-7) Use `v.null()` for void returns (return `null`).
-
-## References
-
-- Patterns:
-  - `references/patterns/schemas.md`
-  - `references/patterns/functions.md`
-  - `references/patterns/auth.md`
-  - `references/patterns/workflows.md`
-  - `references/patterns/http.md`
-- Other:
-  - `references/mcp.md`
-  - `references/cli.md`
-  - `references/cli-help.md`
-  - `references/style.md`
-  - `references/file-storage.md`
-  - `references/testing.md`
-  - `references/ecosystem.md`
-  - `references/troubleshooting.md`
-- Checklist:
-  - `checklists/validation.md`
-
-### Workflow
-Source: workflow/SKILL.md
-
----
-name: workflow
-description: |
-  High-velocity solo development workflow. Idea to production same-day.
-  10 commands: plan, spike, ship, fix, review, spec-review, focus, done, drop, workflow.
-  Auto-activates on: "plan", "spec", "ship", "spike",
-  "fix", "debug", "repair",
-  "spec-review", "review spec", "analyze spec", "challenge spec",
-  "focus", "what should i do", "prioritize", "overwhelmed", "what should i work on",
-  "done", "finish", "complete", "drop", "abandon",
-  "workflow", "what's next", "whats next", "next step", "what now".
-license: MIT
-compatibility: "Agent-agnostic. Works with Claude Code, OpenCode, Windsurf, Cursor, Codex, Aider, or any agent supporting SKILL.md."
-metadata:
-  version: "1.2"
----
-
-# Workflow
-
-High-velocity solo development. Idea to production same-day.
-
-## Agent Capabilities
+## Required Capabilities
 
 | Capability | Used For | Required | Fallback |
-|------------|----------|----------|----------|
-| File read/write | Specs, config, history | Yes | — |
-| Code search (grep/glob) | Discovery, context | Yes | — |
-| Shell/command execution | Quality gates (lint, build, test) | Yes | List commands for user to run |
-| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX projects (graph, metrics, blast radius) | No | grep/glob/read (manual exploration) |
-| Task/todo tracking | Phase management | Recommended | Track in spec Progress section |
-| User interaction | Stuck escalation, risk flags | Recommended | Log decisions in spec Notes |
-| Web/doc search | Pattern lookup | No | Use embedded patterns |
+|---|---|---|---|
+| File read/write/edit | Audit and scaffold docs/templates | Yes | — |
+| Shell access | git/gh/grep/find-based checks | Recommended | Manual file inspection |
+| `git` | Repo metadata, tags, tracked-file checks | Recommended | Filesystem-only audit |
+| `gh` | GitHub metadata, PR/issue/security settings | Optional | Report as unchecked/manual |
+| `node` or `python` | Manifest/version extraction helpers | Optional | Grep/parse text manually |
 
-**Fallback rule:** If your agent lacks a capability, use the fallback. Never skip the workflow step — adapt the method.
+The skill still works without shell tooling. Shell commands are accelerators, not requirements.
 
-## Commands
+## Entry Points
 
-| Command | Action | Reference |
-|---------|--------|-----------|
-| `plan {idea}` | Create spec | [plan.md](references/actions/plan.md) |
-| `spike {question}` | Time-boxed exploration | [spike.md](references/actions/spike.md) |
-| `ship` / `ship {idea}` | Implement + validate | [ship.md](references/actions/ship.md) |
-| `fix` / `fix {bug}` | Scientific debug + regression fix | [fix.md](references/actions/fix.md) |
-| `review` | Multi-perspective code review | [review.md](references/actions/review.md) |
-| `spec-review` | Adversarial spec analysis | [spec-review.md](references/actions/spec-review.md) |
-| `focus` | Priority analysis + task proposals | [focus.md](references/actions/focus.md) |
-| `done` | Validate + retro + archive | [done.md](references/actions/done.md) |
-| `drop` | Abandon, preserve learnings | [drop.md](references/actions/drop.md) |
-| `workflow` | Show state + suggest next | [Status](#status-action) (below) |
+Use either natural language or shorthand. Route both to the same workflow.
 
-No flags needed. The agent auto-detects intent from context:
-- "review the spec" → manual review pause
-- "skip tests" → skip test gate (documented)
-- "fix this bug" → dedicated bug fix with regression test
-- "emergency fix" → bypass spec ceremony
-- "production ready" → production validation
+| Intent | Example prompts | Route |
+|---|---|---|
+| Full audit | `audit OSS readiness`, `/oss` | `references/checklist.md` |
+| Scaffold missing files | `scaffold missing OSS files`, `/oss fix` | `references/checklist.md` |
+| Generate LLM docs | `generate llms.txt`, `/oss llms` | `references/llms-generation.md` |
+| Sync version refs | `bump stale version refs in docs`, `/oss bump` | `references/version-sync.md` |
+| Validate CI | `check OSS CI readiness`, `/oss ci` | `references/ci-validation.md` |
+| Review release title / notes / announcement framing | `audit release messaging`, `is this a good OSS release title?` | `references/release-messaging.md` |
 
-## Flow
+## Template Variables
 
-```
-Features: focus → plan {idea} → ship → [implement/review/fix loop] → done
-Bug fixes: fix {bug} → [investigate/TDD/validate] → done
-```
+Scaffolded files should use these placeholders until the target repo values are known:
 
-Quick mode (<2h): `ship {idea} → done`
-Don't know what to work on: `focus`
+| Placeholder | Meaning |
+|---|---|
+| `{REPO_NAME}` | Repository/project name |
+| `{ORG}` / `{REPO}` | Git hosting owner + repo slug |
+| `{DESCRIPTION}` | One-line project description |
+| `{LICENSE_TYPE}` | Chosen OSS license |
+| `{PRIMARY_BRANCH}` | Default branch name |
+| `{PROJECT_REPO_URL}` | Canonical source repository URL |
+| `{PROJECT_HOMEPAGE}` | Public project or docs homepage |
+| `{COMMUNITY_SUPPORT_URL}` | Support/discussion channel |
+| `{SECURITY_REPORTING_URL}` | Private vulnerability reporting channel |
+| `{CODE_OF_CONDUCT_CONTACT}` | Contact path for conduct reports |
+| `{MAINTAINER_NAME}` | Maintainer or org display name |
+| `{MAINTAINER_URL}` | Maintainer/org profile or homepage |
+| `{MAINTAINER_CONTACT_URL}` | Optional generic contact page/social/profile |
 
-## Philosophy
+If a value is unknown, keep the placeholder or omit the optional block. Never substitute repo-specific defaults from this skill repository.
 
-- **Spec-first**: All work needs a spec (creates one if missing)
-- **Ship loop**: Build → review → fix until clean
-- **Quality gates**: lint → typecheck → build → test → E2E → coverage (auto-detected per project)
-- **E2E-first testing**: Default to E2E tests. Unit tests only for pure functions
-- **TDD enforced**: RED → GREEN → REFACTOR per AC. Tests written before implementation (BLOCKING)
-- **Mock boundary**: Real systems preferred. Mock only third-party APIs without sandbox (last resort)
-- **AC-driven coverage**: Every Must Have + Error AC maps to an E2E test in the scenario registry
-- **Anti-regression**: Bug fixes require E2E regression test + anti-cascade diff (BLOCKING)
-- **Failure mode testing**: Every HIGH/MED failure hypothesis gets a defensive E2E test
-- **Human controls deployment**: Agent codes, you push/deploy
-- **Done same-day**: Scope to what ships today
-- **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
+## Stack Detection
 
-## Spec Tiers
+Detect project type to customize audit logic:
 
-| Tier | Size | Spec | Task Tracking |
-|------|------|------|---------------|
-| trivial | <5 LOC | None — just do it | No |
-| micro | <30 LOC | Inline comment in code | No |
-| mini | <100 LOC | Spec file, minimal | Yes (if available) |
-| standard | 100+ LOC | Full spec with checklist | Yes (if available) |
+```bash
+# Package manager / language hints
+IS_NPM=$(test -f package.json && echo true || echo false)
+IS_CARGO=$(test -f Cargo.toml && echo true || echo false)
+IS_PYTHON=$(test -f pyproject.toml -o -f setup.py && echo true || echo false)
+IS_GO=$(test -f go.mod && echo true || echo false)
 
-## Action Router
-
-```
-User input
-  │
-  ├─ "plan", "spec", "design"           → Load references/actions/plan.md
-  ├─ "spike", "explore", "investigate"   → Load references/actions/spike.md
-  ├─ "ship", "implement", "build"         → Load references/actions/ship.md
-  ├─ "fix", "debug", "repair"            → Load references/actions/fix.md
-  ├─ "review", "check code"              → Load references/actions/review.md
-  ├─ "review spec", "analyze spec",
-  │  "challenge spec"                    → Load references/actions/spec-review.md
-  ├─ "focus", "what should i do",
-  │  "prioritize", "overwhelmed"         → Load references/actions/focus.md
-  ├─ "done", "finish", "complete"        → Load references/actions/done.md
-  ├─ "drop", "abandon"                   → Load references/actions/drop.md
-  └─ "workflow", "what's next", "what now",
-     "what's up", "whats up", "status"  → Status Action (below)
+# Library/package vs app (heuristics)
+# npm: package.json has "main" or "exports"
+# cargo: Cargo.toml has [lib]
+# python: pyproject has build metadata / published package info
+# go: cmd/ often implies app; library repos may omit it
 ```
 
-**Loading rule:** Read the action file BEFORE executing. The action file contains all logic, task templates, and references needed.
+## Checklist Summary (23 items)
 
-## Status Action
+### BLOCKING (12) — must fix before public release
 
-No separate action file — logic is inline here. Detect current state, suggest next action:
+| # | Item | Severity |
+|---|---|---|
+| 1 | LICENSE file | BLOCKING |
+| 2 | README.md exists | BLOCKING |
+| 3 | README.md quality (H1, desc, install, usage, license) | BLOCKING |
+| 4 | CONTRIBUTING.md | BLOCKING |
+| 5 | .gitignore | BLOCKING |
+| 6 | No secrets in repo | BLOCKING |
+| 7 | CI: tests run | BLOCKING |
+| 8 | CI: lint runs | BLOCKING |
+| 9 | GitHub description set | BLOCKING |
+| 10 | CHANGELOG.md with version entry | BLOCKING |
+| 11 | llms.txt exists | BLOCKING |
+| 12 | llms-full.txt exists | BLOCKING |
 
+### WARN (11) — recommended
+
+| # | Item | Severity |
+|---|---|---|
+| 13 | GitHub topics/tags | WARN |
+| 14 | AGENTS.md | WARN |
+| 15 | Harness-specific agent-instruction aliases | WARN |
+| 16 | SECURITY.md | WARN |
+| 17 | CODE_OF_CONDUCT.md | WARN |
+| 18 | Issue templates | WARN |
+| 19 | PR template | WARN |
+| 20 | CI: publish workflow (libraries) | WARN |
+| 21 | docs/ folder | WARN |
+| 22 | Version in docs matches package | WARN |
+| 23 | No TODO/FIXME in public src/ | WARN |
+
+Full detection logic + fix actions → [references/checklist.md](oss-readiness/references/checklist.md)
+
+## Scoring
+
+```text
+SCORE = (blocking_pass / blocking_total) * 70 + (warn_pass / warn_total) * 30
+
+A = score >= 90 AND 0 blocking failures
+B = score >= 75 AND 0 blocking failures
+C = score >= 60 (some blocking failures)
+D = score >= 40
+F = score < 40
+
+Any blocking failure caps grade at C maximum.
 ```
-1. Check specs/active/ for active spec
-2. Check git status for uncommitted work
-3. Check task list for in-progress items
 
-State → Suggestion:
-  No spec, no changes    → "Ready. Run: plan {idea}"
-  Active spec, no code   → "Spec ready. Run: ship"
-  Active spec, code WIP  → "In progress. Run: ship (resumes)"
-  Active spec, code done → "Ready to close. Run: done"
-  No spec, dirty tree    → "Uncommitted work. Run: ship (creates spec) or done"
+## Audit Output Format
+
+```text
+═══════════════════════════════════════════════════════════════
+ OSS READINESS — {org}/{repo}
+ Version: {version} | Type: {npm|cargo|pip|go|app}
+ Grade: {A-F} | Score: {0-100}
+═══════════════════════════════════════════════════════════════
+
+ BLOCKING
+ ┌────────────────────────────────┬──────────┬───────────────────────┐
+ │ Item                           │ Status   │ Note                  │
+ ├────────────────────────────────┼──────────┼───────────────────────┤
+ │ LICENSE                        │ PASS     │ MIT detected          │
+ │ README.md                      │ WARN     │ Missing: usage, API   │
+ │ llms.txt                       │ FAIL     │ Not found             │
+ └────────────────────────────────┴──────────┴───────────────────────┘
+
+ RECOMMENDED
+ ┌────────────────────────────────┬──────────┬───────────────────────┐
+ │ AGENTS.md                      │ FAIL     │ Not found             │
+ │ Agent aliases                  │ WARN     │ AGENTS.md only        │
+ └────────────────────────────────┴──────────┴───────────────────────┘
+
+ BLOCKING failures: 2 — must fix before public release
+ Warnings: 1 — recommended
+
+ Run `scaffold missing OSS files` or `/oss fix` to scaffold missing files.
+ Run `generate llms.txt` or `/oss llms` to create llms docs.
+═══════════════════════════════════════════════════════════════
 ```
 
-Output: Follow [status-output.md](references/templates/status-output.md).
+## Scaffold Order
 
-## Project Structure
-
+```text
+1. Detect stack (npm/cargo/python/go/app)
+2. Run full checklist → identify missing items
+3. Present: "Missing N BLOCKING + M WARN items. Scaffold all? [all / blocking only / pick]"
+4. For each item:
+   a. LICENSE → ask user for license type (MIT/Apache-2.0/ISC/GPL-3.0/BSD-3-Clause)
+   b. README.md → scaffold from template placeholders
+   c. CONTRIBUTING.md → fill template with repo + branch strategy
+   d. SECURITY.md → fill template with repo + reporting channel placeholders
+   e. CODE_OF_CONDUCT.md → fill Contributor Covenant template + conduct contact placeholder
+   f. AGENTS.md → analyze repo, generate canonical instructions file
+   g. Optional aliases → ask which harness aliases to create from AGENTS.md
+   h. llms.txt + llms-full.txt → route to llms generation flow
+   i. Issue templates → create .github/ISSUE_TEMPLATE/
+   j. PR template → create .github/pull_request_template.md
+   k. GitHub description/topics → update via `gh` when available
+   l. CI workflows → generate starter workflow(s) based on stack
+5. Report scaffolded files
+6. Suggest re-running the audit before commit/push
 ```
-specs/
-  active/       ← Current work (0-1 specs)
-  backlog/      ← Queued work from focus
-  shipped/      ← Completed features
-  dropped/      ← Abandoned with learnings
-  history.log   ← One-line per feature shipped/dropped
-```
 
-## Configuration
+## Error Handling
 
-All behavior is configurable by editing the skill files directly.
-
-| What to change | Edit |
-|----------------|------|
-| Action logic, gates, limits | `references/actions/{action}.md` |
-| Output format | `references/templates/{action}-output.md` |
-| Spec structure | `references/spec-template.md` |
-| Quality gate commands/levels | `references/quality-gates.md` |
-| Session resume, stuck detection | `references/session-management.md` |
+| Error | Response |
+|---|---|
+| Not a git repo | "Not a git repository. OSS audit requires a repo." |
+| Private repo | Works but warns: "Repo is private. Audit shows readiness for going public." |
+| No package manager | Skip version-specific checks, note in output |
+| `gh` unavailable/auth missing | Continue filesystem checks; mark GitHub metadata as manual |
+| Maintainer contact unknown | Keep placeholder or omit optional contact block |
 
 ## References
 
-Actions:
-- [Plan](references/actions/plan.md) | [Ship](references/actions/ship.md) | [Fix](references/actions/fix.md) | [Review](references/actions/review.md) | [Spec Review](references/actions/spec-review.md) | [Focus](references/actions/focus.md) | [Done](references/actions/done.md) | [Drop](references/actions/drop.md) | [Spike](references/actions/spike.md)
+- [Checklist](oss-readiness/references/checklist.md) — full detection + fix logic for all 23 items
+- [LLMs Generation](oss-readiness/references/llms-generation.md) — `llms.txt` + `llms-full.txt` algorithm
+- [Version Sync](oss-readiness/references/version-sync.md) — version detection + doc bumping
+- [CI Validation](oss-readiness/references/ci-validation.md) — CI pipeline rules + starter workflows
+- [Release Messaging](oss-readiness/references/release-messaging.md) — title, opening-summary, and announcement-quality rubric for public OSS releases
 
-Output templates:
-- [Plan + Spec Review](references/templates/plan-output.md) | [Ship](references/templates/ship-output.md) | [Fix](references/templates/fix-output.md) | [Review](references/templates/review-output.md) | [Focus](references/templates/focus-output.md) | [Done](references/templates/done-output.md) | [Drop](references/templates/drop-output.md) | [Spike](references/templates/spike-output.md) | [Status](references/templates/status-output.md)
+## Templates
 
-Review standards:
-- [Production Standards](references/reviews/production-standards.md)
+All scaffold templates live in `templates/`. Keep them generic and placeholder-driven.
 
-Specs & gates:
-- [Spec template](references/spec-template.md) | [Quality gates](references/quality-gates.md) | [Session management](references/session-management.md) | [Memory update](references/memory-update.md) | [Testing automation](references/testing-automation.md) | [E2E scenarios](references/e2e-scenarios.md) | [Codebase intelligence](references/codebase-intelligence.md)
+### Skill Builder
+Source: skill-builder/SKILL.md
 
-Patterns:
-- [Implementation](references/patterns/implementation.md) | [Planning](references/patterns/planning.md) | [Debugging](references/patterns/debugging.md) | [Decisions](references/patterns/decisions.md) | [Decomposition](references/patterns/decomposition.md) | [Regression testing](references/patterns/regression-testing.md)
+---
+name: skill-builder
+description: |
+  Build correct, consistent Agent Skills for any compatible agent product. Use when creating,
+  updating, renaming, deleting, or validating a skill, or when improving skill descriptions,
+  structure, safety rules, progressive disclosure, or trigger reliability.
+license: MIT
+compatibility: "Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown."
+metadata:
+  version: "1.1"
+---
+
+# Skill Builder
+
+Unified, security-first skill builder.
+
+This skill is intentionally opinionated:
+- Prefer no new skill if a simpler change works.
+- When you do create a skill, make it boring, testable, and hard to misuse.
+- Keep one clear router and avoid overlapping descriptions across skills.
+- Stay model-agnostic and harness-agnostic unless the target environment explicitly requires otherwise.
+
+## Operation Router
+
+| User intent | Operation | Output |
+|---|---|---|
+| create/build/make/new skill | CREATE | new skill folder + `SKILL.md` + only the companion files actually needed |
+| update/modify/improve skill | UPDATE | minimal diff, keep scope stable |
+| delete/remove skill | DELETE | remove skill + update any dependent references |
+| add content/route/workflow to skill | ADD | new router row + minimal supporting procedure |
+| validate skill | VALIDATE | evidence-backed validation report + fixes |
+| rename skill | RENAME | safe rename + reference updates |
+
+## Operation Selection Rules
+
+Use the smallest operation that solves the request:
+
+- **CREATE** — new user-facing capability or clearly distinct intent/description domain.
+- **UPDATE** — improve an existing skill without changing its core scope.
+- **ADD** — add one new route, example, or sub-workflow inside the current scope.
+- **RENAME** — change identity/path/name while preserving mostly the same behavior.
+- **DELETE** — remove obsolete capability because it is superseded, merged, or no longer useful.
+- **VALIDATE** — inspect correctness without broadening scope.
+
+If uncertain, default to **UPDATE** rather than CREATE.
+
+## What "Correct" Means
+
+This skill treats "correct" as:
+
+- Conforms to the Agent Skills spec where the spec is explicit.
+- Uses progressive disclosure: concise `SKILL.md`, deeper docs only when needed.
+- Has unambiguous activation: specific description + non-overlapping neighboring skills.
+- Is safe: no secrets, no default-destructive commands, explicit confirmation boundaries.
+- Produces validation evidence instead of relying on vibes.
+
+## Phase 0: First-Principles Check (Mandatory)
+
+Run this before any CREATE or UPDATE:
+
+1. QUESTION: what problem, for who, measured how?
+2. DELETE: can an existing skill, README section, script, or template solve it?
+3. SIMPLIFY: what is the smallest change that works?
+4. ACCELERATE: only after (2) and (3)
+5. AUTOMATE: create a new skill only if it will be reused
+
+If the answer is "no skill", propose:
+- a README section
+- a small script
+- a usage snippet users can copy
+- a targeted update to an existing skill
+
+## Phase 1: Detect Target + Name
+
+### Required by the Agent Skills spec
+
+- Skill directory contains `SKILL.md`.
+- `SKILL.md` starts with valid YAML frontmatter.
+- `name` matches the parent directory name.
+- `description` explains what the skill does and when to use it.
+
+### Recommended by this skill
+
+- Keep `SKILL.md` focused on router + core rules.
+- Add `references/`, `scripts/`, `assets/`, or `README.md` only when they add real value.
+- Keep references one level deep from `SKILL.md`.
+- Put nonstandard metadata under `metadata` instead of inventing new top-level fields.
+
+### Naming
+
+- Use kebab-case (`my-skill-name`).
+- Avoid generic names (`tools`, `helper`).
+- Prefer names that describe a distinct job to be done.
+
+### Description design
+
+The `description` field is the primary discovery surface.
+
+Write it to cover:
+- **what** the skill does
+- **when** to use it
+- likely user wording, domain terms, and near-synonyms
+
+Do not depend on a custom top-level `triggers` field for portability. If you want trigger examples, keep them in the body, `metadata`, or eval fixtures.
+
+## Confirmation Boundary
+
+Safe without confirmation:
+- read-only inspection
+- drafting content
+- local validation
+- proposing diffs
+
+Require confirmation before:
+- deleting files or folders
+- renaming skill folders
+- overwriting user-authored content
+- changing trigger semantics in ways that may alter discovery behavior
+- editing repo indexes or catalogs
+- installing dependencies or using networked side effects
+
+## Phase 2: CREATE Flow
+
+### Inputs (minimum)
+
+- Name
+- Goal + non-goals
+- Description draft that covers what + when
+- Optional capability constraints if the target client supports them
+
+### CREATE Steps
+
+1. Discover existing conventions in the target repo.
+2. Draft a micro-spec: goal, non-goals, router, safety boundary.
+3. Create `/<skill-name>/SKILL.md` with:
+   - frontmatter (`name`, `description`, optional spec-supported fields)
+   - router table
+   - safety and confirmation rules
+   - short workflows or links to `references/`
+4. Add companion files only if justified:
+   - `README.md` for human-facing install/overview
+   - `references/` for deep workflows
+   - `scripts/` for executable helpers
+   - `assets/` for templates/resources
+5. Validate using the evidence rules below.
+6. If the repo maintains an index, update it.
+
+### Output Contract (CREATE)
+
+Always return:
+- files created/edited
+- description added or changed
+- whether optional fields like `compatibility`, `metadata`, or `allowed-tools` were used
+- one minimal smoke-test prompt
+- validation report: pass/fail + evidence + remaining risks
+
+## Phase 3: UPDATE Flow
+
+1. Read the current skill.
+2. Identify the actual user goal.
+3. Apply the smallest diff that solves it.
+4. Re-run validation.
+5. Keep scope and description stable unless a broader change is explicitly requested.
+
+### Output Contract (UPDATE)
+
+Return:
+- files changed
+- behavior changed
+- description change: yes/no
+- validation report
+- risks or follow-ups
+
+## Phase 4: DELETE Flow
+
+1. Confirm the target skill folder.
+2. Identify dependents: indexes, references, sibling skills.
+3. Remove the skill and update references.
+4. Provide rollback instructions.
+
+### Output Contract (DELETE)
+
+Return:
+- removed paths
+- references updated
+- rollback note
+- validation/report of any remaining broken links
+
+## Phase 5: ADD Content to a Skill
+
+Rules for skill growth:
+- Never duplicate description intent across multiple skills in the same install.
+- Route by intent first, then load deeper sections.
+- Keep `SKILL.md` readable: short tables, stable templates, deep detail in `references/`.
+
+Add steps:
+1. Add one new router row or one tightly scoped section.
+2. Add the minimal new procedure.
+3. If it grows, split into `references/<topic>.md`.
+4. Add or update examples.
+5. Re-check neighboring skills for overlap.
+
+## Phase 6: RENAME Flow
+
+1. Confirm old and new names.
+2. Rename the folder and update frontmatter `name`.
+3. Update internal and repo-level references.
+4. Validate links, name/path parity, and discovery wording.
+
+### Output Contract (RENAME)
+
+Return:
+- old name → new name
+- moved paths
+- references updated
+- validation report
+
+## Validation
+
+### Validation Requirements
+
+A skill is not validated until you produce evidence for all three layers:
+
+1. **Spec validation** — structure and YAML correctness
+2. **Trigger validation** — the description should trigger when it should, and not trigger on near-misses
+3. **Output validation** — the skill improves or constrains the resulting work on realistic tasks
+
+### Skill Validation Checklist
+
+- Frontmatter includes valid `name` and `description`.
+- Frontmatter is valid YAML, not just visually plausible Markdown metadata.
+- `name` matches the parent directory.
+- Description clearly states what + when.
+- Any extra frontmatter stays within spec-supported fields unless the target environment explicitly supports more.
+- Router is present.
+- Confirmation boundary is explicit.
+- No secrets; no private paths unless the target repo is intentionally private.
+- No unscoped destructive instructions.
+- Progressive disclosure is respected.
+- Trigger hygiene has been checked against neighboring skills.
+
+### Spec Validation (Recommended)
+
+If available:
+
+```bash
+skills-ref validate ./<skill-name>
+```
+
+If not available, validate manually using the rules in `references/validation.md`.
+
+### Capability Safety
+
+- Prefer the least-privileged capability that can complete the task.
+- Inspect/search before executing commands.
+- If command execution is needed, scope it tightly.
+- Never recommend `rm -rf`, `git reset --hard`, or `push --force` as defaults.
+
+## Templates
+
+### Skill Frontmatter
+
+```yaml
+---
+name: my-skill
+description: Use this skill when you need to do X, Y, or Z. It handles A and B and is relevant when the user asks for C.
+compatibility: Optional. Mention required runtimes, system tools, or environment assumptions.
+metadata:
+  version: "0.1"
+allowed-tools: Optional experimental field. Only include it when the target client supports it and the skill benefits from a constrained tool list.
+---
+```
+
+### Minimum Viable Portable Skill
+
+1. Frontmatter
+2. One-paragraph purpose/activation guidance
+3. Router table
+4. Safety + confirmation rules
+5. Short workflows
+6. Optional `references/` only when needed
+
+## References
+
+- `references/checklist.md` (authoring checklist)
+- `references/templates.md` (copy/paste templates)
+- `references/validation.md` (spec, trigger, and output validation)
+
+## What This Skill Is For (Practical Examples)
+
+- "Create a skill that scaffolds new skills" → CREATE.
+- "Make this skill more portable across agent products" → UPDATE.
+- "Rename this skill without breaking references" → RENAME.
+- "Check whether this skill will trigger reliably" → VALIDATE.
+- "Make skills consistent across repos" → UPDATE or ADD, depending on scope.
 
 ### tmux
 Source: tmux/SKILL.md
@@ -1850,230 +2207,186 @@ Check if inside tmux: `[ -n "$TMUX" ]`
 | Colors not working | Set `TERM=xterm-256color` or `set -g default-terminal "tmux-256color"` |
 | Mouse not working | `set -g mouse on` in config |
 
-### OSS Readiness
-Source: oss-readiness/SKILL.md
+### Workflow
+Source: workflow/SKILL.md
 
 ---
-name: oss-readiness
+name: workflow
 description: |
-  Open-source/public release readiness gate. Audit repos for OSS basics, scaffold missing public-release files,
-  generate llms.txt + llms-full.txt, validate CI, and sync version references.
-  Triggers: "oss", "/oss", "open source readiness", "release readiness", "public release",
-  "go public", "oss audit", "llms.txt", "generate llms", "version bump docs", "scaffold OSS files".
-compatibility: Agent Skills spec (agentskills.io). Works with any agent product that supports SKILL.md frontmatter + Markdown. Optional CLI helpers: git, gh, grep, find, jq, node or python.
+  High-velocity solo development workflow. Idea to production same-day.
+  10 commands: plan, spike, ship, fix, review, spec-review, focus, done, drop, workflow.
+  Auto-activates on: "plan", "spec", "ship", "spike",
+  "fix", "debug", "repair",
+  "spec-review", "review spec", "analyze spec", "challenge spec",
+  "focus", "what should i do", "prioritize", "overwhelmed", "what should i work on",
+  "done", "finish", "complete", "drop", "abandon",
+  "workflow", "what's next", "whats next", "next step", "what now".
+license: MIT
+compatibility: "Agent-agnostic. Works with any agent that can read SKILL.md files and project rule conventions."
 metadata:
-  version: "0.2"
+  version: "1.2"
 ---
 
-# OSS Readiness — Public Release Gate
+# Workflow
 
-Audit a repository for open-source release basics. Scaffold missing public docs/templates.
-Generate AI-friendly docs (`llms.txt`, `llms-full.txt`). Validate CI. Sync version references.
+High-velocity solo development. Idea to production same-day.
 
-## Portability Rules
-
-This skill must stay **harness-agnostic** and **maintainer-agnostic**:
-
-- Accept natural-language prompts and slash-command shorthand as equivalent entry points.
-- Keep `AGENTS.md` as the canonical agent-instructions file when one is scaffolded.
-- Treat harness-specific files such as `CLAUDE.md`, `.cursorrules`, `.windsurfrules`, `codex.md`, or `.opencode/config` as optional aliases/mirrors — never the only supported path.
-- Use placeholders in generated files. Never hardcode links, social handles, org names, or contact methods from this repository.
-- Never invent maintainer contact channels. If the project does not provide one, leave a clear placeholder or omit the optional section.
-
-## Required Capabilities
+## Agent Capabilities
 
 | Capability | Used For | Required | Fallback |
-|---|---|---|---|
-| File read/write/edit | Audit and scaffold docs/templates | Yes | — |
-| Shell access | git/gh/grep/find-based checks | Recommended | Manual file inspection |
-| `git` | Repo metadata, tags, tracked-file checks | Recommended | Filesystem-only audit |
-| `gh` | GitHub metadata, PR/issue/security settings | Optional | Report as unchecked/manual |
-| `node` or `python` | Manifest/version extraction helpers | Optional | Grep/parse text manually |
+|------------|----------|----------|----------|
+| File read/write | Specs, config, history | Yes | — |
+| Code search (grep/glob) | Discovery, context | Yes | — |
+| Shell/command execution | Quality gates (lint, build, test) | Yes | List commands for user to run |
+| Codebase intelligence (`npx codebase-intelligence`) | Structural analysis for TS/TSX projects (graph, metrics, blast radius) | No | grep/glob/read (manual exploration) |
+| Task/todo tracking | Phase management | Recommended | Track in spec Progress section |
+| User interaction | Stuck escalation, risk flags | Recommended | Log decisions in spec Notes |
+| Web/doc search | Pattern lookup | No | Use embedded patterns |
 
-The skill still works without shell tooling. Shell commands are accelerators, not requirements.
+**Fallback rule:** If your agent lacks a capability, use the fallback. Never skip the workflow step — adapt the method.
 
-## Entry Points
+## Commands
 
-Use either natural language or shorthand. Route both to the same workflow.
+| Command | Action | Reference |
+|---------|--------|-----------|
+| `plan {idea}` | Create spec | [plan.md](workflow/references/actions/plan.md) |
+| `spike {question}` | Time-boxed exploration | [spike.md](workflow/references/actions/spike.md) |
+| `ship` / `ship {idea}` | Implement + validate | [ship.md](workflow/references/actions/ship.md) |
+| `fix` / `fix {bug}` | Scientific debug + regression fix | [fix.md](workflow/references/actions/fix.md) |
+| `review` | Portable multi-perspective review spec with line-by-line + rule-by-rule coverage | [review.md](workflow/references/actions/review.md) |
+| `spec-review` | Adversarial spec analysis | [spec-review.md](workflow/references/actions/spec-review.md) |
+| `focus` | Priority analysis + task proposals | [focus.md](workflow/references/actions/focus.md) |
+| `done` | Validate + retro + archive | [done.md](workflow/references/actions/done.md) |
+| `drop` | Abandon, preserve learnings | [drop.md](workflow/references/actions/drop.md) |
+| `workflow` | Show state + suggest next | [Status](#status-action) (below) |
 
-| Intent | Example prompts | Route |
-|---|---|---|
-| Full audit | `audit OSS readiness`, `/oss` | `references/checklist.md` |
-| Scaffold missing files | `scaffold missing OSS files`, `/oss fix` | `references/checklist.md` |
-| Generate LLM docs | `generate llms.txt`, `/oss llms` | `references/llms-generation.md` |
-| Sync version refs | `bump stale version refs in docs`, `/oss bump` | `references/version-sync.md` |
-| Validate CI | `check OSS CI readiness`, `/oss ci` | `references/ci-validation.md` |
+No flags needed. The agent auto-detects intent from context:
+- "review the spec" → manual review pause
+- "skip tests" → skip test gate (documented)
+- "fix this bug" → dedicated bug fix with regression test
+- "emergency fix" → bypass spec ceremony
+- "production ready" → production validation
 
-## Template Variables
+## Flow
 
-Scaffolded files should use these placeholders until the target repo values are known:
-
-| Placeholder | Meaning |
-|---|---|
-| `{REPO_NAME}` | Repository/project name |
-| `{ORG}` / `{REPO}` | Git hosting owner + repo slug |
-| `{DESCRIPTION}` | One-line project description |
-| `{LICENSE_TYPE}` | Chosen OSS license |
-| `{PRIMARY_BRANCH}` | Default branch name |
-| `{PROJECT_REPO_URL}` | Canonical source repository URL |
-| `{PROJECT_HOMEPAGE}` | Public project or docs homepage |
-| `{COMMUNITY_SUPPORT_URL}` | Support/discussion channel |
-| `{SECURITY_REPORTING_URL}` | Private vulnerability reporting channel |
-| `{CODE_OF_CONDUCT_CONTACT}` | Contact path for conduct reports |
-| `{MAINTAINER_NAME}` | Maintainer or org display name |
-| `{MAINTAINER_URL}` | Maintainer/org profile or homepage |
-| `{MAINTAINER_CONTACT_URL}` | Optional generic contact page/social/profile |
-
-If a value is unknown, keep the placeholder or omit the optional block. Never substitute repo-specific defaults from this skill repository.
-
-## Stack Detection
-
-Detect project type to customize audit logic:
-
-```bash
-# Package manager / language hints
-IS_NPM=$(test -f package.json && echo true || echo false)
-IS_CARGO=$(test -f Cargo.toml && echo true || echo false)
-IS_PYTHON=$(test -f pyproject.toml -o -f setup.py && echo true || echo false)
-IS_GO=$(test -f go.mod && echo true || echo false)
-
-# Library/package vs app (heuristics)
-# npm: package.json has "main" or "exports"
-# cargo: Cargo.toml has [lib]
-# python: pyproject has build metadata / published package info
-# go: cmd/ often implies app; library repos may omit it
+```
+Features: focus → plan {idea} → ship → [implement/review/fix loop] → done
+Bug fixes: fix {bug} → [investigate/TDD/validate] → done
 ```
 
-## Checklist Summary (23 items)
+Quick mode (<2h): `ship {idea} → done`
+Don't know what to work on: `focus`
 
-### BLOCKING (12) — must fix before public release
+## Philosophy
 
-| # | Item | Severity |
-|---|---|---|
-| 1 | LICENSE file | BLOCKING |
-| 2 | README.md exists | BLOCKING |
-| 3 | README.md quality (H1, desc, install, usage, license) | BLOCKING |
-| 4 | CONTRIBUTING.md | BLOCKING |
-| 5 | .gitignore | BLOCKING |
-| 6 | No secrets in repo | BLOCKING |
-| 7 | CI: tests run | BLOCKING |
-| 8 | CI: lint runs | BLOCKING |
-| 9 | GitHub description set | BLOCKING |
-| 10 | CHANGELOG.md with version entry | BLOCKING |
-| 11 | llms.txt exists | BLOCKING |
-| 12 | llms-full.txt exists | BLOCKING |
+- **Spec-first**: All work needs a spec (creates one if missing)
+- **Ship loop**: Build → review → fix until clean
+- **Quality gates**: lint → typecheck → build → test → E2E → coverage (auto-detected per project)
+- **E2E-first testing**: Default to E2E tests. Unit tests only for pure functions
+- **TDD enforced**: RED → GREEN → REFACTOR per AC. Tests written before implementation (BLOCKING)
+- **Mock boundary**: Real systems preferred. Mock only third-party APIs without sandbox (last resort)
+- **AC-driven coverage**: Every Must Have + Error AC maps to an E2E test in the scenario registry
+- **Anti-regression**: Bug fixes require E2E regression test + anti-cascade diff (BLOCKING)
+- **Failure mode testing**: Every HIGH/MED failure hypothesis gets a defensive E2E test
+- **Human controls deployment**: Agent codes, you push/deploy
+- **Done same-day**: Scope to what ships today
+- **Own planning**: Never use the host agent's built-in plan mode (EnterPlanMode, etc.). This skill writes real spec files to `specs/active/`.
 
-### WARN (11) — recommended
+## Spec Tiers
 
-| # | Item | Severity |
-|---|---|---|
-| 13 | GitHub topics/tags | WARN |
-| 14 | AGENTS.md | WARN |
-| 15 | Harness-specific agent-instruction aliases | WARN |
-| 16 | SECURITY.md | WARN |
-| 17 | CODE_OF_CONDUCT.md | WARN |
-| 18 | Issue templates | WARN |
-| 19 | PR template | WARN |
-| 20 | CI: publish workflow (libraries) | WARN |
-| 21 | docs/ folder | WARN |
-| 22 | Version in docs matches package | WARN |
-| 23 | No TODO/FIXME in public src/ | WARN |
+| Tier | Size | Spec | Task Tracking |
+|------|------|------|---------------|
+| trivial | <5 LOC | None — just do it | No |
+| micro | <30 LOC | Inline comment in code | No |
+| mini | <100 LOC | Spec file, minimal | Yes (if available) |
+| standard | 100+ LOC | Full spec with checklist | Yes (if available) |
 
-Full detection logic + fix actions → [references/checklist.md](references/checklist.md)
+## Action Router
 
-## Scoring
-
-```text
-SCORE = (blocking_pass / blocking_total) * 70 + (warn_pass / warn_total) * 30
-
-A = score >= 90 AND 0 blocking failures
-B = score >= 75 AND 0 blocking failures
-C = score >= 60 (some blocking failures)
-D = score >= 40
-F = score < 40
-
-Any blocking failure caps grade at C maximum.
+```
+User input
+  │
+  ├─ "plan", "spec", "design"           → Load references/actions/plan.md
+  ├─ "spike", "explore", "investigate"   → Load references/actions/spike.md
+  ├─ "ship", "implement", "build"         → Load references/actions/ship.md
+  ├─ "fix", "debug", "repair"            → Load references/actions/fix.md
+  ├─ "review", "check code"              → Load references/actions/review.md
+  ├─ "review spec", "analyze spec",
+  │  "challenge spec"                    → Load references/actions/spec-review.md
+  ├─ "focus", "what should i do",
+  │  "prioritize", "overwhelmed"         → Load references/actions/focus.md
+  ├─ "done", "finish", "complete"        → Load references/actions/done.md
+  ├─ "drop", "abandon"                   → Load references/actions/drop.md
+  └─ "workflow", "what's next", "what now",
+     "what's up", "whats up", "status"  → Status Action (below)
 ```
 
-## Audit Output Format
+**Loading rule:** Read the action file BEFORE executing. The action file contains all logic, task templates, and references needed.
 
-```text
-═══════════════════════════════════════════════════════════════
- OSS READINESS — {org}/{repo}
- Version: {version} | Type: {npm|cargo|pip|go|app}
- Grade: {A-F} | Score: {0-100}
-═══════════════════════════════════════════════════════════════
+## Status Action
 
- BLOCKING
- ┌────────────────────────────────┬──────────┬───────────────────────┐
- │ Item                           │ Status   │ Note                  │
- ├────────────────────────────────┼──────────┼───────────────────────┤
- │ LICENSE                        │ PASS     │ MIT detected          │
- │ README.md                      │ WARN     │ Missing: usage, API   │
- │ llms.txt                       │ FAIL     │ Not found             │
- └────────────────────────────────┴──────────┴───────────────────────┘
+No separate action file — logic is inline here. Detect current state, suggest next action:
 
- RECOMMENDED
- ┌────────────────────────────────┬──────────┬───────────────────────┐
- │ AGENTS.md                      │ FAIL     │ Not found             │
- │ Agent aliases                  │ WARN     │ AGENTS.md only        │
- └────────────────────────────────┴──────────┴───────────────────────┘
+```
+1. Check specs/active/ for active spec
+2. Check git status for uncommitted work
+3. Check task list for in-progress items
 
- BLOCKING failures: 2 — must fix before public release
- Warnings: 1 — recommended
-
- Run `scaffold missing OSS files` or `/oss fix` to scaffold missing files.
- Run `generate llms.txt` or `/oss llms` to create llms docs.
-═══════════════════════════════════════════════════════════════
+State → Suggestion:
+  No spec, no changes    → "Ready. Run: plan {idea}"
+  Active spec, no code   → "Spec ready. Run: ship"
+  Active spec, code WIP  → "In progress. Run: ship (resumes)"
+  Active spec, code done → "Ready to close. Run: done"
+  No spec, dirty tree    → "Uncommitted work. Run: ship (creates spec) or done"
 ```
 
-## Scaffold Order
+Output: Follow [status-output.md](workflow/references/templates/status-output.md).
 
-```text
-1. Detect stack (npm/cargo/python/go/app)
-2. Run full checklist → identify missing items
-3. Present: "Missing N BLOCKING + M WARN items. Scaffold all? [all / blocking only / pick]"
-4. For each item:
-   a. LICENSE → ask user for license type (MIT/Apache-2.0/ISC/GPL-3.0/BSD-3-Clause)
-   b. README.md → scaffold from template placeholders
-   c. CONTRIBUTING.md → fill template with repo + branch strategy
-   d. SECURITY.md → fill template with repo + reporting channel placeholders
-   e. CODE_OF_CONDUCT.md → fill Contributor Covenant template + conduct contact placeholder
-   f. AGENTS.md → analyze repo, generate canonical instructions file
-   g. Optional aliases → ask which harness aliases to create from AGENTS.md
-   h. llms.txt + llms-full.txt → route to llms generation flow
-   i. Issue templates → create .github/ISSUE_TEMPLATE/
-   j. PR template → create .github/pull_request_template.md
-   k. GitHub description/topics → update via `gh` when available
-   l. CI workflows → generate starter workflow(s) based on stack
-5. Report scaffolded files
-6. Suggest re-running the audit before commit/push
+## Project Structure
+
+```
+specs/
+  active/       ← Current work (0-1 specs)
+  backlog/      ← Queued work from focus
+  shipped/      ← Completed features
+  dropped/      ← Abandoned with learnings
+  history.log   ← One-line per feature shipped/dropped
 ```
 
-## Error Handling
+## Configuration
 
-| Error | Response |
-|---|---|
-| Not a git repo | "Not a git repository. OSS audit requires a repo." |
-| Private repo | Works but warns: "Repo is private. Audit shows readiness for going public." |
-| No package manager | Skip version-specific checks, note in output |
-| `gh` unavailable/auth missing | Continue filesystem checks; mark GitHub metadata as manual |
-| Maintainer contact unknown | Keep placeholder or omit optional contact block |
+All behavior is configurable by editing the skill files directly.
+
+| What to change | Edit |
+|----------------|------|
+| Action logic, gates, limits | `references/actions/{action}.md` |
+| Output format | `references/templates/{action}-output.md` |
+| Spec structure | `references/spec-template.md` |
+| Quality gate commands/levels | `references/quality-gates.md` |
+| Session resume, stuck detection | `references/session-management.md` |
 
 ## References
 
-- [Checklist](references/checklist.md) — full detection + fix logic for all 23 items
-- [LLMs Generation](references/llms-generation.md) — `llms.txt` + `llms-full.txt` algorithm
-- [Version Sync](references/version-sync.md) — version detection + doc bumping
-- [CI Validation](references/ci-validation.md) — CI pipeline rules + starter workflows
+Actions:
+- [Plan](workflow/references/actions/plan.md) | [Ship](workflow/references/actions/ship.md) | [Fix](workflow/references/actions/fix.md) | [Review](workflow/references/actions/review.md) | [Spec Review](workflow/references/actions/spec-review.md) | [Focus](workflow/references/actions/focus.md) | [Done](workflow/references/actions/done.md) | [Drop](workflow/references/actions/drop.md) | [Spike](workflow/references/actions/spike.md)
 
-## Templates
+Output templates:
+- [Plan + Spec Review](workflow/references/templates/plan-output.md) | [Ship](workflow/references/templates/ship-output.md) | [Fix](workflow/references/templates/fix-output.md) | [Review](workflow/references/templates/review-output.md) | [Focus](workflow/references/templates/focus-output.md) | [Done](workflow/references/templates/done-output.md) | [Drop](workflow/references/templates/drop-output.md) | [Spike](workflow/references/templates/spike-output.md) | [Status](workflow/references/templates/status-output.md)
 
-All scaffold templates live in `templates/`. Keep them generic and placeholder-driven.
+Review standards:
+- [Core portable review spec](workflow/references/reviews/core-portable-review-spec.md) | [Executor patterns](workflow/references/reviews/executor-patterns.md) | [Production Standards](workflow/references/reviews/production-standards.md)
+
+The portable review spec is normative. Executor patterns are optional implementation guidance.
+
+Specs & gates:
+- [Spec template](workflow/references/spec-template.md) | [Quality gates](workflow/references/quality-gates.md) | [Session management](workflow/references/session-management.md) | [Memory update](workflow/references/memory-update.md) | [Testing automation](workflow/references/testing-automation.md) | [E2E scenarios](workflow/references/e2e-scenarios.md) | [Codebase intelligence](workflow/references/codebase-intelligence.md)
+
+Patterns:
+- [Implementation](workflow/references/patterns/implementation.md) | [Planning](workflow/references/patterns/planning.md) | [Debugging](workflow/references/patterns/debugging.md) | [Decisions](workflow/references/patterns/decisions.md) | [Decomposition](workflow/references/patterns/decomposition.md) | [Regression testing](workflow/references/patterns/regression-testing.md)
 
 ## Optional
 
-### Security Policy
+### Security
 Source: SECURITY.md
 
 # Security Policy
@@ -2133,7 +2446,7 @@ This policy covers the Agent Skills collection and its source code in this repos
 
 Maintained by [bntvllnt](https://bntvllnt.com)
 
-### Code of Conduct
+### Code Of Conduct
 Source: CODE_OF_CONDUCT.md
 
 # Contributor Covenant Code of Conduct
@@ -2211,3 +2524,28 @@ version 2.1, available at
 
 [homepage]: https://www.contributor-covenant.org
 [v2.1]: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
+
+### License
+Source: LICENSE
+
+MIT License
+
+Copyright (c) 2026 bntvllnt
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

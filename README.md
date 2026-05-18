@@ -187,6 +187,21 @@ analyze "should I accept this job offer"
 
 This is a public collection of skills developed by [@bntvllnt](https://github.com/bntvllnt). 
 
+Before opening a PR, run the repository validator:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python scripts/validate_repo.py
+```
+
+If you changed skill content or root documentation, refresh generated manifests first:
+
+```bash
+python scripts/validate_repo.py --write
+```
+
+The validator checks `SKILL.md` YAML frontmatter, required skill metadata, skill folder/name consistency, local Markdown links, and exact generated `llms.txt` / `llms-full.txt` manifest sync.
+
 Feel free to:
 - Fork and adapt for your needs
 - Submit issues for bugs or improvement suggestions
