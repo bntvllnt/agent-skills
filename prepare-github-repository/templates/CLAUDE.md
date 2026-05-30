@@ -32,6 +32,7 @@ Modular rules live in `.claude/rules/`. Each is loaded on demand.
 - @.claude/rules/git-workflow.md
 - @.claude/rules/code-style.md
 - @.claude/rules/security.md
+- @.claude/rules/commit-privacy.md
 
 When you add a rule file, add a matching `@.claude/rules/<name>.md` line above and re-run
 `cp CLAUDE.md AGENTS.md`.

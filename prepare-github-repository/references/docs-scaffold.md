@@ -38,13 +38,16 @@ Scaffold a starter rule set if `.claude/rules/` has no `*.md`. Copy the generic 
 
 ```bash
 mkdir -p .claude/rules
-cp <skill>/templates/rules/git-workflow.md .claude/rules/git-workflow.md
-cp <skill>/templates/rules/code-style.md   .claude/rules/code-style.md
-cp <skill>/templates/rules/security.md     .claude/rules/security.md
+cp <skill>/templates/rules/git-workflow.md   .claude/rules/git-workflow.md
+cp <skill>/templates/rules/code-style.md     .claude/rules/code-style.md
+cp <skill>/templates/rules/security.md       .claude/rules/security.md
+cp <skill>/templates/rules/commit-privacy.md .claude/rules/commit-privacy.md
 ```
 
 These are generic and placeholder-driven — adapt to the repo. The `git-workflow` rule intentionally
-mirrors the repo settings this skill enforces (squash-only, PR-required, delete-on-merge).
+mirrors the repo settings this skill enforces (squash-only, PR-required, delete-on-merge); the
+`commit-privacy` rule pairs with the email-privacy enforcement (#14/#15, see
+[email-privacy.md](email-privacy.md)).
 
 ## 3. CLAUDE.md (#11)
 

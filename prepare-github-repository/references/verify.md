@@ -57,6 +57,19 @@ diff -q CLAUDE.md AGENTS.md >/dev/null 2>&1 && echo "mirror OK" || echo "MIRROR 
 ls .claude/rules/*.md >/dev/null 2>&1 && echo "rules present" || echo "MISSING: .claude/rules/*.md"
 ```
 
+## Email privacy (#14–#15) — run in the repo working copy
+
+```bash
+NOREPLY=$(gh api user --jq '"\(.id)+\(.login)@users.noreply.github.com"')
+test "$(git config user.email)" = "$NOREPLY" && echo "identity OK" || echo "IDENTITY WRONG"
+git log --format='%ae%n%ce' | sort -u | grep -vE '@users\.noreply\.github\.com$' \
+  && echo "LEAK: non-no-reply email in history" || echo "history clean"
+test -f .github/workflows/email-guard.yml && echo "CI guard present" || echo "MISSING CI guard"
+```
+
+The account setting ("Block command line pushes that expose my email") has no read API — verify it
+manually at `https://github.com/settings/emails` and record it as a MANUAL check.
+
 ## Report format
 
 ```text

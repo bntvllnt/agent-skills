@@ -47,6 +47,8 @@ This table is the contract. Every workflow and the verifier check against it.
 | 11 | CLAUDE.md | present, references `.claude/rules/*.md` | scaffold from template |
 | 12 | AGENTS.md | full content mirror of CLAUDE.md | `cp CLAUDE.md AGENTS.md` + verify |
 | 13 | `.claude/rules/*.md` | present (>= 1) | scaffold starter rules |
+| 14 | Commit identity | repo `user.email` = GitHub no-reply | `git config user.email <id>+<login>@users.noreply.github.com` |
+| 15 | Email-leak guard | ruleset email-pattern rule (server-side) + account block-push; CI guard fallback | `gh api POST .../rulesets` (`commit_author_email_pattern`) + settings/emails + `email-guard.yml` |
 
 **Solo protection profile** (the default this skill applies):
 
@@ -78,18 +80,20 @@ rejected even with 0 required approvals.
 | Settings only | `apply repo settings owner/repo` | [references/repo-settings.md](references/repo-settings.md) |
 | Protection only | `harden main owner/repo` | [references/branch-protection.md](references/branch-protection.md) |
 | Docs only | `scaffold repo docs` | [references/docs-scaffold.md](references/docs-scaffold.md) |
+| Email privacy only | `don't leak my email`, `enforce no-reply`, `no-reply only` | [references/email-privacy.md](references/email-privacy.md) |
 | Verify / dry-run | `verify repo prep owner/repo` | [references/verify.md](references/verify.md) |
 
 ### Full sequence
 
 ```text
 0. Resolve target (owner/repo, current origin, or create new)
-1. Preflight: gh auth status; confirm admin on repo; resolve default branch name
+1. Preflight: gh auth status; confirm admin on repo; resolve default branch + no-reply email
 2. Verify (dry-run) -> report current vs desired (references/verify.md)
-3. Repo settings   (references/repo-settings.md)   <- one gh repo edit call
-4. Branch protection (references/branch-protection.md) <- detect checks, confirm, PUT
-5. Docs scaffold    (references/docs-scaffold.md)   <- README, CLAUDE.md, AGENTS.md mirror, rules
-6. Verify again -> report final state + any remaining drift
+3. Repo settings   (references/repo-settings.md)     <- one gh repo edit call
+4. Email privacy   (references/email-privacy.md)     <- repo no-reply identity + CI email guard
+5. Branch protection (references/branch-protection.md) <- detect checks (incl. email guard), confirm, PUT
+6. Docs scaffold    (references/docs-scaffold.md)    <- README, CLAUDE.md, AGENTS.md mirror, rules
+7. Verify again -> report final state + any remaining drift (incl. manual account-setting check)
 ```
 
 ## Inputs to gather first
@@ -103,6 +107,8 @@ Ask only for what is missing; never invent these.
 | Topics / tags (#2) | yes | none — propose from repo content, confirm |
 | Default branch | yes | auto-detect via `gh repo view --json defaultBranchRef` |
 | Status-check contexts (#9) | yes | auto-detect from recent runs, confirm; if none yet, see note |
+| No-reply email (#14) | yes | `gh api user --jq '"\(.id)+\(.login)@users.noreply.github.com"'` |
+| Email pattern mode (#15) | yes | exact account (solo, default) / any no-reply (accepts contributors) |
 | New repo visibility (create flow) | when creating | ask: private (recommended) / public |
 
 ## Safety Rules
@@ -113,6 +119,9 @@ Ask only for what is missing; never invent these.
 - `enforce_admins: false` (Solo) is intentional — do not silently flip to strict without asking.
 - Squash-only + `required_linear_history` are consistent; do not enable merge commits alongside linear history.
 - Never set topics/description from this skill's repo as defaults — they belong to the target repo.
+- **Never write a personal email** into any file, commit, example, or log. Use the no-reply address
+  (`<id>+<login>@users.noreply.github.com`) or a placeholder — leaking it is the exact failure #14/#15 prevent.
+- The account-level "block pushes that expose my email" setting can't be toggled via API — instruct + verify it manually.
 
 ## Confirmation Policy
 
@@ -144,12 +153,14 @@ gh api -X PUT repos/owner/repo/branches/<main>/protection ...
 
 - [Repo settings](references/repo-settings.md) — description, topics, projects/wiki, squash-only, delete-on-merge
 - [Branch protection](references/branch-protection.md) — Solo profile PUT + status-check auto-detection
+- [Email privacy](references/email-privacy.md) — no-reply identity, account block-push, CI email guard, push restriction
 - [Docs scaffold](references/docs-scaffold.md) — README, CLAUDE.md + AGENTS.md mirror, `.claude/rules/*.md`
 - [Verify](references/verify.md) — dry-run + post-run drift report
 
 ## Templates
 
 - `templates/CLAUDE.md` — canonical agent-instructions file referencing `.claude/rules/*.md`
-- `templates/rules/*.md` — generic starter rules (git workflow, code style, security)
+- `templates/rules/*.md` — generic starter rules (git workflow, code style, security, commit privacy)
+- `templates/ci/email-guard.yml` — PR workflow that blocks commits with a non-no-reply email
 
 AGENTS.md is not a template — it is generated as a byte-identical copy of CLAUDE.md.

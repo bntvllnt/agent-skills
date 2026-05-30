@@ -1,0 +1,37 @@
+name: Email Guard
+# Fails the PR if any commit author OR committer email is not an allowed GitHub no-reply.
+# Add this job's check ("Commit email privacy") to the branch's required status checks so a
+# leaking commit can never reach the default branch.
+
+on:
+  pull_request:
+
+jobs:
+  email-guard:
+    name: Commit email privacy
+    runs-on: ubuntu-latest
+    env:
+      # Exact account only ("only my account") — replace <ID> and <LOGIN>:
+      #   ALLOWED_EMAIL_PATTERN: '^<ID>\+<LOGIN>@users\.noreply\.github\.com$'
+      # Any GitHub no-reply (use when you accept external contributors):
+      ALLOWED_EMAIL_PATTERN: '@users\.noreply\.github\.com$'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check commit author/committer emails
+        run: |
+          set -euo pipefail
+          BASE="origin/${{ github.event.pull_request.base.ref }}"
+          RANGE="$BASE...HEAD"
+          emails=$(git log --format='%ae%n%ce' "$RANGE" | sort -u)
+          echo "Emails in range $RANGE:"
+          echo "$emails" | sed 's/^/  /'
+          bad=$(echo "$emails" | grep -vE "$ALLOWED_EMAIL_PATTERN" || true)
+          if [ -n "$bad" ]; then
+            echo "::error::Disallowed commit email(s) — use your GitHub no-reply address:"
+            echo "$bad" | while read -r e; do echo "::error::  $e"; done
+            exit 1
+          fi
+          echo "All commit emails are allowed no-reply addresses."
