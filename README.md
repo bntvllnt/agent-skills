@@ -3,7 +3,7 @@
 # 🎯 Agent Skills
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Skills](https://img.shields.io/badge/skills-8-blue.svg)](./#available-skills)
+[![Skills](https://img.shields.io/badge/skills-9-blue.svg)](./#available-skills)
 [![Release](https://img.shields.io/github/v/release/bntvllnt/agent-skills?display_name=tag&sort=semver)](https://github.com/bntvllnt/agent-skills/releases/latest)
 
 **Compatible with:** Claude Code • OpenCode • Windsurf • Cursor • More via [skills.sh](https://skills.sh)
@@ -64,6 +64,14 @@ GitHub operations via `gh` CLI: repos, issues, PRs, Actions, releases, and CI mo
 
 ---
 
+### [Prepare GitHub Repository](./prepare-github-repository/) - Standard Repo Config
+
+Apply a standard GitHub repo config in one pass: description + topics, disable projects/wiki, squash-only merges, auto-delete branch on merge, `main` branch protection (PR + status checks), and scaffold `README.md`, `CLAUDE.md` mirrored to `AGENTS.md`, and `.claude/rules/*.md`.
+
+[View skill documentation →](./prepare-github-repository/SKILL.md)
+
+---
+
 ### [Convex](./convex/) - Convex Backend + MCP
 
 Build and operate Convex backends with best practices, validation, and Convex MCP workflows.
@@ -103,6 +111,8 @@ npx skills add bntvllnt/agent-skills --skill git
 
 npx skills add bntvllnt/agent-skills --skill github
 
+npx skills add bntvllnt/agent-skills --skill prepare-github-repository
+
 npx skills add bntvllnt/agent-skills --skill convex
 
 npx skills add bntvllnt/agent-skills --skill workflow
@@ -122,6 +132,8 @@ npx skills add bntvllnt/agent-skills --skill git -g
 
 npx skills add bntvllnt/agent-skills --skill github -g
 
+npx skills add bntvllnt/agent-skills --skill prepare-github-repository -g
+
 npx skills add bntvllnt/agent-skills --skill convex -g
 
 npx skills add bntvllnt/agent-skills --skill workflow -g
@@ -140,6 +152,8 @@ npx skills add bntvllnt/agent-skills --skill oss-readiness --agent claude-code
 npx skills add bntvllnt/agent-skills --skill git --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill github --agent claude-code
+
+npx skills add bntvllnt/agent-skills --skill prepare-github-repository --agent claude-code
 
 npx skills add bntvllnt/agent-skills --skill convex --agent claude-code
 

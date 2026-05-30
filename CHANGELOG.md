@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.14.0] - 2026-05-30
+
+- feat(prepare-github-repository): add skill to apply a standard GitHub repo configuration in one idempotent pass — set description + topics, disable Projects/Wiki, allow squash merges only, auto-delete head branch on merge, protect `main` (PR required with 0 approvals "Solo" profile, strict auto-detected status checks, no force-push/deletion, linear history, conversation resolution), and scaffold required docs: `README.md`, `CLAUDE.md` referencing `.claude/rules/*.md`, `AGENTS.md` as a byte-identical mirror of `CLAUDE.md`, and starter `.claude/rules/*.md`. Includes references (repo-settings, branch-protection, docs-scaffold, verify) and placeholder-driven templates. All `gh` flags and `--json` fields verified against gh 2.86.0.
+- docs: list Prepare GitHub Repository in the README and bump the skills badge 8 -> 9
+
 ## [1.13.7] - 2026-04-28
 
 - feat(convex): delegate canonical Convex content (quickstart, auth, components, migrations, performance) to upstream `get-convex/agent-skills` with fetchable raw GitHub URLs so agents can WebFetch upstream `SKILL.md` even when not installed locally; local references kept as fallback for project conventions; bump skill metadata 2.0 -> 2.1
